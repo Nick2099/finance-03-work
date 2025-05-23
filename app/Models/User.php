@@ -26,6 +26,7 @@ class User extends Authenticatable
         'currency',
         'language',
         'timezone',
+        'date_format',
     ];
 
     /**

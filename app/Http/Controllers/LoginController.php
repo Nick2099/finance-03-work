@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Mail\PasswordResetRequest;
 use App\Mail\UsernameRecoveryRequest;
+use App\Models\User;
+use App\Rules\LoginUserRules;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -39,8 +40,8 @@ class LoginController extends Controller
     {
         // Validate the request data
         $validatedData = $request->validate([
-            'username' => 'required|string|min:5|max:50',
-            'password' => 'required|string|min:1',
+            'username' => LoginUserRules::username(),
+            'password' => LoginUserRules::password(),
         ]);
 
         //
@@ -195,7 +196,7 @@ class LoginController extends Controller
     public function emailUsername(Request $request)
     {
         $validatedData = $request->validate([
-            'email' => 'required|string|email|max:255',
+            'email' => LoginUserRules::email(),
         ]);
 
         // Check if the email exists in the database
@@ -215,7 +216,7 @@ class LoginController extends Controller
     public function emailPassword(Request $request)
     {
         $validatedData = $request->validate([
-            'username' => 'required|string|max:50',
+            'username' => LoginUserRules::username(),
         ]);
 
         // Check if the email exists in the database
@@ -254,12 +255,7 @@ class LoginController extends Controller
     public function updatePassword(Request $request)
     {
         $validatedData = $request->validate([
-            'password' => [
-                'required',
-                'string',
-                Password::min(12)->max(64)->letters()->mixedCase()->numbers()->symbols(),
-                'confirmed',
-            ],
+            'password' => LoginUserRules::passwordReset(),
         ]);
 
         // Verify the token and email

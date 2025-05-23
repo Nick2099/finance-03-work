@@ -32,18 +32,8 @@
         <x-form-field name="language" label="Language" required>
             <div>
                 <select name="language" id="language" class="form-select block w-full mt-1">
-                    @php
-                        $languages = [
-                            'en' => 'English',
-                            'de' => 'German',
-                            'fr' => 'French',
-                            'es' => 'Spanish',
-                            'it' => 'Italian',
-                            // Add more languages as needed
-                        ];
-                    @endphp
-                    @foreach ($languages as $code => $name)
-                        <option value="{{ $code }}" {{ old('language', 'en') === $code ? 'selected' : '' }}>{{ $name }}</option>
+                    @foreach (config('appoptions.languages'); as $code => $name)
+                        <option value="{{ $code }}" {{ old('language', config('appoptions.default_language')) === $code ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -53,7 +43,17 @@
             <div>
                 <select name="timezone" id="timezone" class="form-select block w-full mt-1">
                     @foreach (\DateTimeZone::listIdentifiers() as $timezone)
-                    <option value="{{ $timezone }}" {{ old('timezone', 'Europe/Berlin') === $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
+                    <option value="{{ $timezone }}" {{ old('timezone', config('appoptions.default_timezone')) === $timezone ? 'selected' : '' }}>{{ $timezone }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </x-form-field>
+
+        <x-form-field name="date_format" label="Date Format" required>
+            <div>
+                <select name="date_format" id="date_format" class="form-select block w-full mt-1">
+                    @foreach (config('appoptions.date_formats') as $format => $name)
+                        <option value="{{ $format }}" {{ old('date_format', config('appoptions.default_date_format')) === $format ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -62,54 +62,8 @@
         <x-form-field name="currency" label="Currency" required>
             <div>
                 <select name="currency" id="currency" class="form-select block w-full mt-1">
-                    @php
-                        $currencies = [
-                            /*
-                            'USD' => 'US Dollar',
-                            'EUR' => 'Euro',
-                            'GBP' => 'British Pound Sterling',
-                            'CAD' => 'Canadian Dollar',
-                            'AUD' => 'Australian Dollar',
-                            'CHF' => 'Swiss Franc',
-                            'CNY' => 'Chinese Yuan Renminbi',
-                            'INR' => 'Indian Rupee',
-                            'JPY' => 'Japanese Yen',
-                            'BRL' => 'Brazilian Real',
-                            'MXN' => 'Mexican Peso',
-                            'ZAR' => 'South African Rand',
-                            'HKD' => 'Hong Kong Dollar',
-                            'SGD' => 'Singapore Dollar',
-                            'SEK' => 'Swedish Krona',
-                            'NOK' => 'Norwegian Krone',
-                            'NZD' => 'New Zealand Dollar',
-                            'RUB' => 'Russian Ruble',
-                            'SAR' => 'Saudi Riyal',
-                            'KRW' => 'South Korean Won',
-                            */
-                            'AUD' => 'AUD',
-                            'BRL' => 'BRL',
-                            'CAD' => 'CAD',
-                            'CHF' => 'CHF',
-                            'CNY' => 'CNY',
-                            'EUR' => 'EUR',
-                            'GBP' => 'GBP',
-                            'HKD' => 'HKD',
-                            'INR' => 'INR',
-                            'JPY' => 'JPY',
-                            'KRW' => 'KRW',
-                            'MXN' => 'MXN',
-                            'NOK' => 'NOK',
-                            'NZD' => 'NZD',
-                            'RUB' => 'RUB',
-                            'SAR' => 'SAR',
-                            'SEK' => 'SEK',
-                            'SGD' => 'SGD',
-                            'USD' => 'USD',
-                            'ZAR' => 'ZAR'
-                        ];
-                    @endphp
-                    @foreach ($currencies as $code => $name)
-                        <option value="{{ $code }}" {{ old('currency', 'EUR') === $code ? 'selected' : '' }}>{{ $name }}</option>
+                    @foreach (config('appoptions.currencies') as $code => $name)
+                        <option value="{{ $code }}" {{ old('currency', config('appoptions.default_currency')) === $code ? 'selected' : '' }}>{{ $name }}</option>
                     @endforeach
                 </select>
             </div>

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserConfirmationRequest;
 use App\Models\User;
+use App\Rules\RegisterUserRules;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\UserConfirmationRequest;
-use Illuminate\Validation\Rules\Password;
 
 class RegisterUserController extends Controller
 {
@@ -26,19 +26,14 @@ class RegisterUserController extends Controller
     {
         // Validate the request data
         $validatedData = $request->validate([
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'string|max:100',
-            'username' => 'required|string|min:5|max:50|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => [
-                'required',
-                'string',
-                Password::min(12)->max(64)->letters()->mixedCase()->numbers()->symbols(),
-                'confirmed',
-            ],
-            'language' => 'required|string|in:en,es,fr,de,it',
-            'timezone' => 'required|string|timezone',
-            'currency' => 'required|string|in:USD,EUR,GBP',
+            'first_name' => RegisterUserRules::firstName(),
+            'last_name' => RegisterUserRules::lastName(),
+            'username' => RegisterUserRules::username(),
+            'email' => RegisterUserRules::email(),
+            'password' => RegisterUserRules::password(),
+            'language' => RegisterUserRules::language(),
+            'timezone' => RegisterUserRules::timezone(),
+            'currency' => RegisterUserRules::currency(),
         ]);
 
         // Create the user
