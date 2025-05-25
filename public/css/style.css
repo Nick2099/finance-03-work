@@ -81,3 +81,8 @@ body {
     background:#d1e7dd;
     color:#0f5132;
 }
+
+.alert-error {
+    background:#fab498;
+    color:#aa1d1d;
+}

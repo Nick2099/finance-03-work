@@ -57,9 +57,6 @@ class RegisterUserController extends Controller
         // Optionally, you can send a confirmation email here
         Mail::to($user->email)->send(new UserConfirmationRequest($user, $token));
 
-        // Log the user in
-        // Auth::login($user);
-
         // Redirect to a success page or perform any other action
         return redirect()->route('home')->with('success', 'User registered successfully. We sent you an e-mail to confirm your account. Please check your inbox.');
     }
@@ -87,7 +84,7 @@ class RegisterUserController extends Controller
             ->first();
 
         if (!$record) {
-            return redirect('/')->with('error', 'Invalid or expired verification link.');
+            return redirect('login')->with('error', 'Invalid or expired verification link. You can request a new verification email after submitting correct login credentials in this form.');
         }
 
         // Mark user as verified

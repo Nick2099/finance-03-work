@@ -60,12 +60,6 @@ class LoginController extends Controller
 
                 Auth::logout();
 
-                /*
-                return back()->withErrors([
-                    'username' => 'You must verify your email address before logging in.',
-                ]);
-                */
-
                 return redirect()->route('email-not-verified', [
                     'username' => $username,
                     'email' => $email,

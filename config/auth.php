@@ -113,5 +113,5 @@ return [
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
     
-    'login_lock_minutes' => env('LOGIN_LOCK_MINUTES', 15),
+    'login_lock_minutes' => env('LOGIN_LOCK_MINUTES', 5),
 ];

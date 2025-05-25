@@ -10,6 +10,7 @@
 <body>
     <x-navbar />
     <x-alert-success />
+    <x-alert-error />
     {{ $slot }}    
 </body>
 </html>
