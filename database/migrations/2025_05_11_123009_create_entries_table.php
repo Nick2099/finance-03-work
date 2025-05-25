@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreignId('subgroup_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->string('description')->nullable();
-            // creatino = 0: created manually, 1: created automatically
+            // creation = 0: created manually, 1: created automatically, 2: created automatically but manually modified
             $table->tinyInteger('creation')->default(0);
-            // series = 0: not a series, 1: first entry of a series, 2: last entry of a series, 3: middle entry of a series
+            // series = 0: not a series, 1: first entry of a series, 2: middle entry of a series, 3: last entry of a series
             $table->tinyInteger('series')->default(0);
             $table->timestamps();
         });
