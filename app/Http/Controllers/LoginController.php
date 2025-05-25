@@ -78,7 +78,8 @@ class LoginController extends Controller
             $this->wrongLoginAttempt($validatedData['username']);
 
             throw ValidationException::withMessages([
-                'username' => 'The provided credentials do not match.',
+                'username' => 'The user with the provided credentials does not exist. ' .
+                    'Please check your username and password. ',
             ]);
         };
     }

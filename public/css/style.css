@@ -86,3 +86,8 @@ body {
     background:#fab498;
     color:#aa1d1d;
 }
+
+.decimal {
+    font-family: monospace;
+    text-align: right;
+}

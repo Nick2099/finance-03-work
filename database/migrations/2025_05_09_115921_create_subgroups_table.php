@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('description', length: 255)->nullable();
             // privacy = 0: public, 1: private, 2: secret, 3: hidden, 4: custom
             $table->tinyInteger('privacy')->default(0);
-            $table->foreignId(\App\Models\Group::class);
+            $table->foreignIdFor(\App\Models\Group::class);
             $table->timestamps();
         });
     }

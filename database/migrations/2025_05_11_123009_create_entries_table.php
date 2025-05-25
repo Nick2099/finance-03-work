@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('group_id')->constrained()->onDelete('cascade');
             $table->foreignId('subgroup_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
+            $table->string('place', length: 50);
             $table->string('description')->nullable();
             // creation = 0: created manually, 1: created automatically, 2: created automatically but manually modified
             $table->tinyInteger('creation')->default(0);

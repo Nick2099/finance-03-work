@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('timezone', length: 60)->default('UTC');
             $table->string('date_format', length: 5)->default('d.m.Y');
             $table->string('currency', length: 3)->default('EUR');
-            $table->foreignId(\App\Models\Collection::class)->default(1);
+            $table->foreignIdFor(\App\Models\Collection::class)->default(1);
             $table->boolean('demo')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->tinyInteger('wrong_login_attempts')->default(0);

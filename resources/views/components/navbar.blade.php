@@ -4,6 +4,7 @@
         <x-nav-link href="{{ route('about') }}" :active="request()->is('about')">About</x-nav-link>
         <x-nav-link href="{{ route('contact') }}" :active="request()->is('contact')">Contact</x-nav-link>
         @auth
+            <x-nav-link href="{{ route('entry.create') }}" :active="request()->is('entry.create')">Entry</x-nav-link>
             <x-nav-link href="{{ route('profile') }}" :active="request()->is('profile')">Profile</x-nav-link>
         @endauth
         @auth

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->tinyInteger('type')->default(0);
             // privacy = 0: public, 1: private, 2: secret, 3: hidden, 4: custom
             $table->tinyInteger('privacy')->default(0);
-            $table->foreignId(\App\Models\Collection::class);
+            $table->foreignIdFor(\App\Models\Collection::class);
             $table->timestamps();
         });
     }

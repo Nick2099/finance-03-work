@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EntryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterUserController;
@@ -61,3 +62,11 @@ Route::post('/update-password', [LoginController::class, 'updatePassword'])
 
 Route::get('/profile', [ProfileController::class, 'create'])
     ->name('profile');
+
+Route::get('/entry', [EntryController::class, 'create'])
+    ->name('entry.create');
+
+Route::post('/entry', [EntryController::class, 'store'])
+    ->name('entry.store');
+
+Route::get('/subgroups/{group}', [EntryController::class, 'getSubgroups']);
