@@ -15,4 +15,9 @@ class Subgroup extends Model
         'description',
         'privacy',
     ];
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
 }

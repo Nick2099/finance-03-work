@@ -15,4 +15,9 @@ class Collection extends Model
         'description',
         'type',
     ];
+
+    public function groups()
+    {
+        return $this->hasMany(Group::class);
+    }
 }

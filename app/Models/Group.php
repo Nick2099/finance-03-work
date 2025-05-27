@@ -16,4 +16,14 @@ class Group extends Model
         'type',
         'privacy',
     ];
+
+    public function subgroups()
+    {
+        return $this->hasMany(Subgroup::class);
+    }
+
+    public function collection()
+    {
+        return $this->belongsTo(Collection::class);
+    }
 }
