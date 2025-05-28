@@ -62,4 +62,7 @@ return [
     'default_language' => 'en',
     'default_timezone' => 'UTC',
     'default_date_format' => 'd.m.Y',
+    'place_suggest_min_length' => env('PLACE_SUGGEST_MIN_LENGTH', 3),
+    'location_suggest_min_length' => env('LOCATION_SUGGEST_MIN_LENGTH', 3),
+    'debounce_delay' => env('DEBOUNCE_DELAY', 300), // in milliseconds
 ];

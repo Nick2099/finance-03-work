@@ -16,9 +16,14 @@ class EntryController extends Controller
     public function create()
     {
         if (!Auth::check()) {
-            return redirect('/')->with('success', 'You are already logged in.');
+            return redirect('/')->with('error', 'You have to be logged in.');
         }
-        return view('entries.entry');
+
+        $user = Auth::user();
+        $collection = $user->collection;
+        $groups = $collection->groups()->with('subgroups')->orderBy('name')->get();
+
+        return view('entries.entry', compact('groups'));
     }
 
     public function store(Request $request)
@@ -43,5 +48,35 @@ class EntryController extends Controller
     {
         $subgroups = \App\Models\Subgroup::where('group_id', $groupId)->orderBy('name')->get(['id', 'name']);
         return response()->json($subgroups);
+    }
+
+    public function suggestPlaces(Request $request)
+    {
+        $query = $request->input('q');
+        $user = Auth::user();
+
+        $places = \App\Models\Header::where('user_id', $user->id)
+            ->where('place_of_purchase', 'like', $query . '%')
+            ->distinct()
+            ->orderBy('place_of_purchase')
+            ->limit(10)
+            ->pluck('place_of_purchase');
+
+        return response()->json($places);
+    }
+
+    public function suggestLocations(Request $request)
+    {
+        $query = $request->input('q');
+        $user = Auth::user();
+
+        $places = \App\Models\Header::where('user_id', $user->id)
+            ->where('location', 'like', $query . '%')
+            ->distinct()
+            ->orderBy('location')
+            ->limit(10)
+            ->pluck('location');
+
+        return response()->json($places);
     }
 }

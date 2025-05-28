@@ -16,7 +16,9 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\User::class)->constrained()->onDelete('cascade');
             $table->date('date');
             $table->decimal('amount', 10, 2);
-            $table->string('establishment', length: 50);
+            // place of purchase is a short description of where the spending took place, e.g. "Supermarket", "Restaurant", etc. The name can be used too, like "John's Diner", Lidl", "Amazon", etc.
+            $table->string('place_of_purchase', length: 50);
+            // location is a short description of where the spending took place, e.g. "Berlin", "New York", etc.
             $table->string('location', length: 50);
             $table->string('description')->nullable();
             // creation = 0: created manually, 1: created automatically, 2: created automatically but manually modified
