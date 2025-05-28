@@ -41,25 +41,48 @@
                 autocomplete="off" />
         </x-form-field>
 
-        <x-form-field name="group_id" label="Group" required>
-            <div>
-                <select name="group_id" id="group_id">
-                    @foreach ($groups as $group)
-                        <option value="{{ $group->id }}" {{ old('group_id') == $group->id ? 'selected' : '' }}>
-                            {{ $group->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </x-form-field>
-
-        <x-form-field name="subgroup_id" label="Subgroup" required>
-            <div>
-                <select name="subgroup_id" id="subgroup_id">
-                </select>
-            </div>
-        </x-form-field>
-
-        <x-form-button>Details</x-form-button>
+        <table id="items-list">
+            <thead>
+                <tr>
+                    <th>Group</th>
+                    <th>Subgroup</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="items-list-body">
+                <!-- Items will be dynamically added here -->
+                <tr id="bottom-line">
+                    <td>
+                        <select name="group_id" id="group_id">
+                            @foreach ($groups as $group)
+                                <option value="{{ $group->id }}"
+                                    {{ old('group_id') == $group->id ? 'selected' : '' }}>
+                                    {{ $group->name }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <select name="subgroup_id" id="subgroup_id">
+                            @if (old('group_id'))
+                                @foreach ($groups->find(old('group_id'))->subgroups as $subgroup)
+                                    <option value="{{ $subgroup->id }}"
+                                        {{ old('subgroup_id') == $subgroup->id ? 'selected' : '' }}>
+                                        {{ $subgroup->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </td>
+                    <td>
+                        <x-form-input type="number" name="item_amount" id="item_amount"
+                            value="{{ old('item_amount', '0.00') }}" step="0.01" class="decimal" required />
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-secondary" id="add-item">Add item</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </form>
 
     <script>
@@ -119,7 +142,7 @@
                     const query = this.value;
                     if (query.length < PLACE_MIN_LENGTH || query === lastPlaceQuery) return;
                     lastPlaceQuery = query;
-                    console.log('Fetching places for:', lastPlaceQuery);
+                    // console.log('Fetching places for:', lastPlaceQuery);
                     fetch(`/places/suggest?q=${encodeURIComponent(query)}`)
                         .then(response => response.json())
                         .then(data => {
@@ -143,7 +166,7 @@
                     const query = this.value;
                     if (query.length < LOCATION_MIN_LENGTH || query === lastLocationQuery) return;
                     lastLocationQuery = query;
-                    console.log('Fetching locations for:', lastLocationQuery);
+                    // console.log('Fetching locations for:', lastLocationQuery);
                     fetch(`/locations/suggest?q=${encodeURIComponent(query)}`)
                         .then(response => response.json())
                         .then(data => {
@@ -155,6 +178,68 @@
                             });
                         });
                 }, DEBOUNCE_DELAY));
+            }
+
+            let items = [];
+
+            function renderItems() {
+                const itemsList = document.getElementById('items-list-body');
+                const bottomLine = document.getElementById('bottom-line');
+                // Remove all rows except the bottom line
+                Array.from(itemsList.querySelectorAll('tr')).forEach(row => {
+                    if (row.id !== 'bottom-line') row.remove();
+                });
+                // Add each item before the bottom line
+                items.forEach((item, idx) => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${item.groupText}</td>
+                        <td>${item.subgroupText}</td>
+                        <td>${item.amount}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="items.splice(${idx}, 1); renderItems();">Remove</button>
+                        </td>
+                    `;
+                    itemsList.insertBefore(newRow, bottomLine);
+                });
+            }
+
+            document.getElementById('add-item').addEventListener('click', function() {
+                const groupSelect = document.getElementById('group_id');
+                const subgroupSelect = document.getElementById('subgroup_id');
+                const amountInput = document.getElementById('item_amount');
+
+                const groupId = groupSelect.value;
+                const groupText = groupSelect.options[groupSelect.selectedIndex].text;
+                const subgroupId = subgroupSelect.value;
+                const subgroupText = subgroupSelect.options[subgroupSelect.selectedIndex]?.text || '';
+                const amount = amountInput.value;
+
+                // Add to items array
+                items.push({
+                    groupId,
+                    groupText,
+                    subgroupId,
+                    subgroupText,
+                    amount
+                });
+
+                renderItems();
+
+                removeSubgroup(subgroupId)
+
+                console.log('Items:', items);
+            });
+
+            function removeSubgroup(subgroupId) {
+                const subgroupSelect = document.getElementById('subgroup_id');
+                if (!subgroupSelect) return;
+                for (let i = 0; i < subgroupSelect.options.length; i++) {
+                    if (subgroupSelect.options[i].value == subgroupId) {
+                        subgroupSelect.remove(i);
+                        break;
+                    }
+                }
             }
         });
     </script>

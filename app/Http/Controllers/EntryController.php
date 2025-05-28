@@ -22,8 +22,9 @@ class EntryController extends Controller
         $user = Auth::user();
         $collection = $user->collection;
         $groups = $collection->groups()->with('subgroups')->orderBy('name')->get();
+        $items = [];
 
-        return view('entries.entry', compact('groups'));
+        return view('entries.entry', compact('groups', 'items'));
     }
 
     public function store(Request $request)

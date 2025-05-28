@@ -97,7 +97,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Group::factory()->create([
-            'name' => 'Entertainment & Subscriptions',
+            'name' => 'Internet & Co.',
             'description' => 'All kinds of entertainment and subscription expenses, for example streaming services, internet, mobile phone plans etc.',
             'type' => 2, // expense
             'privacy' => 0, // public
