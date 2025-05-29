@@ -3,6 +3,8 @@
     $placeMinLength = config('appoptions.place_suggest_min_length');
     $locationMinLength = config('appoptions.location_suggest_min_length');
     $debounceDelay = config('appoptions.suggest_debounce_delay', 250);
+    $tempGroupSubgroupMap = $groupSubgroupMap;
+    // dd($tempGroupSubgroupMap);
     ?>
     <x-slot:heading>
         New entry
@@ -55,26 +57,32 @@
                 <tr id="bottom-line">
                     <td>
                         <select name="group_id" id="group_id">
-                            @foreach ($groups as $group)
-                                <option value="{{ $group->id }}"
-                                    {{ old('group_id') == $group->id ? 'selected' : '' }}>
-                                    {{ $group->name }}</option>
+                            @foreach ($tempGroupSubgroupMap as $group)
+                                <option value="{{ $group['id'] }}"
+                                    {{ old('group_id') == $group['id'] ? 'selected' : '' }}>
+                                    {{ $group['name'] }}
+                                </option>
                             @endforeach
                         </select>
                     </td>
                     <td>
+                        @php
+                            $selectedGroupId = old('group_id') ?? ($tempGroupSubgroupMap[0]['id'] ?? null);
+                            $selectedGroup = collect($tempGroupSubgroupMap)->firstWhere('id', $selectedGroupId);
+                        @endphp
                         <select name="subgroup_id" id="subgroup_id">
-                            @if (old('group_id'))
-                                @foreach ($groups->find(old('group_id'))->subgroups as $subgroup)
-                                    <option value="{{ $subgroup->id }}"
-                                        {{ old('subgroup_id') == $subgroup->id ? 'selected' : '' }}>
-                                        {{ $subgroup->name }}</option>
+                            @if ($selectedGroup)
+                                @foreach ($selectedGroup['subgroups'] as $subgroupId => $subgroupName)
+                                    <option value="{{ $subgroupId }}"
+                                        {{ old('subgroup_id') == $subgroupId ? 'selected' : ($loop->first && !old('subgroup_id') ? 'selected' : '') }}>
+                                        {{ $subgroupName }}
+                                    </option>
                                 @endforeach
                             @endif
                         </select>
                     </td>
                     <td>
-                        <x-form-input type="number" name="item_amount" id="item_amount"
+                        <input type="number" name="item_amount" id="item_amount"
                             value="{{ old('item_amount', '0.00') }}" step="0.01" class="decimal" required />
                     </td>
                     <td>
@@ -89,10 +97,15 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Amount input formatting
             const amountInput = document.getElementById('amount');
+            const itemAmountInput = document.getElementById('item_amount');
             if (amountInput) {
                 amountInput.addEventListener('blur', function() {
                     let value = parseFloat(this.value.replace(',', '.'));
                     this.value = !isNaN(value) ? value.toFixed(2) : '0.00';
+                    // If there are no items yet, update item_amount to match amount
+                    if (itemAmountInput && items.length === 0) {
+                        itemAmountInput.value = this.value;
+                    }
                 });
             }
 
@@ -100,23 +113,30 @@
             const groupSelect = document.getElementById('group_id');
             const subgroupSelect = document.getElementById('subgroup_id');
 
-            function loadSubgroups(groupId) {
-                fetch(`/subgroups/${groupId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        subgroupSelect.innerHTML = '';
-                        data.forEach(function(subgroup) {
-                            const option = document.createElement('option');
-                            option.value = subgroup.id;
-                            option.text = subgroup.name;
-                            subgroupSelect.appendChild(option);
-                        });
+            // Pass PHP array to JS
+            const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
+
+            function loadSubgroupsFromMap(groupId) {
+                subgroupSelect.innerHTML = '';
+                const group = groupSubgroupMapJSON.find(g => g.id == groupId);
+                if (group && group.subgroups) {
+                    // Convert to array and sort by name
+                    const sortedSubgroups = Object.entries(group.subgroups)
+                        .sort((a, b) => a[1].localeCompare(b[1], undefined, {
+                            sensitivity: 'base'
+                        }));
+                    sortedSubgroups.forEach(([subgroupId, subgroupName]) => {
+                        const option = document.createElement('option');
+                        option.value = subgroupId;
+                        option.text = subgroupName;
+                        subgroupSelect.appendChild(option);
                     });
+                }
             }
             if (groupSelect && subgroupSelect) {
-                if (groupSelect.value) loadSubgroups(groupSelect.value);
+                if (groupSelect.value) loadSubgroupsFromMap(groupSelect.value);
                 groupSelect.addEventListener('change', function() {
-                    loadSubgroups(this.value);
+                    loadSubgroupsFromMap(this.value);
                 });
             }
 
@@ -195,13 +215,17 @@
                     newRow.innerHTML = `
                         <td>${item.groupText}</td>
                         <td>${item.subgroupText}</td>
-                        <td>${item.amount}</td>
+                        <td>${Number(item.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                         <td>
                             <button type="button" class="btn btn-danger" onclick="items.splice(${idx}, 1); renderItems();">Remove</button>
                         </td>
                     `;
                     itemsList.insertBefore(newRow, bottomLine);
                 });
+                // Remove the bottom line if the first item's amount is 0
+                if (items.length > 0 && Number(items[0].amount) === 0 && bottomLine) {
+                    bottomLine.remove();
+                }
             }
 
             document.getElementById('add-item').addEventListener('click', function() {
@@ -213,7 +237,25 @@
                 const groupText = groupSelect.options[groupSelect.selectedIndex].text;
                 const subgroupId = subgroupSelect.value;
                 const subgroupText = subgroupSelect.options[subgroupSelect.selectedIndex]?.text || '';
-                const amount = amountInput.value;
+                let amount = amountInput.value;
+
+                // Subtract new item_amount from the first item's amount if possible
+                if (items.length > 0) {
+                    let firstAmount = parseFloat(items[0].amount);
+                    let subtractAmount = parseFloat(amount);
+                    if (!isNaN(firstAmount) && !isNaN(subtractAmount)) {
+                        if (subtractAmount > firstAmount) {
+                            subtractAmount = firstAmount; // Prevent negative amounts
+                        }
+                        if (firstAmount < subtractAmount) {
+                            subtractAmount = firstAmount; // Prevent negative amounts
+                        }
+                        // Update the first item's amount
+                        const newFirstAmount = firstAmount - subtractAmount;
+                        items[0].amount = newFirstAmount.toFixed(2);
+                    }
+                    amount = subtractAmount;
+                }
 
                 // Add to items array
                 items.push({
@@ -227,6 +269,10 @@
                 renderItems();
 
                 removeSubgroup(subgroupId)
+                removeGroup(groupId)
+
+                // Reset item_amount to 0 after adding an item
+                amountInput.value = '0.00';
 
                 console.log('Items:', items);
             });
@@ -239,6 +285,22 @@
                         subgroupSelect.remove(i);
                         break;
                     }
+                }
+            }
+
+            function removeGroup(groupId) {
+                const groupSelect = document.getElementById('group_id');
+                const subgroupSelect = document.getElementById('subgroup_id');
+                if (!groupSelect || !subgroupSelect) return;
+                if (subgroupSelect.options.length === 0) {
+                    for (let i = 0; i < groupSelect.options.length; i++) {
+                        if (groupSelect.options[i].value == groupId) {
+                            groupSelect.remove(i);
+                            break;
+                        }
+                    }
+                    // After removing the group, update subgroups for the new selected group
+                    loadSubgroupsFromMap(groupSelect.value);
                 }
             }
         });

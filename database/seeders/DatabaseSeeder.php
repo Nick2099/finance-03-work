@@ -235,14 +235,6 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Water',
-            'description' => 'This is the water subgroup.',
-            'privacy' => 0, // public
-            'group_id' => 4,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
             'name' => 'Clothes',
             'description' => 'This is the clothes subgroup.',
             'privacy' => 0, // public

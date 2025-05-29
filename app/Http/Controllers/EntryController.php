@@ -24,7 +24,19 @@ class EntryController extends Controller
         $groups = $collection->groups()->with('subgroups')->orderBy('name')->get();
         $items = [];
 
-        return view('entries.entry', compact('groups', 'items'));
+        // Create a variable with all groups and their subgroups (id => name), subgroups sorted alphabetically (case-insensitive)
+        $groupSubgroupMap = $groups->map(function ($group) {
+            $sortedSubgroups = $group->subgroups->sortBy(function ($subgroup) {
+                return mb_strtolower($subgroup->name);
+            });
+            return [
+                'id' => $group->id,
+                'name' => $group->name,
+                'subgroups' => $sortedSubgroups->pluck('name', 'id')->toArray(),
+            ];
+        });
+
+        return view('entries.entry', compact('groups', 'items', 'groupSubgroupMap'));
     }
 
     public function store(Request $request)
