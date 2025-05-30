@@ -95,8 +95,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Amount input formatting
+            // Set focus to the amount field when the form is shown
             const amountInput = document.getElementById('amount');
+            if (amountInput) {
+                amountInput.focus();
+            }
+
+            // Amount input formatting
             const itemAmountInput = document.getElementById('item_amount');
             if (amountInput) {
                 amountInput.addEventListener('blur', function() {
@@ -205,6 +210,7 @@
             function renderItems() {
                 const itemsList = document.getElementById('items-list-body');
                 const bottomLine = document.getElementById('bottom-line');
+                const groupSelect = document.getElementById('group_id');
                 // Remove all rows except the bottom line
                 Array.from(itemsList.querySelectorAll('tr')).forEach(row => {
                     if (row.id !== 'bottom-line') row.remove();
@@ -222,33 +228,44 @@
                     `;
                     itemsList.insertBefore(newRow, bottomLine);
                 });
-                // Remove the bottom line if the first item's amount is 0
-                if (items.length > 0 && Number(items[0].amount) === 0 && bottomLine) {
-                    bottomLine.remove();
-                }
+                // Remove the bottom line if the first item's amount is 0 or if there are no more group options
+                // setTimeout(..., 0) works because it doesn't actually wait for 0 milliseconds in the sense of "do this immediately." Instead, it tells the browser: "Run this code after the current call stack is finished and the DOM has had a chance to update."
+                setTimeout(() => {
+                    if ((items.length > 0 && Number(items[0].amount) === 0 && bottomLine) || (groupSelect && groupSelect.options.length === 0 && bottomLine)) {
+                        bottomLine.remove();
+                    }
+                    // Set focus to group_id select after rendering items
+                    if (groupSelect) {
+                        groupSelect.focus();
+                    }
+                }, 0);
             }
 
             document.getElementById('add-item').addEventListener('click', function() {
+                const amountInput = document.getElementById('item_amount');
+                let amount = amountInput.value;
+                // Prevent adding item if amount is 0 or empty
+                if (!amount || parseFloat(amount) === 0) {
+                    return;
+                }
+
                 const groupSelect = document.getElementById('group_id');
                 const subgroupSelect = document.getElementById('subgroup_id');
-                const amountInput = document.getElementById('item_amount');
 
                 const groupId = groupSelect.value;
                 const groupText = groupSelect.options[groupSelect.selectedIndex].text;
                 const subgroupId = subgroupSelect.value;
                 const subgroupText = subgroupSelect.options[subgroupSelect.selectedIndex]?.text || '';
-                let amount = amountInput.value;
+
 
                 // Subtract new item_amount from the first item's amount if possible
                 if (items.length > 0) {
                     let firstAmount = parseFloat(items[0].amount);
                     let subtractAmount = parseFloat(amount);
                     if (!isNaN(firstAmount) && !isNaN(subtractAmount)) {
+                        // Ensure subtractAmount does not exceed firstAmount
                         if (subtractAmount > firstAmount) {
-                            subtractAmount = firstAmount; // Prevent negative amounts
-                        }
-                        if (firstAmount < subtractAmount) {
-                            subtractAmount = firstAmount; // Prevent negative amounts
+                            subtractAmount = firstAmount;
                         }
                         // Update the first item's amount
                         const newFirstAmount = firstAmount - subtractAmount;
@@ -273,8 +290,6 @@
 
                 // Reset item_amount to 0 after adding an item
                 amountInput.value = '0.00';
-
-                console.log('Items:', items);
             });
 
             function removeSubgroup(subgroupId) {
