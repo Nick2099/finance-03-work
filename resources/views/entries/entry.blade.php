@@ -48,6 +48,7 @@
                 <tr>
                     <th>Group</th>
                     <th>Subgroup</th>
+                    <th>Add</th>
                     <th>Amount</th>
                     <th>Action</th>
                 </tr>
@@ -81,6 +82,7 @@
                             @endif
                         </select>
                     </td>
+                    <td></td>
                     <td>
                         <input type="number" name="item_amount" id="item_amount"
                             value="{{ old('item_amount', '0.00') }}" step="0.01" class="decimal" required />
@@ -207,7 +209,21 @@
 
             let items = [];
 
+            function recalculateFirstItemAmount() {
+                const amountInput = document.getElementById('amount');
+                let total = 0;
+                for (let i = 1; i < items.length; i++) {
+                    total += parseFloat(items[i].amount) || 0;
+                }
+                let mainAmount = parseFloat(amountInput.value.replace(',', '.')) || 0;
+                if (items.length > 0) {
+                    let newFirstAmount = mainAmount - total;
+                    items[0].amount = newFirstAmount.toFixed(2);
+                }
+            }
+
             function renderItems() {
+                recalculateFirstItemAmount();
                 const itemsList = document.getElementById('items-list-body');
                 const bottomLine = document.getElementById('bottom-line');
                 const groupSelect = document.getElementById('group_id');
@@ -221,9 +237,13 @@
                     newRow.innerHTML = `
                         <td>${item.groupText}</td>
                         <td>${item.subgroupText}</td>
-                        <td>${Number(item.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td>${idx === 0 ? '' : `<input type=\"number\" name=\"item_${idx}_add\" class=\"decimal item-add-input\" value=\"0.00\" step=\"0.01\" style=\"width:80px;display:inline-block;\" /> <button type=\"button\" class=\"btn btn-success btn-add-amount\" data-idx=\"${idx}\">+</button>`}</td>
+                        <td>${idx === 0
+                            ? Number(item.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                            : `<input type=\"number\" name=\"item_${idx}_amount\" class=\"decimal item-amount-input\" value=\"${Number(item.amount).toFixed(2)}\" step=\"0.01\" style=\"width:80px;display:inline-block;\" /> <button type=\"button\" class=\"btn btn-primary btn-set-amount\" data-idx=\"${idx}\">&#10003;</button>`}
+                        </td>
                         <td>
-                            <button type="button" class="btn btn-danger" onclick="items.splice(${idx}, 1); renderItems();">Remove</button>
+                            <button type=\"button\" class=\"btn btn-danger\" onclick=\"items.splice(${idx}, 1); renderItems();\">Remove</button>
                         </td>
                     `;
                     itemsList.insertBefore(newRow, bottomLine);
@@ -231,7 +251,8 @@
                 // Remove the bottom line if the first item's amount is 0 or if there are no more group options
                 // setTimeout(..., 0) works because it doesn't actually wait for 0 milliseconds in the sense of "do this immediately." Instead, it tells the browser: "Run this code after the current call stack is finished and the DOM has had a chance to update."
                 setTimeout(() => {
-                    if ((items.length > 0 && Number(items[0].amount) === 0 && bottomLine) || (groupSelect && groupSelect.options.length === 0 && bottomLine)) {
+                    if ((items.length > 0 && Number(items[0].amount) === 0 && bottomLine) || (groupSelect &&
+                            groupSelect.options.length === 0 && bottomLine)) {
                         bottomLine.remove();
                     }
                     // Set focus to group_id select after rendering items
@@ -239,6 +260,52 @@
                         groupSelect.focus();
                     }
                 }, 0);
+
+                // Add event delegation for the new buttons after rendering items
+                itemsList.querySelectorAll('.btn-add-amount').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const idx = parseInt(this.getAttribute('data-idx'));
+                        const addInput = itemsList.querySelector(`input[name='item_${idx}_add']`);
+                        const amountInput = itemsList.querySelector(`input[name='item_${idx}_amount']`);
+                        let addValue = parseFloat(addInput.value.replace(',', '.'));
+                        let maxAdd = parseFloat(items[0].amount) || 0;
+                        let minAdd = -1 * (parseFloat(items[idx].amount) || 0);
+                        if (!isNaN(addValue) && addValue !== 0) {
+                            // Limit addValue to the range [minAdd, maxAdd]
+                            if (addValue > maxAdd) {
+                                addValue = maxAdd;
+                            }
+                            if (addValue < minAdd) {
+                                addValue = minAdd;
+                            }
+                            let currentAmount = parseFloat(items[idx].amount);
+                            let newAmount = currentAmount + addValue;
+                            items[idx].amount = newAmount.toFixed(2);
+                            renderItems();
+                        }
+                    });
+                });
+                itemsList.querySelectorAll('.btn-set-amount').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const idx = parseInt(this.getAttribute('data-idx'));
+                        const amountInput = itemsList.querySelector(`input[name='item_${idx}_amount']`);
+                        let newValue = parseFloat(amountInput.value.replace(',', '.'));
+                        let maxValue = (parseFloat(items[0].amount) || 0) + (parseFloat(items[idx].amount) || 0);
+                        let minValue = 0;
+                        console.log(`Setting amount for item ${idx}: newValue=${newValue}, maxValue=${maxValue}, minValue=${minValue}`);
+                        if (!isNaN(newValue)) {
+                            if (newValue > maxValue) {
+                                newValue = maxValue;
+                            }
+                            if (newValue < minValue) {
+                                newValue = minValue;
+                            }
+                            // Update the item's amount
+                            items[idx].amount = newValue.toFixed(2);
+                            renderItems();
+                        }
+                    });
+                });
             }
 
             document.getElementById('add-item').addEventListener('click', function() {
