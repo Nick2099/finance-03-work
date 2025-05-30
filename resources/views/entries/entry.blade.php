@@ -93,6 +93,12 @@
                 </tr>
             </tbody>
         </table>
+        <x-form-button>Save entry</x-form-button>
+        <x-form-button>Reset</x-form-button>
+        <div>
+            <input type="checkbox" name="negative" id="negative" value="negative" {{ old('negative') ? 'checked' : '' }} />
+            <label for="negative"> Allow negative numbers.</label>
+        </div>
     </form>
 
     <script>
@@ -105,6 +111,8 @@
 
             // Amount input formatting
             const itemAmountInput = document.getElementById('item_amount');
+            itemAmountInput.disabled = true; // Disable item_amount input initially
+
             if (amountInput) {
                 amountInput.addEventListener('blur', function() {
                     let value = parseFloat(this.value.replace(',', '.'));
@@ -140,6 +148,8 @@
                     });
                 }
             }
+            
+            // Load subgroups for the initially selected group
             if (groupSelect && subgroupSelect) {
                 if (groupSelect.value) loadSubgroupsFromMap(groupSelect.value);
                 groupSelect.addEventListener('change', function() {
@@ -259,6 +269,7 @@
                     if (groupSelect) {
                         groupSelect.focus();
                     }
+                    itemAmountInput.disabled = items.length === 0;
                 }, 0);
 
                 // Add event delegation for the new buttons after rendering items
@@ -335,8 +346,9 @@
                             subtractAmount = firstAmount;
                         }
                         // Update the first item's amount
-                        const newFirstAmount = firstAmount - subtractAmount;
-                        items[0].amount = newFirstAmount.toFixed(2);
+                        // Following code is now replaced by the renderItems function where the first item's amount is recalculated
+                        // const newFirstAmount = firstAmount - subtractAmount;
+                        // items[0].amount = newFirstAmount.toFixed(2);
                     }
                     amount = subtractAmount;
                 }
