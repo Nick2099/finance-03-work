@@ -117,6 +117,9 @@
                 amountInput.addEventListener('blur', function() {
                     let value = parseFloat(this.value.replace(',', '.'));
                     this.value = !isNaN(value) ? value.toFixed(2) : '0.00';
+                    if (!negativeValues && value < 0) {
+                        this.value = '0.00'; // Reset to 0 if negative values are not allowed
+                    }
                     // If there are no items yet, update item_amount to match amount
                     if (itemAmountInput && items.length === 0) {
                         itemAmountInput.value = this.value;
@@ -232,7 +235,7 @@
                 }
             }
 
-            function renderItems() {
+            function renderItems(foculField = null, focusIdx = null) {
                 recalculateFirstItemAmount();
                 const itemsList = document.getElementById('items-list-body');
                 const bottomLine = document.getElementById('bottom-line');
@@ -270,6 +273,15 @@
                         groupSelect.focus();
                     }
                     itemAmountInput.disabled = items.length === 0;
+                    let focusElement = null;
+                    if ((foculField) && (focusIdx !== null)) {
+                        if (foculField === 'item_x_amount') {
+                            focusElement = document.querySelector(`input[name='item_${focusIdx}_amount']`);
+                        } else if (foculField === 'item_x_add') {
+                            focusElement = document.querySelector(`input[name='item_${focusIdx}_add']`);
+                        } 
+                        if (focusElement) focusElement.focus();
+                    }
                 }, 0);
 
                 // Add event delegation for the new buttons after rendering items
@@ -279,14 +291,24 @@
                         const addInput = itemsList.querySelector(`input[name='item_${idx}_add']`);
                         const amountInput = itemsList.querySelector(`input[name='item_${idx}_amount']`);
                         let addValue = parseFloat(addInput.value.replace(',', '.'));
+                        if (addValue < 0 && !negativeValues) {
+                            console.log('Add amount: Negative values not allowed, resetting to 0.00');
+                            addValue = 0.00;
+                            addInput.value = '0.00';
+                            // items[idx].amount = newValue.toFixed(2);
+                            renderItems('item_x_add', idx);
+                            return;
+                        }
                         let maxAdd = parseFloat(items[0].amount) || 0;
                         let minAdd = -1 * (parseFloat(items[idx].amount) || 0);
                         if (!isNaN(addValue) && addValue !== 0) {
                             // Limit addValue to the range [minAdd, maxAdd]
-                            if (addValue > maxAdd) {
+                            if ((addValue > maxAdd) && (!negativeValues)) {
+                                console.log(`Add amount: Negative values not allowed, setting addValue to maxAdd: ${maxAdd}`);
                                 addValue = maxAdd;
                             }
-                            if (addValue < minAdd) {
+                            if ((addValue < minAdd) && (!negativeValues)) {
+                                console.log(`Add amount: Negative values not allowed, setting addValue to minAdd: ${minAdd}`);
                                 addValue = minAdd;
                             }
                             let currentAmount = parseFloat(items[idx].amount);
@@ -301,14 +323,24 @@
                         const idx = parseInt(this.getAttribute('data-idx'));
                         const amountInput = itemsList.querySelector(`input[name='item_${idx}_amount']`);
                         let newValue = parseFloat(amountInput.value.replace(',', '.'));
+                        if (newValue < 0 && !negativeValues) {
+                            console.log('Set amount: Negative values not allowed, resetting to 0.00');
+                            newValue = 0.00;
+                            amountInput.value = '0.00';
+                            items[idx].amount = newValue.toFixed(2);
+                            renderItems('item_x_amount', idx);
+                            return;
+                        }
                         let maxValue = (parseFloat(items[0].amount) || 0) + (parseFloat(items[idx].amount) || 0);
                         let minValue = 0;
                         console.log(`Setting amount for item ${idx}: newValue=${newValue}, maxValue=${maxValue}, minValue=${minValue}`);
                         if (!isNaN(newValue)) {
-                            if (newValue > maxValue) {
+                            if ((newValue > maxValue) && (!negativeValues)) {
+                                console.log(`Set amount: Negative values not allowed, setting newValue to maxValue: ${maxValue}`);
                                 newValue = maxValue;
                             }
-                            if (newValue < minValue) {
+                            if ((newValue < minValue) && (!negativeValues)) {
+                                console.log(`Set amount: Negative values not allowed, setting newValue to minValue: ${minValue}`);
                                 newValue = minValue;
                             }
                             // Update the item's amount
@@ -327,6 +359,14 @@
                     return;
                 }
 
+                if (!negativeValues && parseFloat(amount) < 0) {
+                    console.log('Negative values not allowed, resetting amount to 0.00');
+                    amount = '0.00';
+                    amountInput.value = '0.00';
+                    return;
+                }
+                // Ensure amount is a valid number
+
                 const groupSelect = document.getElementById('group_id');
                 const subgroupSelect = document.getElementById('subgroup_id');
 
@@ -335,20 +375,15 @@
                 const subgroupId = subgroupSelect.value;
                 const subgroupText = subgroupSelect.options[subgroupSelect.selectedIndex]?.text || '';
 
-
                 // Subtract new item_amount from the first item's amount if possible
                 if (items.length > 0) {
                     let firstAmount = parseFloat(items[0].amount);
                     let subtractAmount = parseFloat(amount);
                     if (!isNaN(firstAmount) && !isNaN(subtractAmount)) {
-                        // Ensure subtractAmount does not exceed firstAmount
-                        if (subtractAmount > firstAmount) {
+                        console.log(`Subtracting ${subtractAmount} from first item amount ${firstAmount}`);
+                        if ((subtractAmount > firstAmount) && (!negativeValues)) {
                             subtractAmount = firstAmount;
                         }
-                        // Update the first item's amount
-                        // Following code is now replaced by the renderItems function where the first item's amount is recalculated
-                        // const newFirstAmount = firstAmount - subtractAmount;
-                        // items[0].amount = newFirstAmount.toFixed(2);
                     }
                     amount = subtractAmount;
                 }
@@ -371,6 +406,7 @@
                 amountInput.value = '0.00';
             });
 
+            // Remove subgroup if it has no items left
             function removeSubgroup(subgroupId) {
                 const subgroupSelect = document.getElementById('subgroup_id');
                 if (!subgroupSelect) return;
@@ -382,6 +418,7 @@
                 }
             }
 
+            // Remove group if it has no subgroups left
             function removeGroup(groupId) {
                 const groupSelect = document.getElementById('group_id');
                 const subgroupSelect = document.getElementById('subgroup_id');
@@ -396,6 +433,15 @@
                     // After removing the group, update subgroups for the new selected group
                     loadSubgroupsFromMap(groupSelect.value);
                 }
+            }
+
+            // Handle negative checkbox
+            const negativeCheckbox = document.getElementById('negative');
+            let negativeValues = negativeCheckbox && negativeCheckbox.checked;
+            if (negativeCheckbox) {
+                negativeCheckbox.addEventListener('change', function() {
+                    negativeValues = this.checked;
+                });
             }
         });
     </script>
