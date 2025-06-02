@@ -273,6 +273,7 @@
                         groupSelect.focus();
                     }
                     itemAmountInput.disabled = items.length === 0;
+                    amountInput.disabled = items.length > 0;
                     let focusElement = null;
                     if ((foculField) && (focusIdx !== null)) {
                         if (foculField === 'item_x_amount') {
