@@ -103,6 +103,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            let items = [];
+
             // Set focus to the amount field when the form is shown
             const amountInput = document.getElementById('amount');
             if (amountInput) {
@@ -138,16 +140,21 @@
                 subgroupSelect.innerHTML = '';
                 const group = groupSubgroupMapJSON.find(g => g.id == groupId);
                 if (group && group.subgroups) {
+                    // Get all subgroupIds already used in items
+                    const usedSubgroupIds = items.map(item => String(item.subgroupId));
                     // Convert to array and sort by name
                     const sortedSubgroups = Object.entries(group.subgroups)
                         .sort((a, b) => a[1].localeCompare(b[1], undefined, {
                             sensitivity: 'base'
                         }));
                     sortedSubgroups.forEach(([subgroupId, subgroupName]) => {
-                        const option = document.createElement('option');
-                        option.value = subgroupId;
-                        option.text = subgroupName;
-                        subgroupSelect.appendChild(option);
+                        // Only add subgroup if not already used in items
+                        if (!usedSubgroupIds.includes(String(subgroupId))) {
+                            const option = document.createElement('option');
+                            option.value = subgroupId;
+                            option.text = subgroupName;
+                            subgroupSelect.appendChild(option);
+                        }
                     });
                 }
             }
@@ -220,8 +227,6 @@
                 }, DEBOUNCE_DELAY));
             }
 
-            let items = [];
-
             function recalculateFirstItemAmount() {
                 const amountInput = document.getElementById('amount');
                 let total = 0;
@@ -256,7 +261,9 @@
                             : `<input type=\"number\" name=\"item_${idx}_amount\" class=\"decimal item-amount-input\" value=\"${Number(item.amount).toFixed(2)}\" step=\"0.01\" style=\"width:80px;display:inline-block;\" /> <button type=\"button\" class=\"btn btn-primary btn-set-amount\" data-idx=\"${idx}\">&#10003;</button>`}
                         </td>
                         <td>
-                            <button type=\"button\" class=\"btn btn-danger\" onclick=\"items.splice(${idx}, 1); renderItems();\">Remove</button>
+                            <button type="button"
+                                    class="btn btn-delete-item"
+                                    data-remove='{"idx":${idx},"groupId":"${item.groupId}","groupText":"${item.groupText}","subgroupId":"${item.subgroupId}","subgroupText":"${item.subgroupText}"}' name=\"item_${idx}_remove\">Remove</button>
                         </td>
                     `;
                     itemsList.insertBefore(newRow, bottomLine);
@@ -348,6 +355,68 @@
                             items[idx].amount = newValue.toFixed(2);
                             renderItems();
                         }
+                    });
+                });
+                itemsList.querySelectorAll('.btn-delete-item').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const data = JSON.parse(btn.getAttribute('data-remove'));
+                        // Remove the item from the items array
+                        items.splice(data.idx, 1);
+                        console.log(`Removing item at index ${data.idx}:`, data);
+
+                        // Restore group option if not present, in alphabetical order
+                        let groupSelect = document.getElementById('group_id');
+                        let bottomLine = document.getElementById('bottom-line');
+                        // If groupSelect does not exist (bottomLine removed), recreate bottomLine and groupSelect
+                        if (!groupSelect) {
+                            // Recreate bottomLine row
+                            bottomLine = document.createElement('tr');
+                            bottomLine.id = 'bottom-line';
+                            bottomLine.innerHTML = `
+                                <td>
+                                    <select name="group_id" id="group_id"></select>
+                                </td>
+                                <td>
+                                    <select name="subgroup_id" id="subgroup_id"></select>
+                                </td>
+                                <td></td>
+                                <td>
+                                    <input type="number" name="item_amount" id="item_amount" value="0.00" step="0.01" class="decimal" required />
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-secondary" id="add-item">Add item</button>
+                                </td>
+                            `;
+                            itemsList.appendChild(bottomLine);
+                            groupSelect = document.getElementById('group_id');
+                        }
+                        // Now restore group option if not present
+                        let groupExists = false;
+                        for (let i = 0; i < groupSelect.options.length; i++) {
+                            if (groupSelect.options[i].value == data.groupId) {
+                                groupExists = true;
+                                break;
+                            }
+                        }
+                        if (!groupExists) {
+                            const newOption = document.createElement('option');
+                            newOption.value = data.groupId;
+                            newOption.text = data.groupText;
+                            let inserted = false;
+                            for (let i = 0; i < groupSelect.options.length; i++) {
+                                if (groupSelect.options[i].text.localeCompare(data.groupText, undefined, { sensitivity: 'base' }) > 0) {
+                                    groupSelect.insertBefore(newOption, groupSelect.options[i]);
+                                    inserted = true;
+                                    break;
+                                }
+                            }
+                            if (!inserted) {
+                                groupSelect.appendChild(newOption);
+                            }
+                        }
+                        // Reload subgroups
+                        loadSubgroupsFromMap(groupSelect.value);
+                        renderItems();
                     });
                 });
             }
