@@ -130,8 +130,11 @@
             }
 
             // Group/Subgroup logic
-            const groupSelect = document.getElementById('group_id');
-            const subgroupSelect = document.getElementById('subgroup_id');
+            let groupSelect = document.getElementById('group_id');
+            let subgroupSelect = document.getElementById('subgroup_id');
+
+            // Bottom line for adding items
+            let bottomLine = document.getElementById('bottom-line');
 
             // Pass PHP array to JS
             const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
@@ -243,8 +246,6 @@
             function renderItems(foculField = null, focusIdx = null) {
                 recalculateFirstItemAmount();
                 const itemsList = document.getElementById('items-list-body');
-                const bottomLine = document.getElementById('bottom-line');
-                const groupSelect = document.getElementById('group_id');
                 // Remove all rows except the bottom line
                 Array.from(itemsList.querySelectorAll('tr')).forEach(row => {
                     if (row.id !== 'bottom-line') row.remove();
@@ -273,7 +274,9 @@
                 setTimeout(() => {
                     if ((items.length > 0 && Number(items[0].amount) === 0 && bottomLine) || (groupSelect &&
                             groupSelect.options.length === 0 && bottomLine)) {
-                        bottomLine.remove();
+                        bottomLine.style.display = 'none';
+                    } else if (bottomLine) {
+                        bottomLine.style.display = '';
                     }
                     // Set focus to group_id select after rendering items
                     if (groupSelect) {
@@ -365,31 +368,8 @@
                         console.log(`Removing item at index ${data.idx}:`, data);
 
                         // Restore group option if not present, in alphabetical order
-                        let groupSelect = document.getElementById('group_id');
-                        let bottomLine = document.getElementById('bottom-line');
-                        // If groupSelect does not exist (bottomLine removed), recreate bottomLine and groupSelect
-                        if (!groupSelect) {
-                            // Recreate bottomLine row
-                            bottomLine = document.createElement('tr');
-                            bottomLine.id = 'bottom-line';
-                            bottomLine.innerHTML = `
-                                <td>
-                                    <select name="group_id" id="group_id"></select>
-                                </td>
-                                <td>
-                                    <select name="subgroup_id" id="subgroup_id"></select>
-                                </td>
-                                <td></td>
-                                <td>
-                                    <input type="number" name="item_amount" id="item_amount" value="0.00" step="0.01" class="decimal" required />
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-secondary" id="add-item">Add item</button>
-                                </td>
-                            `;
-                            itemsList.appendChild(bottomLine);
-                            groupSelect = document.getElementById('group_id');
-                        }
+                        groupSelect = document.getElementById('group_id');
+                        bottomLine = document.getElementById('bottom-line');
                         // Now restore group option if not present
                         let groupExists = false;
                         for (let i = 0; i < groupSelect.options.length; i++) {
