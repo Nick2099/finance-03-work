@@ -10,6 +10,16 @@ class Header extends Model
     /** @use HasFactory<\Database\Factories\HeaderFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'date',
+        'place_of_purchase',
+        'location',
+        'description',
+        'amount',
+        // Add other header fields as needed
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);

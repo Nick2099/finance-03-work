@@ -41,20 +41,46 @@ class EntryController extends Controller
 
     public function store(Request $request)
     {
-        dd("Store method called");
+        // Debugging line to see the request data
+        // dd($request->all());
 
-        // Validate the request data
+        // Validate the request data (adjust rules as needed for your fields)
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
+            'date' => 'required|date',
+            'place' => 'required|string|max:50',
+            'location' => 'required|string|max:50',
+            'description' => 'nullable|string',
+            'amount' => 'required|numeric|min:0',
+            'items' => 'required|array|min:1',
+            'items.*.group_id' => 'required|integer|exists:groups,id',
+            'items.*.subgroup_id' => 'required|integer|exists:subgroups,id',
+            'items.*.amount' => 'required|numeric',
         ]);
 
-        // Create a new entry in the database
-        // $entry = Auth::user()->entries()->create($validatedData);
+        // Create the header (main entry)
+        $header = \App\Models\Header::create([
+            'user_id' => Auth::id(),
+            'date' => $validatedData['date'],
+            'place_of_purchase' => $validatedData['place'],
+            'location' => $validatedData['location'],
+            'description' => $validatedData['description'] ?? null,
+            'amount' => $validatedData['amount'], // Sum of all item amounts
+            // Add other fields as needed
+        ]);
 
-        // Redirect to the entry page or perform any other action
-        return redirect()->route('entries.show', ['entry' => $entry->id])
-            ->with('success', 'Entry created successfully.');
+        // Create the items
+        foreach ($validatedData['items'] as $itemData) {
+            \App\Models\Item::create([
+                'header_id' => $header->id,
+                'group_id' => $itemData['group_id'],
+                'subgroup_id' => $itemData['subgroup_id'],
+                'amount' => $itemData['amount'],
+                // Add other fields as needed
+            ]);
+        }
+
+        // Redirect or return response
+        return redirect()->route('entry.create')->with('success', 'Entry created successfully.');
     }
 
     public function getSubgroups($groupId)

@@ -93,8 +93,9 @@
                 </tr>
             </tbody>
         </table>
+        <div id="items-hidden-fields"></div>
         <x-form-button>Save entry</x-form-button>
-        <x-form-button>Reset</x-form-button>
+        <x-form-button type="reset">Reset</x-form-button>
         <div>
             <input type="checkbox" name="negative" id="negative" value="negative" {{ old('negative') ? 'checked' : '' }} />
             <label for="negative"> Allow negative numbers.</label>
@@ -114,6 +115,9 @@
             // Amount input formatting
             const itemAmountInput = document.getElementById('item_amount');
             itemAmountInput.disabled = true; // Disable item_amount input initially
+
+            const saveEntryBtn = document.querySelector('button[type="submit"]');
+            saveEntryBtn.disabled = true; // Disable save button initially
 
             if (amountInput) {
                 amountInput.addEventListener('blur', function() {
@@ -283,7 +287,8 @@
                         groupSelect.focus();
                     }
                     itemAmountInput.disabled = items.length === 0;
-                    amountInput.disabled = items.length > 0;
+                    amountInput.readOnly = items.length > 0;
+                    saveEntryBtn.disabled = items.length === 0;
                     let focusElement = null;
                     if ((foculField) && (focusIdx !== null)) {
                         if (foculField === 'item_x_amount') {
@@ -293,6 +298,7 @@
                         } 
                         if (focusElement) focusElement.focus();
                     }
+
                 }, 0);
 
                 // Add event delegation for the new buttons after rendering items
@@ -501,7 +507,34 @@
                     negativeValues = this.checked;
                 });
             }
+
+            function updateHiddenItemsFields() {
+                const container = document.getElementById('items-hidden-fields');
+                container.innerHTML = '';
+                items.forEach((item, idx) => {
+                    container.innerHTML += `\n<input type="hidden" name="items[${idx}][group_id]" value="${item.groupId}">`;
+                    container.innerHTML += `\n<input type="hidden" name="items[${idx}][subgroup_id]" value="${item.subgroupId}">`;
+                    container.innerHTML += `\n<input type="hidden" name="items[${idx}][amount]" value="${item.amount}">`;
+                });
+            }
+
+            // Attach to form submit
+            const entryForm = document.querySelector('form');
+            if (entryForm) {
+                entryForm.addEventListener('submit', function(e) {
+                    updateHiddenItemsFields();
+                });
+            }
         });
+
+        // Add after DOMContentLoaded
+        const resetBtn = document.querySelector('button[type="reset"]');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.reload();
+            });
+        }
     </script>
 
 </x-layout>
