@@ -396,6 +396,14 @@
                         }
                         // Reload subgroups
                         loadSubgroupsFromMap(groupSelect.value);
+                        // If all items are deleted, set item_amount to amount value
+                        if (items.length === 0) {
+                            const amountInput = document.getElementById('amount');
+                            const itemAmountInput = document.getElementById('item_amount');
+                            if (amountInput && itemAmountInput) {
+                                itemAmountInput.value = amountInput.value;
+                            }
+                        }
                         renderItems();
                     });
                 });
