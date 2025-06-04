@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Header::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(\App\Models\Group::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(\App\Models\Subgroup::class)->constrained()->onDelete('cascade');
+            $table->tinyInteger('group_type')->nullable();
             $table->decimal('amount', 10, 2);
             $table->string('description')->nullable();
             $table->timestamps();

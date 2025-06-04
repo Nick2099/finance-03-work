@@ -64,17 +64,25 @@ class EntryController extends Controller
             'place_of_purchase' => $validatedData['place'],
             'location' => $validatedData['location'],
             'description' => $validatedData['description'] ?? null,
-            'amount' => $validatedData['amount'], // Sum of all item amounts
-            // Add other fields as needed
+            'amount' => $validatedData['amount'],
         ]);
+
+        $user = Auth::user();
+        $collection = $user->collection;
+        $groups = $collection->groups()->get();
+
+        // Create a map of group_id => type for quick lookup
+        $groupTypeMap = $groups->pluck('type', 'id');
 
         // Create the items
         foreach ($validatedData['items'] as $itemData) {
+            $groupType = $groupTypeMap[$itemData['group_id']] ?? null;
             \App\Models\Item::create([
                 'header_id' => $header->id,
                 'group_id' => $itemData['group_id'],
                 'subgroup_id' => $itemData['subgroup_id'],
                 'amount' => $itemData['amount'],
+                'group_type' => $groupType,
                 // Add other fields as needed
             ]);
         }

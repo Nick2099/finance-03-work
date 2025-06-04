@@ -16,6 +16,7 @@ class Item extends Model
         'header_id',
         'group_id',
         'subgroup_id',
+        'group_type',
     ];
 
     public function header()
