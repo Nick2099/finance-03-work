@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PasswordResetRequest;
-use App\Mail\UsernameRecoveryRequest;
-use App\Models\User;
-use App\Rules\LoginUserRules;
 use Carbon\Carbon;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Rules\LoginUserRules;
+use App\Mail\PasswordResetRequest;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\UsernameRecoveryRequest;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 

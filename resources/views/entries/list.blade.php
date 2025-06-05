@@ -9,12 +9,12 @@
     <table id="header-list">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Place of purchase</th>
-                <th>Location</th>
-                <th>Desc.</th>
-                <th>Actions</th>
+                <th>{{ __('list.date') }}</th>
+                <th>{{ __('list.amount') }}</th>
+                <th>{{ __('list.place_of_purchase') }}</th>
+                <th>{{ __('list.location') }}</th>
+                <th>{{ __('list.description') }}</th>
+                <th>{{ __('list.actions') }}</th>
             </tr>
         </thead>
         <tbody id="header-list-body">
@@ -33,6 +33,6 @@
         </tbody>
     </table>
     <div class="pagination">
-        {{ $headers->links('pagination::simple-default') }}
+        {{ $headers->links('pagination::custom') }}
     </div>
 </x-layout>
