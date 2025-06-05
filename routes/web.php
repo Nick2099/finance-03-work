@@ -65,7 +65,7 @@ Route::middleware([SetUserLocale::class])->group(function () {
     Route::get('/profile', [ProfileController::class, 'create'])
         ->name('profile');
 
-    Route::get('/entry', [EntryController::class, 'create'])
+    Route::get('/entry/{id?}', [EntryController::class, 'create'])
         ->name('entry.create');
 
     Route::post('/entry', [EntryController::class, 'store'])
@@ -73,6 +73,9 @@ Route::middleware([SetUserLocale::class])->group(function () {
 
     Route::get('/list', [EntryController::class, 'list'])
         ->name('entry.list');
+
+    Route::get('/destroy', [EntryController::class, 'list'])
+        ->name('entry.destroy');
 
     Route::get('/subgroups/{group}', [EntryController::class, 'getSubgroups']);
 

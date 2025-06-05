@@ -26,7 +26,14 @@
                     <td>{{ $header->location }}</td>
                     <td>{{ $header->description }}</td>
                     <td>
-                        <!-- Add action buttons/links here -->
+                        <form action="{{ route('entry.create', $header->id) }}" method="GET" style="display:inline-block;">
+                            <button type="submit" class="btn btn-primary" >Edit</button>
+                        </form>
+                        <form action="{{ route('entry.destroy', $header->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this entry?');">Delete</button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

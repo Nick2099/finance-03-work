@@ -4,27 +4,33 @@
     $locationMinLength = config('appoptions.location_suggest_min_length');
     $debounceDelay = config('appoptions.suggest_debounce_delay', 250);
     $tempGroupSubgroupMap = $groupSubgroupMap;
-    // dd($tempGroupSubgroupMap);
+    // dump($groups);
+    // dump($listOfItems);
+    // dd($groupSubgroupMap);
+    // dd($header);
     ?>
     <x-slot:heading>
-        New entry
+        {{ empty($header) ? 'New entry' : 'Edit entry' }}
     </x-slot>
-    <h1>New entry</h1>
+    <h1>{{ empty($header) ? 'New entry' : 'Edit entry' }}</h1>
     <form method="POST" action="/entry">
         @csrf
+        @if (!empty($header) && $header->id)
+            <input type="hidden" name="header_id" value="{{ $header->id }}" />
+        @endif
 
         <x-form-field name="date" label="Date" required>
-            <x-form-input type="date" name="date" id="date" value="{{ old('date', date('Y-m-d')) }}" required />
+            <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
         </x-form-field>
 
         <x-form-field name="amount" label="Amount" required>
-            <x-form-input type="number" name="amount" id="amount" value="{{ old('amount', '0.00') }}"
+            <x-form-input type="number" name="amount" id="amount" value="{{ old('amount', $header->amount ?? '0.00') }}"
                 step="0.01" class="decimal" required />
         </x-form-field>
 
         <x-form-field name="place" label="Place of purchase" required>
             <div>
-                <input list="places" name="place" id="place" value="{{ old('place') }}" autocomplete="off"
+                <input list="places" name="place" id="place" value="{{ old('place', $header->place_of_purchase ?? '') }}" autocomplete="off"
                     required class="form-input" />
                 <datalist id="places"></datalist>
             </div>
@@ -32,14 +38,14 @@
 
         <x-form-field name="location" label="Location" required>
             <div>
-                <input list="locations" name="location" id="location" value="{{ old('location') }}" autocomplete="off"
+                <input list="locations" name="location" id="location" value="{{ old('location', $header->location ?? '') }}" autocomplete="off"
                     required class="form-input" />
                 <datalist id="locations"></datalist>
             </div>
         </x-form-field>
 
         <x-form-field name="description" label="Description">
-            <x-form-input type="text" name="description" id="description" value="{{ old('description') }}"
+            <x-form-input type="text" name="description" id="description" value="{{ old('description', $header->description ?? '') }}"
                 autocomplete="off" />
         </x-form-field>
 
@@ -94,7 +100,7 @@
             </tbody>
         </table>
         <div id="items-hidden-fields"></div>
-        <x-form-button>Save entry</x-form-button>
+        <x-form-button>{{ empty($header) ? 'Save entry' : 'Update entry' }}</x-form-button>
         <x-form-button type="reset">Reset</x-form-button>
         <div>
             <input type="checkbox" name="negative" id="negative" value="negative" {{ old('negative') ? 'checked' : '' }} />
@@ -104,7 +110,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const listOfItems = @json($listOfItems ?? []);
+            const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
+            const headerId = @json($header->id ?? null);
+            // Bottom line for adding items
+            const bottomLine = document.getElementById('bottom-line');
             let items = [];
+            if (Array.isArray(listOfItems) && listOfItems.length > 0) {
+                // Map group and subgroup names for each item
+                items = listOfItems.map(item => {
+                    // Find group and subgroup names from groupSubgroupMap
+                    const group = groupSubgroupMapJSON.find(g => g.id == item.group_id);
+                    const groupText = group ? group.name : '';
+                    const subgroupText = group && group.subgroups[item.subgroup_id] ? group.subgroups[item.subgroup_id] : '';
+                    return {
+                        groupId: item.group_id,
+                        groupText: groupText,
+                        subgroupId: item.subgroup_id,
+                        subgroupText: subgroupText,
+                        amount: item.amount
+                    };
+                });
+                renderItems();
+            }
+            console.log('Initial items:', items);
 
             // Set focus to the amount field when the form is shown
             const amountInput = document.getElementById('amount');
@@ -137,12 +166,7 @@
             let groupSelect = document.getElementById('group_id');
             let subgroupSelect = document.getElementById('subgroup_id');
 
-            // Bottom line for adding items
-            let bottomLine = document.getElementById('bottom-line');
-
             // Pass PHP array to JS
-            const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
-
             function loadSubgroupsFromMap(groupId) {
                 subgroupSelect.innerHTML = '';
                 const group = groupSubgroupMapJSON.find(g => g.id == groupId);
@@ -375,7 +399,7 @@
 
                         // Restore group option if not present, in alphabetical order
                         groupSelect = document.getElementById('group_id');
-                        bottomLine = document.getElementById('bottom-line');
+                        // bottomLine = document.getElementById('bottom-line');
                         // Now restore group option if not present
                         let groupExists = false;
                         for (let i = 0; i < groupSelect.options.length; i++) {
@@ -511,6 +535,10 @@
             function updateHiddenItemsFields() {
                 const container = document.getElementById('items-hidden-fields');
                 container.innerHTML = '';
+                // Add header_id if editing
+                if (typeof headerId !== 'undefined' && headerId) {
+                    container.innerHTML += `\n<input type="hidden" name="header_id" value="${headerId}">`;
+                }
                 items.forEach((item, idx) => {
                     container.innerHTML += `\n<input type="hidden" name="items[${idx}][group_id]" value="${item.groupId}">`;
                     container.innerHTML += `\n<input type="hidden" name="items[${idx}][subgroup_id]" value="${item.subgroupId}">`;

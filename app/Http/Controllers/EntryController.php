@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
+use App\Models\Header;
 use App\Models\Subgroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +15,7 @@ class EntryController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create($id = null)
     {
         if (!Auth::check()) {
             return redirect('/')->with('error', 'You have to be logged in.');
@@ -22,7 +24,13 @@ class EntryController extends Controller
         $user = Auth::user();
         $collection = $user->collection;
         $groups = $collection->groups()->with('subgroups')->orderBy('name')->get();
-        $items = [];
+        $listOfItems = [];
+        $header = null;
+
+        if ($id) {
+            $header = Header::where('user_id', $user->id)->findOrFail($id);
+            $listOfItems = $header->items()->with('group', 'subgroup')->get();
+        }
 
         // Create a variable with all groups and their subgroups (id => name), subgroups sorted alphabetically (case-insensitive)
         $groupSubgroupMap = $groups->map(function ($group) {
@@ -36,14 +44,11 @@ class EntryController extends Controller
             ];
         });
 
-        return view('entries.entry', compact('groups', 'items', 'groupSubgroupMap'));
+        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header'));
     }
 
     public function store(Request $request)
     {
-        // Debugging line to see the request data
-        // dd($request->all());
-
         // Validate the request data (adjust rules as needed for your fields)
         $validatedData = $request->validate([
             'date' => 'required|date',
@@ -57,43 +62,55 @@ class EntryController extends Controller
             'items.*.amount' => 'required|numeric',
         ]);
 
-        // Create the header (main entry)
-        $header = \App\Models\Header::create([
-            'user_id' => Auth::id(),
-            'date' => $validatedData['date'],
-            'place_of_purchase' => $validatedData['place'],
-            'location' => $validatedData['location'],
-            'description' => $validatedData['description'] ?? null,
-            'amount' => $validatedData['amount'],
-        ]);
-
         $user = Auth::user();
         $collection = $user->collection;
         $groups = $collection->groups()->get();
-
-        // Create a map of group_id => type for quick lookup
         $groupTypeMap = $groups->pluck('type', 'id');
 
-        // Create the items
+        // Check if this is an update or create
+        if ($request->has('header_id')) {
+            // Update existing header
+            $header = Header::where('user_id', $user->id)->findOrFail($request->input('header_id'));
+            $header->update([
+                'date' => $validatedData['date'],
+                'place_of_purchase' => $validatedData['place'],
+                'location' => $validatedData['location'],
+                'description' => $validatedData['description'] ?? null,
+                'amount' => $validatedData['amount'],
+            ]);
+            // Delete old items
+            $header->items()->delete();
+        } else {
+            // Create new header
+            $header = Header::create([
+                'user_id' => $user->id,
+                'date' => $validatedData['date'],
+                'place_of_purchase' => $validatedData['place'],
+                'location' => $validatedData['location'],
+                'description' => $validatedData['description'] ?? null,
+                'amount' => $validatedData['amount'],
+            ]);
+        }
+
+        // Create the items (for both create and update)
         foreach ($validatedData['items'] as $itemData) {
             $groupType = $groupTypeMap[$itemData['group_id']] ?? null;
-            \App\Models\Item::create([
+            Item::create([
                 'header_id' => $header->id,
                 'group_id' => $itemData['group_id'],
                 'subgroup_id' => $itemData['subgroup_id'],
                 'amount' => $itemData['amount'],
                 'group_type' => $groupType,
-                // Add other fields as needed
             ]);
         }
 
         // Redirect or return response
-        return redirect()->route('entry.create')->with('success', 'Entry created successfully.');
+        return redirect()->route('entry.create')->with('success', 'Entry saved successfully.');
     }
 
     public function getSubgroups($groupId)
     {
-        $subgroups = \App\Models\Subgroup::where('group_id', $groupId)->orderBy('name')->get(['id', 'name']);
+        $subgroups = Subgroup::where('group_id', $groupId)->orderBy('name')->get(['id', 'name']);
         return response()->json($subgroups);
     }
 
@@ -102,7 +119,7 @@ class EntryController extends Controller
         $query = $request->input('q');
         $user = Auth::user();
 
-        $places = \App\Models\Header::where('user_id', $user->id)
+        $places = Header::where('user_id', $user->id)
             ->where('place_of_purchase', 'like', $query . '%')
             ->distinct()
             ->orderBy('place_of_purchase')
@@ -117,7 +134,7 @@ class EntryController extends Controller
         $query = $request->input('q');
         $user = Auth::user();
 
-        $places = \App\Models\Header::where('user_id', $user->id)
+        $places = Header::where('user_id', $user->id)
             ->where('location', 'like', $query . '%')
             ->distinct()
             ->orderBy('location')
@@ -135,7 +152,7 @@ class EntryController extends Controller
 
         $user = Auth::user();
         // Assuming your Header model has a user_id column
-        $headers = \App\Models\Header::where('user_id', $user->id)
+        $headers = Header::where('user_id', $user->id)
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
             ->paginate(3); // or ->get() if you don't want pagination
@@ -143,5 +160,21 @@ class EntryController extends Controller
         $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
 
         return view('entries.list', compact('headers', 'dateFormat'));
+    }
+    
+    public function destroy($id)
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        $user = Auth::user();
+        $header = Header::where('user_id', $user->id)->findOrFail($id);
+
+        // Delete the header and its associated items
+        $header->items()->delete();
+        $header->delete();
+
+        return redirect()->route('entry.list')->with('success', 'Entry deleted successfully.');
     }
 }

@@ -5,6 +5,6 @@ return [
     'amount' => 'Amount',
     'place_of_purchase' => 'Origin',
     'location' => 'Location',
-    'description' => 'Desc.',
+    'description' => 'Description',
     'actions' => 'Actions',
 ];
