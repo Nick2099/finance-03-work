@@ -40,6 +40,7 @@ class EntryController extends Controller
             return [
                 'id' => $group->id,
                 'name' => $group->name,
+                'type' => $group->type, // Add type here
                 'subgroups' => $sortedSubgroups->pluck('name', 'id')->toArray(),
             ];
         });
@@ -105,7 +106,11 @@ class EntryController extends Controller
         }
 
         // Redirect or return response
-        return redirect()->route('entry.create')->with('success', 'Entry saved successfully.');
+        if ($request->has('header_id')) {
+            return redirect()->route('entry.list')->with('success', 'Entry updated successfully.');
+        } else {
+            return redirect()->route('entry.create')->with('success', 'Entry saved successfully.');
+        }
     }
 
     public function getSubgroups($groupId)
@@ -155,7 +160,7 @@ class EntryController extends Controller
         $headers = Header::where('user_id', $user->id)
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(3); // or ->get() if you don't want pagination
+            ->paginate(5); // or ->get() if you don't want pagination
 
         $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
 

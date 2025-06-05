@@ -23,6 +23,33 @@
             <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
         </x-form-field>
 
+        <x-form-field name="type" label="Type" required>
+            <div>
+                <select name="type" id="type" class="form-select block w-full mt-1">
+                    {{-- type = 0: state,  1: income, 2: expense, 3: correction --}}
+                    @php
+                        $selectedType = old('type');
+                        if (!$selectedType) {
+                            if (!empty($listOfItems) && count($listOfItems) > 0) {
+                                // Find the group for the first item
+                                $firstItem = $listOfItems[0];
+                                $group = collect($tempGroupSubgroupMap)->firstWhere('id', $firstItem->group_id ?? $firstItem['group_id'] ?? null);
+                                $selectedType = $group['type'] ?? 2;
+                            } elseif (!empty($header) && isset($header->type)) {
+                                $selectedType = $header->type;
+                            } else {
+                                $selectedType = 2;
+                            }
+                        }
+                    @endphp
+                    <option value="0" {{ $selectedType == 0 ? 'selected' : '' }}>State</option>
+                    <option value="1" {{ $selectedType == 1 ? 'selected' : '' }}>Income</option>
+                    <option value="2" {{ $selectedType == 2 ? 'selected' : '' }}>Expense</option>
+                    <option value="3" {{ $selectedType == 3 ? 'selected' : '' }}>Correction</option>
+                </select>
+            </div>
+        </x-form-field>
+
         <x-form-field name="amount" label="Amount" required>
             <x-form-input type="number" name="amount" id="amount" value="{{ old('amount', $header->amount ?? '0.00') }}"
                 step="0.01" class="decimal" required />
@@ -63,14 +90,7 @@
                 <!-- Items will be dynamically added here -->
                 <tr id="bottom-line">
                     <td>
-                        <select name="group_id" id="group_id">
-                            @foreach ($tempGroupSubgroupMap as $group)
-                                <option value="{{ $group['id'] }}"
-                                    {{ old('group_id') == $group['id'] ? 'selected' : '' }}>
-                                    {{ $group['name'] }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <select name="group_id" id="group_id"></select>
                     </td>
                     <td>
                         @php
@@ -113,8 +133,8 @@
             const listOfItems = @json($listOfItems ?? []);
             const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
             const headerId = @json($header->id ?? null);
-            // Bottom line for adding items
             const bottomLine = document.getElementById('bottom-line');
+            const typeSelect = document.getElementById('type');
             let items = [];
             if (Array.isArray(listOfItems) && listOfItems.length > 0) {
                 // Map group and subgroup names for each item
@@ -133,7 +153,7 @@
                 });
                 renderItems();
             }
-            console.log('Initial items:', items);
+            // console.log('Initial items:', items);
 
             // Set focus to the amount field when the form is shown
             const amountInput = document.getElementById('amount');
@@ -313,6 +333,7 @@
                     itemAmountInput.disabled = items.length === 0;
                     amountInput.readOnly = items.length > 0;
                     saveEntryBtn.disabled = items.length === 0;
+                    typeSelect.disabled = items.length > 0;
                     let focusElement = null;
                     if ((foculField) && (focusIdx !== null)) {
                         if (foculField === 'item_x_amount') {
@@ -333,7 +354,7 @@
                         const amountInput = itemsList.querySelector(`input[name='item_${idx}_amount']`);
                         let addValue = parseFloat(addInput.value.replace(',', '.'));
                         if (addValue < 0 && !negativeValues) {
-                            console.log('Add amount: Negative values not allowed, resetting to 0.00');
+                            // console.log('Add amount: Negative values not allowed, resetting to 0.00');
                             addValue = 0.00;
                             addInput.value = '0.00';
                             // items[idx].amount = newValue.toFixed(2);
@@ -345,11 +366,11 @@
                         if (!isNaN(addValue) && addValue !== 0) {
                             // Limit addValue to the range [minAdd, maxAdd]
                             if ((addValue > maxAdd) && (!negativeValues)) {
-                                console.log(`Add amount: Negative values not allowed, setting addValue to maxAdd: ${maxAdd}`);
+                                // console.log(`Add amount: Negative values not allowed, setting addValue to maxAdd: ${maxAdd}`);
                                 addValue = maxAdd;
                             }
                             if ((addValue < minAdd) && (!negativeValues)) {
-                                console.log(`Add amount: Negative values not allowed, setting addValue to minAdd: ${minAdd}`);
+                                // console.log(`Add amount: Negative values not allowed, setting addValue to minAdd: ${minAdd}`);
                                 addValue = minAdd;
                             }
                             let currentAmount = parseFloat(items[idx].amount);
@@ -365,7 +386,7 @@
                         const amountInput = itemsList.querySelector(`input[name='item_${idx}_amount']`);
                         let newValue = parseFloat(amountInput.value.replace(',', '.'));
                         if (newValue < 0 && !negativeValues) {
-                            console.log('Set amount: Negative values not allowed, resetting to 0.00');
+                            // console.log('Set amount: Negative values not allowed, resetting to 0.00');
                             newValue = 0.00;
                             amountInput.value = '0.00';
                             items[idx].amount = newValue.toFixed(2);
@@ -374,14 +395,14 @@
                         }
                         let maxValue = (parseFloat(items[0].amount) || 0) + (parseFloat(items[idx].amount) || 0);
                         let minValue = 0;
-                        console.log(`Setting amount for item ${idx}: newValue=${newValue}, maxValue=${maxValue}, minValue=${minValue}`);
+                        // console.log(`Setting amount for item ${idx}: newValue=${newValue}, maxValue=${maxValue}, minValue=${minValue}`);
                         if (!isNaN(newValue)) {
                             if ((newValue > maxValue) && (!negativeValues)) {
-                                console.log(`Set amount: Negative values not allowed, setting newValue to maxValue: ${maxValue}`);
+                                // console.log(`Set amount: Negative values not allowed, setting newValue to maxValue: ${maxValue}`);
                                 newValue = maxValue;
                             }
                             if ((newValue < minValue) && (!negativeValues)) {
-                                console.log(`Set amount: Negative values not allowed, setting newValue to minValue: ${minValue}`);
+                                // console.log(`Set amount: Negative values not allowed, setting newValue to minValue: ${minValue}`);
                                 newValue = minValue;
                             }
                             // Update the item's amount
@@ -395,7 +416,7 @@
                         const data = JSON.parse(btn.getAttribute('data-remove'));
                         // Remove the item from the items array
                         items.splice(data.idx, 1);
-                        console.log(`Removing item at index ${data.idx}:`, data);
+                        // console.log(`Removing item at index ${data.idx}:`, data);
 
                         // Restore group option if not present, in alphabetical order
                         groupSelect = document.getElementById('group_id');
@@ -448,7 +469,7 @@
                 }
 
                 if (!negativeValues && parseFloat(amount) < 0) {
-                    console.log('Negative values not allowed, resetting amount to 0.00');
+                    // console.log('Negative values not allowed, resetting amount to 0.00');
                     amount = '0.00';
                     amountInput.value = '0.00';
                     return;
@@ -468,7 +489,7 @@
                     let firstAmount = parseFloat(items[0].amount);
                     let subtractAmount = parseFloat(amount);
                     if (!isNaN(firstAmount) && !isNaN(subtractAmount)) {
-                        console.log(`Subtracting ${subtractAmount} from first item amount ${firstAmount}`);
+                        // console.log(`Subtracting ${subtractAmount} from first item amount ${firstAmount}`);
                         if ((subtractAmount > firstAmount) && (!negativeValues)) {
                             subtractAmount = firstAmount;
                         }
@@ -553,6 +574,34 @@
                     updateHiddenItemsFields();
                 });
             }
+
+            // const groupSelect = document.getElementById('group_id');
+            // Helper to update group dropdown based on selected type
+            function updateGroupDropdown(selectedType) {
+                console.log('selectedType:', selectedType);
+                groupSelect.innerHTML = '';
+                console.log('groupSubgroupMapJSON:', groupSubgroupMapJSON);
+                groupSubgroupMapJSON.forEach(group => {
+                    console.log('Checking group:', group.name, 'with type:', group.type);
+                    if (String(group.type) === String(selectedType)) {
+                        const option = document.createElement('option');
+                        option.value = group.id;
+                        option.text = group.name;
+                        groupSelect.appendChild(option);
+                    }
+                });
+                // Trigger change to update subgroups
+                if (groupSelect.value) {
+                    const event = new Event('change');
+                    groupSelect.dispatchEvent(event);
+                }
+            }
+            // Initial filter on page load
+            updateGroupDropdown(typeSelect.value);
+            // Update group dropdown when type changes
+            typeSelect.addEventListener('change', function() {
+                updateGroupDropdown(this.value);
+            });
         });
 
         // Add after DOMContentLoaded
