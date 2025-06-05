@@ -69,6 +69,9 @@ Route::get('/entry', [EntryController::class, 'create'])
 Route::post('/entry', [EntryController::class, 'store'])
     ->name('entry.store');
 
+Route::get('/list', [EntryController::class, 'list'])
+    ->name('entry.list');
+
 Route::get('/subgroups/{group}', [EntryController::class, 'getSubgroups']);
 
 Route::get('/places/suggest', [EntryController::class, 'suggestPlaces'])

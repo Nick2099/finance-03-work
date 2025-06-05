@@ -126,4 +126,22 @@ class EntryController extends Controller
 
         return response()->json($places);
     }
+
+    public function list()
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        $user = Auth::user();
+        // Assuming your Header model has a user_id column
+        $headers = \App\Models\Header::where('user_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate(3); // or ->get() if you don't want pagination
+
+        $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
+
+        return view('entries.list', compact('headers', 'dateFormat'));
+    }
 }

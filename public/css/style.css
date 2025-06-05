@@ -91,3 +91,14 @@ body {
     font-family: monospace;
     text-align: right;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    list-style: none;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
