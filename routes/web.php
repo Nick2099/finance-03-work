@@ -1,11 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Middleware\SetUserLocale;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware([SetUserLocale::class])->group(function () {
     Route::get('/', function () {
@@ -74,7 +76,7 @@ Route::middleware([SetUserLocale::class])->group(function () {
     Route::get('/list', [EntryController::class, 'list'])
         ->name('entry.list');
 
-    Route::get('/destroy', [EntryController::class, 'list'])
+    Route::delete('/entry/{id}', [EntryController::class, 'destroy'])
         ->name('entry.destroy');
 
     Route::get('/subgroups/{group}', [EntryController::class, 'getSubgroups']);
@@ -84,4 +86,6 @@ Route::middleware([SetUserLocale::class])->group(function () {
 
     Route::get('/locations/suggest', [EntryController::class, 'suggestLocations'])
         ->name('locations.suggest');
+
+    Route::post('/set-locale', [LocaleController::class, 'setLocale'])->name('set-locale');
 });

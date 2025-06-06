@@ -180,6 +180,7 @@ class EntryController extends Controller
         $header->items()->delete();
         $header->delete();
 
-        return redirect()->route('entry.list')->with('success', 'Entry deleted successfully.');
+        // Redirect back to the previous page (preserve pagination)
+        return redirect()->back()->with('success', 'Entry deleted successfully.');
     }
 }
