@@ -568,7 +568,7 @@
             }
 
             // Attach to form submit
-            const entryForm = document.querySelector('form');
+            const entryForm = document.querySelector('form[action="/entry"]');
             if (entryForm) {
                 entryForm.addEventListener('submit', function(e) {
                     updateHiddenItemsFields();
@@ -578,11 +578,11 @@
             // const groupSelect = document.getElementById('group_id');
             // Helper to update group dropdown based on selected type
             function updateGroupDropdown(selectedType) {
-                console.log('selectedType:', selectedType);
+                // console.log('selectedType:', selectedType);
                 groupSelect.innerHTML = '';
-                console.log('groupSubgroupMapJSON:', groupSubgroupMapJSON);
+                // console.log('groupSubgroupMapJSON:', groupSubgroupMapJSON);
                 groupSubgroupMapJSON.forEach(group => {
-                    console.log('Checking group:', group.name, 'with type:', group.type);
+                    // console.log('Checking group:', group.name, 'with type:', group.type);
                     if (String(group.type) === String(selectedType)) {
                         const option = document.createElement('option');
                         option.value = group.id;
