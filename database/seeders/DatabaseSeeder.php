@@ -52,6 +52,15 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Group::factory()->create([
+            'name' => 'State',
+            'description' => 'All kinds of state, for example bank accounts, cash, etc.',
+            'type' => 0, // state
+            'privacy' => 0, // public
+            'collection_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Group::factory()->create([
             'name' => 'Income',
             'description' => 'All kinds of income, for example salary, gifts, etc.',
             'type' => 1, // income
@@ -107,10 +116,35 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Subgroup::factory()->create([
+            'name' => 'Bank account',
+            'description' => 'This is the bank account subgroup.',
+            'privacy' => 0, // public
+            'group_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'Cash',
+            'description' => 'This is the cash subgroup.',
+            'privacy' => 0, // public
+            'group_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'Cash - savings',
+            'description' => 'This is the cash subgroup.',
+            'privacy' => 0, // public
+            'group_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        
+        Subgroup::factory()->create([
             'name' => 'Salary',
             'description' => 'This is the salary subgroup.',
             'privacy' => 0, // public
-            'group_id' => 1,
+            'group_id' => 2,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -118,7 +152,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Minijob',
             'description' => 'This is the minijob subgroup.',
             'privacy' => 0, // public
-            'group_id' => 1,
+            'group_id' => 2,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -126,7 +160,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Groceries',
             'description' => 'This is the groceries subgroup.',
             'privacy' => 0, // public
-            'group_id' => 2,
+            'group_id' => 3,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -134,7 +168,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Sweets',
             'description' => 'This is the sweets subgroup.',
             'privacy' => 0, // public
-            'group_id' => 2,
+            'group_id' => 3,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -142,7 +176,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Takeaway',
             'description' => 'This is the takeaway subgroup.',
             'privacy' => 0, // public
-            'group_id' => 2,
+            'group_id' => 3,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -150,7 +184,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Restaurants',
             'description' => 'This is the restaurants subgroup.',
             'privacy' => 0, // public
-            'group_id' => 2,
+            'group_id' => 3,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -158,7 +192,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Credit',
             'description' => 'This is the credit subgroup.',
             'privacy' => 0, // public
-            'group_id' => 3,
+            'group_id' => 4,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -166,7 +200,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Rent',
             'description' => 'This is the rent subgroup.',
             'privacy' => 0, // public
-            'group_id' => 3,
+            'group_id' => 4,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -174,7 +208,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Texes',
             'description' => 'This is the taxes subgroup.',
             'privacy' => 0, // public
-            'group_id' => 3,
+            'group_id' => 4,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -182,7 +216,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Insurance',
             'description' => 'This is the insurance subgroup.',
             'privacy' => 0, // public
-            'group_id' => 3,
+            'group_id' => 4,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -190,7 +224,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Maintenance & Repairs',
             'description' => 'This is the maintenance and repairs subgroup.',
             'privacy' => 0, // public
-            'group_id' => 3,
+            'group_id' => 4,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -198,7 +232,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Trash & Recycling',
             'description' => 'This is the trash and recycling subgroup.',
             'privacy' => 0, // public
-            'group_id' => 4,
+            'group_id' => 5,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -206,7 +240,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Heating & Cooling',
             'description' => 'This is the heating and cooling subgroup.',
             'privacy' => 0, // public
-            'group_id' => 4,
+            'group_id' => 5,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -214,7 +248,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Electricity',
             'description' => 'This is the electricity subgroup.',
             'privacy' => 0, // public
-            'group_id' => 4,
+            'group_id' => 5,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -222,7 +256,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Gas',
             'description' => 'This is the gas subgroup.',
             'privacy' => 0, // public
-            'group_id' => 4,
+            'group_id' => 5,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -230,7 +264,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Water',
             'description' => 'This is the water subgroup.',
             'privacy' => 0, // public
-            'group_id' => 4,
+            'group_id' => 5,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -238,7 +272,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Clothes',
             'description' => 'This is the clothes subgroup.',
             'privacy' => 0, // public
-            'group_id' => 5,
+            'group_id' => 6,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -246,7 +280,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Shoes',
             'description' => 'This is the shoes subgroup.',
             'privacy' => 0, // public
-            'group_id' => 5,
+            'group_id' => 6,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -254,7 +288,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Accessories',
             'description' => 'This is the accessories subgroup.',
             'privacy' => 0, // public
-            'group_id' => 5,
+            'group_id' => 6,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -262,7 +296,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Internet',
             'description' => 'This is the internet subgroup.',
             'privacy' => 0, // public
-            'group_id' => 6,
+            'group_id' => 7,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -270,7 +304,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Mobile Phone',
             'description' => 'This is the mobile phone subgroup.',
             'privacy' => 0, // public
-            'group_id' => 6,
+            'group_id' => 7,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -278,7 +312,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Streaming Services',
             'description' => 'This is the streaming services subgroup.',
             'privacy' => 0, // public
-            'group_id' => 6,
+            'group_id' => 7,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -286,7 +320,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Subscriptions',
             'description' => 'This is the subscriptions subgroup.',
             'privacy' => 0, // public
-            'group_id' => 6,
+            'group_id' => 7,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
