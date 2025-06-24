@@ -32,6 +32,13 @@ class EntryController extends Controller
             $listOfItems = $header->items()->with('group', 'subgroup')->get();
         }
 
+        // If validation failed, repopulate items from old('items')
+        if (old('items')) {
+            $listOfItems = collect(old('items'))->map(function($item) {
+                return (object)$item;
+            });
+        }
+
         // Create a variable with all groups and their subgroups (id => name), subgroups sorted alphabetically (case-insensitive)
         $groupSubgroupMap = $groups->map(function ($group) {
             $sortedSubgroups = $group->subgroups->sortBy(function ($subgroup) {
@@ -61,8 +68,9 @@ class EntryController extends Controller
             'items.*.group_id' => 'required|integer|exists:groups,id',
             'items.*.subgroup_id' => 'required|integer|exists:subgroups,id',
             'items.*.amount' => 'required|numeric',
+            'items.*.note' => 'nullable|string',
         ]);
-
+        
         $user = Auth::user();
         $collection = $user->collection;
         $groups = $collection->groups()->get();
@@ -105,6 +113,7 @@ class EntryController extends Controller
                 'subgroup_id' => $itemData['subgroup_id'],
                 'amount' => $itemData['amount'],
                 'group_type' => $groupType,
+                'note' => $itemData['note'] ?? null,
             ]);
         }
 

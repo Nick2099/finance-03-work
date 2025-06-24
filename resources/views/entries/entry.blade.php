@@ -84,6 +84,7 @@
                     <th>Add</th>
                     <th>Amount</th>
                     <th>Action</th>
+                    <th>Note</th>
                 </tr>
             </thead>
             <tbody id="items-list-body">
@@ -116,6 +117,10 @@
                     <td>
                         <button type="button" class="btn btn-secondary" id="add-item">Add item</button>
                     </td>
+                    <td>
+                        <input type="text" name="item_note" id="item_note" value="{{ old('item_note', '') }}"
+                            placeholder="Note for item" />
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -130,7 +135,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const listOfItems = @json($listOfItems ?? []);
+            const listOfItems = @json(old('items', $listOfItems ?? []));
             const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
             const headerId = @json($header->id ?? null);
             const bottomLine = document.getElementById('bottom-line');
@@ -148,7 +153,8 @@
                         groupText: groupText,
                         subgroupId: item.subgroup_id,
                         subgroupText: subgroupText,
-                        amount: item.amount
+                        amount: item.amount,
+                        note: item.note || ''
                     };
                 });
                 renderItems();
@@ -291,7 +297,14 @@
                 }
             }
 
-            function renderItems(foculField = null, focusIdx = null) {
+            function updateItemNote(idx) {
+                console.log(`Updating note for item ${idx}`);
+                if (items[idx]) {
+                    items[idx].note = document.querySelector(`input[name="item_${idx}_note"]`).value;;
+                }
+            }
+
+            function renderItems(focusField = null, focusIdx = null) {
                 recalculateFirstItemAmount();
                 const itemsList = document.getElementById('items-list-body');
                 // Remove all rows except the bottom line
@@ -314,9 +327,13 @@
                                     class="btn btn-delete-item"
                                     data-remove='{"idx":${idx},"groupId":"${item.groupId}","groupText":"${item.groupText}","subgroupId":"${item.subgroupId}","subgroupText":"${item.subgroupText}"}' name=\"item_${idx}_remove\">Remove</button>
                         </td>
+                        <td>
+                            <input type="text" name="item_${idx}_note" value="${item.note}" placeholder="Note for item" />
+                        </td>
                     `;
                     itemsList.insertBefore(newRow, bottomLine);
                 });
+
                 // Remove the bottom line if the first item's amount is 0 or if there are no more group options
                 // setTimeout(..., 0) works because it doesn't actually wait for 0 milliseconds in the sense of "do this immediately." Instead, it tells the browser: "Run this code after the current call stack is finished and the DOM has had a chance to update."
                 setTimeout(() => {
@@ -335,10 +352,10 @@
                     saveEntryBtn.disabled = items.length === 0;
                     typeSelect.disabled = items.length > 0;
                     let focusElement = null;
-                    if ((foculField) && (focusIdx !== null)) {
-                        if (foculField === 'item_x_amount') {
+                    if ((focusField) && (focusIdx !== null)) {
+                        if (focusField === 'item_x_amount') {
                             focusElement = document.querySelector(`input[name='item_${focusIdx}_amount']`);
-                        } else if (foculField === 'item_x_add') {
+                        } else if (focusField === 'item_x_add') {
                             focusElement = document.querySelector(`input[name='item_${focusIdx}_add']`);
                         } 
                         if (focusElement) focusElement.focus();
@@ -458,6 +475,20 @@
                         renderItems();
                     });
                 });
+
+                // Add event listeners for note blur
+                // itemsList.querySelectorAll("input[name^='item_'][name$='_note']").forEach((input, idx) => {
+                //     input.addEventListener("blur", () => updateItemNote(idx));
+                // });
+                // Add event listeners for note blur only to inputs with names like item_0_note, item_1_note, etc.
+                itemsList.querySelectorAll("input[name$='_note']").forEach((input) => {
+                    if (/^item_\d+_note$/.test(input.name)) {
+                        const idx = parseInt(input.name.match(/^item_(\d+)_note$/)[1], 10);
+                        input.addEventListener("blur", () => updateItemNote(idx));
+                    }
+                });
+                // Always update hidden fields after rendering
+                updateHiddenItemsFields();
             }
 
             document.getElementById('add-item').addEventListener('click', function() {
@@ -478,11 +509,13 @@
 
                 const groupSelect = document.getElementById('group_id');
                 const subgroupSelect = document.getElementById('subgroup_id');
+                const noteInput = document.getElementById('item_note');
 
                 const groupId = groupSelect.value;
                 const groupText = groupSelect.options[groupSelect.selectedIndex].text;
                 const subgroupId = subgroupSelect.value;
                 const subgroupText = subgroupSelect.options[subgroupSelect.selectedIndex]?.text || '';
+                const note = noteInput ? noteInput.value : '';
 
                 // Subtract new item_amount from the first item's amount if possible
                 if (items.length > 0) {
@@ -503,7 +536,8 @@
                     groupText,
                     subgroupId,
                     subgroupText,
-                    amount
+                    amount,
+                    note
                 });
 
                 renderItems();
@@ -513,6 +547,9 @@
 
                 // Reset item_amount to 0 after adding an item
                 amountInput.value = '0.00';
+                if (noteInput) noteInput.value = '';
+                // Ensure save button is enabled after adding an item
+                saveEntryBtn.disabled = items.length === 0;
             });
 
             // Remove subgroup if it has no items left
@@ -554,6 +591,13 @@
             }
 
             function updateHiddenItemsFields() {
+                // Always update items array with latest note values from DOM before creating hidden fields
+                items.forEach((item, idx) => {
+                    const noteInput = document.querySelector(`input[name="item_${idx}_note"]`);
+                    if (noteInput) {
+                        item.note = noteInput.value;
+                    }
+                });
                 const container = document.getElementById('items-hidden-fields');
                 container.innerHTML = '';
                 // Add header_id if editing
@@ -564,14 +608,23 @@
                     container.innerHTML += `\n<input type="hidden" name="items[${idx}][group_id]" value="${item.groupId}">`;
                     container.innerHTML += `\n<input type="hidden" name="items[${idx}][subgroup_id]" value="${item.subgroupId}">`;
                     container.innerHTML += `\n<input type="hidden" name="items[${idx}][amount]" value="${item.amount}">`;
+                    container.innerHTML += `\n<input type="hidden" name="items[${idx}][note]" value="${item.note}">`;
                 });
             }
 
             // Attach to form submit
             const entryForm = document.querySelector('form[action="/entry"]');
             if (entryForm) {
+                console.log('Entry form found, attaching submit event listener');
                 entryForm.addEventListener('submit', function(e) {
-                    updateHiddenItemsFields();
+                    try {
+                        updateHiddenItemsFields();
+                        // Debug: log the hidden fields before submit
+                        // console.log('Submitting with hidden fields:', document.getElementById('items-hidden-fields').innerHTML);
+                    } catch (err) {
+                        console.error('Error in submit handler:', err);
+                        // alert('A JavaScript error occurred: ' + err.message);
+                    }
                 });
             }
 
@@ -603,6 +656,7 @@
                 updateGroupDropdown(this.value);
             });
         });
+
 
         // Add after DOMContentLoaded
         const resetBtn = document.querySelector('button[type="reset"]');
