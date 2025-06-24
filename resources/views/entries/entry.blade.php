@@ -328,7 +328,7 @@
                                     data-remove='{"idx":${idx},"groupId":"${item.groupId}","groupText":"${item.groupText}","subgroupId":"${item.subgroupId}","subgroupText":"${item.subgroupText}"}' name=\"item_${idx}_remove\">Remove</button>
                         </td>
                         <td>
-                            <input type="text" name="item_${idx}_note" value="${item.note}" placeholder="Note for item" />
+                            <input type="text" name="item_${idx}_note" value="${item.note}" placeholder="Note for item" autocomplete="off" />
                         </td>
                     `;
                     itemsList.insertBefore(newRow, bottomLine);
@@ -631,12 +631,17 @@
             // const groupSelect = document.getElementById('group_id');
             // Helper to update group dropdown based on selected type
             function updateGroupDropdown(selectedType) {
-                // console.log('selectedType:', selectedType);
                 groupSelect.innerHTML = '';
-                // console.log('groupSubgroupMapJSON:', groupSubgroupMapJSON);
                 groupSubgroupMapJSON.forEach(group => {
-                    // console.log('Checking group:', group.name, 'with type:', group.type);
                     if (String(group.type) === String(selectedType)) {
+                        // Get all subgroupIds for this group
+                        const allSubgroupIds = Object.keys(group.subgroups);
+                        // Get all used subgroupIds for this group in items
+                        const usedSubgroupIds = items.filter(item => String(item.groupId) === String(group.id)).map(item => String(item.subgroupId));
+                        // If all subgroups are used, skip this group
+                        if (allSubgroupIds.length > 0 && allSubgroupIds.every(id => usedSubgroupIds.includes(id))) {
+                            return;
+                        }
                         const option = document.createElement('option');
                         option.value = group.id;
                         option.text = group.name;
