@@ -11,12 +11,12 @@ class Item extends Model
     use HasFactory;
 
         protected $fillable = [
-        'amount',
-        'description',
         'header_id',
         'group_id',
         'subgroup_id',
         'group_type',
+        'amount',
+        'note',
     ];
 
     public function header()

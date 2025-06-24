@@ -7,7 +7,7 @@ return [
     'amount' => 'Amount',
     'place_of_purchase' => 'Origin',
     'location' => 'Location',
-    'description' => 'Description',
+    'note' => 'Note',
     'actions' => 'Actions',
     'edit' => 'Edit',
     'delete' => 'Delete',

@@ -71,8 +71,8 @@
             </div>
         </x-form-field>
 
-        <x-form-field name="description" label="Description">
-            <x-form-input type="text" name="description" id="description" value="{{ old('description', $header->description ?? '') }}"
+        <x-form-field name="note" label="Note">
+            <x-form-input type="text" name="note" id="note" value="{{ old('note', $header->note ?? '') }}"
                 autocomplete="off" />
         </x-form-field>
 

@@ -7,7 +7,7 @@ return [
     'amount' => 'Iznos',
     'place_of_purchase' => 'Podrijetlo',
     'location' => 'Lokacija',
-    'description' => 'Opis',
+    'note' => 'Opis',
     'actions' => 'Akcije',
     'edit' => 'Uredi',
     'delete' => 'Obriši',

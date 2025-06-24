@@ -15,7 +15,7 @@ class Header extends Model
         'date',
         'place_of_purchase',
         'location',
-        'description',
+        'note',
         'amount',
         // Add other header fields as needed
     ];

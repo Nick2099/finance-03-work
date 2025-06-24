@@ -55,7 +55,7 @@ class EntryController extends Controller
             'date' => 'required|date',
             'place' => 'required|string|max:50',
             'location' => 'required|string|max:50',
-            'description' => 'nullable|string',
+            'note' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
             'items' => 'required|array|min:1',
             'items.*.group_id' => 'required|integer|exists:groups,id',
@@ -76,7 +76,7 @@ class EntryController extends Controller
                 'date' => $validatedData['date'],
                 'place_of_purchase' => $validatedData['place'],
                 'location' => $validatedData['location'],
-                'description' => $validatedData['description'] ?? null,
+                'note' => $validatedData['note'] ?? null,
                 'amount' => $validatedData['amount'],
             ]);
             // Delete old items
@@ -88,13 +88,16 @@ class EntryController extends Controller
                 'date' => $validatedData['date'],
                 'place_of_purchase' => $validatedData['place'],
                 'location' => $validatedData['location'],
-                'description' => $validatedData['description'] ?? null,
+                'note' => $validatedData['note'] ?? null,
                 'amount' => $validatedData['amount'],
             ]);
         }
 
         // Create the items (for both create and update)
         foreach ($validatedData['items'] as $itemData) {
+            if (floatval($itemData['amount']) == 0) {
+                continue;
+            }
             $groupType = $groupTypeMap[$itemData['group_id']] ?? null;
             Item::create([
                 'header_id' => $header->id,

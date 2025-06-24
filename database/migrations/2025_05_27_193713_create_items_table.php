@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Subgroup::class)->constrained()->onDelete('cascade');
             $table->tinyInteger('group_type')->nullable();
             $table->decimal('amount', 10, 2);
-            $table->string('description')->nullable();
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }
