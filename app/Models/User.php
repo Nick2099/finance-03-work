@@ -27,6 +27,7 @@ class User extends Authenticatable
         'language',
         'timezone',
         'date_format',
+        'twofa',
     ];
 
     /**

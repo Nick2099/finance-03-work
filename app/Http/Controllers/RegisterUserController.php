@@ -34,6 +34,7 @@ class RegisterUserController extends Controller
             'language' => RegisterUserRules::language(),
             'timezone' => RegisterUserRules::timezone(),
             'currency' => RegisterUserRules::currency(),
+            // Remove 'two_factor_auth' and do not validate checkbox as boolean (since it may be absent)
         ]);
 
         // Create the user
@@ -46,6 +47,8 @@ class RegisterUserController extends Controller
             'language' => $validatedData['language'],
             'timezone' => $validatedData['timezone'],
             'currency' => $validatedData['currency'],
+            // Use the checkbox field name from the form, default to 0 if not present
+            'twofa' => $request->has('two_factor_enabled') ? 1 : 0,
         ]);
 
         // Generate a new token

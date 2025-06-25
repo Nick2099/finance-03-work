@@ -36,6 +36,7 @@ return new class extends Migration
             $table->timestamp('locked_until')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->boolean('twofa')->default(false);
             $table->timestamps();
         });
 

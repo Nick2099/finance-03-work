@@ -49,6 +49,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
             'email_verified_at' => now(),
             'collection_id' => 1,
+            'twofa' => 0, // 0 = disabled, 1 = enabled
         ]);
 
         Group::factory()->create([

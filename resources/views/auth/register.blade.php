@@ -69,5 +69,10 @@
             </div>
         </x-form-field>
 
+        <x-form-field name="two_factor_enabled" label="Enable Two-Factor Authentication?">
+            <input type="checkbox" name="two_factor_enabled" id="two_factor_enabled" value="1" {{ old('two_factor_enabled') ? 'checked' : '' }} />
+            <label for="two_factor_enabled">Enable 2FA</label>
+        </x-form-field>
+
         <x-form-button>Register</x-form-button>
 </x-layout>
