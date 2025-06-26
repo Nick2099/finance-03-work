@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             'language' => 'en',
             'timezone' => 'UTC',
             'password' => bcrypt('password'),
-            'demo' => false,
+            'demo' => true, // true = demo user, false = normal user
             'currency' => 'USD',
             'created_at' => now(),
             'updated_at' => now(),

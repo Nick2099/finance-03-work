@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\SetUserLocale;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileBadgesController;
 use App\Http\Controllers\RegisterUserController;
-use App\Http\Middleware\SetUserLocale;
-use Illuminate\Support\Facades\Route;
 
 Route::middleware([SetUserLocale::class])->group(function () {
     Route::get('/', function () {
@@ -66,6 +67,18 @@ Route::middleware([SetUserLocale::class])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'create'])
         ->name('profile');
+
+    Route::get('/profile/badges', [ProfileBadgesController::class, 'index'])
+        ->name('profile.badges');
+
+    Route::post('/profile/badges/add', [ProfileBadgesController::class, 'add'])
+        ->name('profile.badges.add');
+
+    Route::post('/profile/badges/{badge}/rename', [ProfileBadgesController::class, 'rename'])
+        ->name('profile.badges.rename');
+        
+    Route::delete('/profile/badges/{badge}', [ProfileBadgesController::class, 'delete'])
+        ->name('profile.badges.delete');
 
     Route::get('/entry/{id?}', [EntryController::class, 'create'])
         ->name('entry.create');
