@@ -43,10 +43,10 @@
                             }
                         }
                     @endphp
-                    <option value="0" {{ $selectedType == 0 ? 'selected' : '' }}>State</option>
-                    <option value="1" {{ $selectedType == 1 ? 'selected' : '' }}>Income</option>
                     <option value="2" {{ $selectedType == 2 ? 'selected' : '' }}>Expense</option>
-                    <option value="3" {{ $selectedType == 3 ? 'selected' : '' }}>Correction</option>
+                    <option value="1" {{ $selectedType == 1 ? 'selected' : '' }}>Income</option>
+                    <option value="0" {{ $selectedType == 0 ? 'selected' : '' }}>State</option>
+                    <option value="3" {{ $selectedType == 3 ? 'selected' : '' }} disabled>Correction</option>
                 </select>
             </div>
         </x-form-field>
@@ -83,14 +83,12 @@
                 <div id="badge-modal-message" style="margin-bottom:1em;">Badge button clicked</div>
                 <div id="badge-checkboxes">
                     @if(isset($allBadges) && count($allBadges) > 0)
-                        <form id="badge-form">
                         @foreach($allBadges as $badge)
                             <label style="display:block; margin-bottom:0.5em;">
                                 <input type="checkbox" class="badge-checkbox" value="{{ $badge->id }}"> {{ $badge->name }}
                             </label>
                         @endforeach
                         <button type="button" id="save-badges-btn" class="btn btn-primary" style="margin-top:1em;">Save</button>
-                        </form>
                     @else
                         <div>No badges available.</div>
                     @endif
@@ -144,7 +142,7 @@
                     </td>
                     <td>
                         <input type="text" name="item_note" id="item_note" value="{{ old('item_note', '') }}"
-                            placeholder="Note for item" />
+                            placeholder="Note for item" autocomplete="off"/>
                     </td>
                 </tr>
             </tbody>
@@ -179,7 +177,8 @@
                         subgroupId: item.subgroup_id,
                         subgroupText: subgroupText,
                         amount: item.amount,
-                        note: item.note || ''
+                        note: item.note || '',
+                        badges: item.badges || []
                     };
                 });
                 renderItems();
@@ -503,10 +502,6 @@
                     });
                 });
 
-                // Add event listeners for note blur
-                // itemsList.querySelectorAll("input[name^='item_'][name$='_note']").forEach((input, idx) => {
-                //     input.addEventListener("blur", () => updateItemNote(idx));
-                // });
                 // Add event listeners for note blur only to inputs with names like item_0_note, item_1_note, etc.
                 itemsList.querySelectorAll("input[name$='_note']").forEach((input) => {
                     if (/^item_\d+_note$/.test(input.name)) {
@@ -527,12 +522,10 @@
                 }
 
                 if (!negativeValues && parseFloat(amount) < 0) {
-                    // console.log('Negative values not allowed, resetting amount to 0.00');
                     amount = '0.00';
                     amountInput.value = '0.00';
                     return;
                 }
-                // Ensure amount is a valid number
 
                 const groupSelect = document.getElementById('group_id');
                 const subgroupSelect = document.getElementById('subgroup_id');
@@ -549,7 +542,6 @@
                     let firstAmount = parseFloat(items[0].amount);
                     let subtractAmount = parseFloat(amount);
                     if (!isNaN(firstAmount) && !isNaN(subtractAmount)) {
-                        // console.log(`Subtracting ${subtractAmount} from first item amount ${firstAmount}`);
                         if ((subtractAmount > firstAmount) && (!negativeValues)) {
                             subtractAmount = firstAmount;
                         }
@@ -557,15 +549,30 @@
                     amount = subtractAmount;
                 }
 
-                // Add to items array
+                // Get badges for new item from the hidden input (if any)
+                let badges = [];
+                try {
+                    const newItemBadgesInput = document.getElementById('new_item_badges');
+                    if (newItemBadgesInput && newItemBadgesInput.value) {
+                        badges = JSON.parse(newItemBadgesInput.value);
+                    }
+                } catch (e) {
+                    badges = [];
+                }
+
                 items.push({
                     groupId,
                     groupText,
                     subgroupId,
                     subgroupText,
                     amount,
-                    note
+                    note,
+                    badges: Array.isArray(badges) ? badges : []
                 });
+
+                // Reset new_item_badges hidden input after adding
+                const newItemBadgesInput = document.getElementById('new_item_badges');
+                if (newItemBadgesInput) newItemBadgesInput.value = '[]';
 
                 renderItems();
 
@@ -657,10 +664,10 @@
                     try {
                         updateHiddenItemsFields();
                         // Debug: log the hidden fields before submit
-                        // console.log('Submitting with hidden fields:', document.getElementById('items-hidden-fields').innerHTML);
+                        console.log('Submitting with hidden fields:', document.getElementById('items-hidden-fields').innerHTML);
                     } catch (err) {
                         console.error('Error in submit handler:', err);
-                        // alert('A JavaScript error occurred: ' + err.message);
+                        alert('A JavaScript error occurred: ' + err.message);
                     }
                 });
             }
@@ -730,6 +737,7 @@
                     console.log('Save badges button clicked');
                     // Save selected badges for new item or existing item
                     const checked = Array.from(document.querySelectorAll('#badge-checkboxes .badge-checkbox:checked')).map(cb => parseInt(cb.value));
+                    console.log('Checked badges:', checked);
                     if (currentBadgeIdx === 'null') {
                         document.getElementById('new_item_badges').value = JSON.stringify(checked);
                     } else {
@@ -738,7 +746,10 @@
                         if (Array.isArray(items) && items[currentBadgeIdx]) {
                             items[currentBadgeIdx].badges = checked;
                         }
+                        console.log('Updated items array:', items);
                     }
+                    // Always update hidden fields after badge selection
+                    updateHiddenItemsFields();
                     // Always close the modal on save
                     document.getElementById('badge-modal').style.display = 'none';
                 }

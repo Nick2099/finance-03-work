@@ -31,6 +31,16 @@ class EntryController extends Controller
         if ($id) {
             $header = Header::where('user_id', $user->id)->findOrFail($id);
             $listOfItems = $header->items()->with('group', 'subgroup')->get();
+            // Ensure badges is always an array (force update on the model, not just the collection)
+            foreach ($listOfItems as $item) {
+                // If badges is a string, decode it and set it as an attribute (so $item->badges returns array)
+                if (is_string($item->badges)) {
+                    $decoded = json_decode($item->badges, true);
+                    $item->setAttribute('badges', is_array($decoded) ? $decoded : []);
+                } elseif (is_null($item->badges)) {
+                    $item->setAttribute('badges', []);
+                }
+            }
         }
 
         // If validation failed, repopulate items from old('items')
@@ -58,6 +68,20 @@ class EntryController extends Controller
 
     public function store(Request $request)
     {
+        if ($request->has('items')) {
+            $items = $request->input('items');
+            foreach ($items as $idx => $item) {
+                if (isset($item['badges']) && is_string($item['badges'])) {
+                    $decoded = json_decode($item['badges'], true);
+                    $request->merge([
+                        "items.$idx.badges" => is_array($decoded) ? $decoded : [],
+                    ]);
+                }
+            }
+        }
+
+        // dd($request->all()); // Debugging line to see the request data
+
         // Validate the request data (adjust rules as needed for your fields)
         $validatedData = $request->validate([
             'date' => 'required|date',
@@ -71,7 +95,7 @@ class EntryController extends Controller
             'items.*.amount' => 'required|numeric',
             'items.*.note' => 'nullable|string',
             'items.*.badges' => 'nullable|array',
-            'items.*.badges.*' => 'integer|exists:badges,id',
+            'items.*.badges.*' => 'integer',
         ]);
         
         $user = Auth::user();
