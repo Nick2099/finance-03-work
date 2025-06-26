@@ -4,6 +4,7 @@
     $locationMinLength = config('appoptions.location_suggest_min_length');
     $debounceDelay = config('appoptions.suggest_debounce_delay', 250);
     $tempGroupSubgroupMap = $groupSubgroupMap;
+    // dump($allBadges);
     // dump($groups);
     // dump($listOfItems);
     // dd($groupSubgroupMap);
@@ -72,8 +73,30 @@
         </x-form-field>
 
         <x-form-field name="note" label="Note">
-            <x-form-input type="text" name="note" id="note" value="{{ old('note', $header->note ?? '') }}"
-                autocomplete="off" />
+        <x-form-input type="text" name="note" id="note" value="{{ old('note', $header->note ?? '') }}"
+            autocomplete="off" />
+
+        <!-- Badge Modal -->
+        <div id="badge-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:2000;">
+            <div style="background:#fff; margin:10vh auto; padding:2em; max-width:400px; position:relative; text-align:left;">
+                <button type="button" id="close-badge-modal" style="position:absolute; top:10px; right:10px; font-size:1.5em; background:none; border:none;">&times;</button>
+                <div id="badge-modal-message" style="margin-bottom:1em;">Badge button clicked</div>
+                <div id="badge-checkboxes">
+                    @if(isset($allBadges) && count($allBadges) > 0)
+                        <form id="badge-form">
+                        @foreach($allBadges as $badge)
+                            <label style="display:block; margin-bottom:0.5em;">
+                                <input type="checkbox" class="badge-checkbox" value="{{ $badge->id }}"> {{ $badge->name }}
+                            </label>
+                        @endforeach
+                        <button type="button" id="save-badges-btn" class="btn btn-primary" style="margin-top:1em;">Save</button>
+                        </form>
+                    @else
+                        <div>No badges available.</div>
+                    @endif
+                </div>
+            </div>
+        </div>
         </x-form-field>
 
         <table id="items-list">
@@ -116,6 +139,8 @@
                     </td>
                     <td>
                         <button type="button" class="btn btn-secondary" id="add-item">Add item</button>
+                        <button type="button" class="btn btn-badges-modal" id="new-item-badges" title="Select badges">🏷️</button>
+                        <input type="hidden" name="new_item_badges" id="new_item_badges" value="[]" />
                     </td>
                     <td>
                         <input type="text" name="item_note" id="item_note" value="{{ old('item_note', '') }}"
@@ -326,6 +351,8 @@
                             <button type="button"
                                     class="btn btn-delete-item"
                                     data-remove='{"idx":${idx},"groupId":"${item.groupId}","groupText":"${item.groupText}","subgroupId":"${item.subgroupId}","subgroupText":"${item.subgroupText}"}' name=\"item_${idx}_remove\">Remove</button>
+                            <button type="button" class="btn btn-badges-modal" data-idx="${idx}" title="Select badges">🏷️</button>
+                            <input type="hidden" name="items[${idx}][badges]" id="item_${idx}_badges" value="${item.badges ? JSON.stringify(item.badges) : '[]'}" />
                         </td>
                         <td>
                             <input type="text" name="item_${idx}_note" value="${item.note}" placeholder="Note for item" autocomplete="off" />
@@ -591,11 +618,20 @@
             }
 
             function updateHiddenItemsFields() {
-                // Always update items array with latest note values from DOM before creating hidden fields
+                // Always update items array with latest note values and badges from DOM before creating hidden fields
                 items.forEach((item, idx) => {
                     const noteInput = document.querySelector(`input[name="item_${idx}_note"]`);
                     if (noteInput) {
                         item.note = noteInput.value;
+                    }
+                    // Update badges from hidden input
+                    const badgesInput = document.getElementById(`item_${idx}_badges`);
+                    if (badgesInput) {
+                        try {
+                            item.badges = JSON.parse(badgesInput.value || '[]');
+                        } catch (e) {
+                            item.badges = [];
+                        }
                     }
                 });
                 const container = document.getElementById('items-hidden-fields');
@@ -609,6 +645,7 @@
                     container.innerHTML += `\n<input type="hidden" name="items[${idx}][subgroup_id]" value="${item.subgroupId}">`;
                     container.innerHTML += `\n<input type="hidden" name="items[${idx}][amount]" value="${item.amount}">`;
                     container.innerHTML += `\n<input type="hidden" name="items[${idx}][note]" value="${item.note}">`;
+                    container.innerHTML += `\n<input type="hidden" name="items[${idx}][badges]" value='${JSON.stringify(item.badges || [])}'>`;
                 });
             }
 
@@ -659,6 +696,52 @@
             // Update group dropdown when type changes
             typeSelect.addEventListener('change', function() {
                 updateGroupDropdown(this.value);
+            });
+
+            // Badge modal logic (now inside the same DOMContentLoaded as items)
+            let currentBadgeIdx = null;
+            document.addEventListener('click', function(e) {
+                if (e.target && e.target.classList.contains('btn-badges-modal')) {
+                    let idx = e.target.getAttribute('data-idx');
+                    if (idx === null || typeof idx === 'undefined') idx = 'null';
+                    currentBadgeIdx = idx;
+                    const modal = document.getElementById('badge-modal');
+                    const msg = document.getElementById('badge-modal-message');
+                    msg.textContent = 'Badge button clicked for item #' + idx;
+                    // Pre-check checkboxes for new item or existing item
+                    if (idx === 'null') {
+                        const selected = JSON.parse(document.getElementById('new_item_badges').value || '[]');
+                        document.querySelectorAll('#badge-checkboxes .badge-checkbox').forEach(cb => {
+                            cb.checked = selected.includes(parseInt(cb.value));
+                        });
+                    } else {
+                        const selected = JSON.parse(document.getElementById('item_' + idx + '_badges').value || '[]');
+                        document.querySelectorAll('#badge-checkboxes .badge-checkbox').forEach(cb => {
+                            cb.checked = selected.includes(parseInt(cb.value));
+                        });
+                    }
+                    modal.style.display = 'block';
+                }
+                if (e.target && e.target.id === 'close-badge-modal') {
+                    console.log('Close badge modal clicked');
+                    document.getElementById('badge-modal').style.display = 'none';
+                }
+                if (e.target && e.target.id === 'save-badges-btn') {
+                    console.log('Save badges button clicked');
+                    // Save selected badges for new item or existing item
+                    const checked = Array.from(document.querySelectorAll('#badge-checkboxes .badge-checkbox:checked')).map(cb => parseInt(cb.value));
+                    if (currentBadgeIdx === 'null') {
+                        document.getElementById('new_item_badges').value = JSON.stringify(checked);
+                    } else {
+                        document.getElementById('item_' + currentBadgeIdx + '_badges').value = JSON.stringify(checked);
+                        // Also update the badges in the items array for correct re-render
+                        if (Array.isArray(items) && items[currentBadgeIdx]) {
+                            items[currentBadgeIdx].badges = checked;
+                        }
+                    }
+                    // Always close the modal on save
+                    document.getElementById('badge-modal').style.display = 'none';
+                }
             });
         });
 

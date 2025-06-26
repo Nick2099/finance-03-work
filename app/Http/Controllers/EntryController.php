@@ -26,6 +26,7 @@ class EntryController extends Controller
         $groups = $collection->groups()->with('subgroups')->orderBy('name')->get();
         $listOfItems = [];
         $header = null;
+        $allBadges = $user->badges;
 
         if ($id) {
             $header = Header::where('user_id', $user->id)->findOrFail($id);
@@ -52,7 +53,7 @@ class EntryController extends Controller
             ];
         });
 
-        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header'));
+        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges'));
     }
 
     public function store(Request $request)
@@ -69,6 +70,8 @@ class EntryController extends Controller
             'items.*.subgroup_id' => 'required|integer|exists:subgroups,id',
             'items.*.amount' => 'required|numeric',
             'items.*.note' => 'nullable|string',
+            'items.*.badges' => 'nullable|array',
+            'items.*.badges.*' => 'integer|exists:badges,id',
         ]);
         
         $user = Auth::user();
@@ -107,6 +110,8 @@ class EntryController extends Controller
                 continue;
             }
             $groupType = $groupTypeMap[$itemData['group_id']] ?? null;
+            // Save badges as array (will be cast to JSON)
+            $badges = $itemData['badges'] ?? [];
             Item::create([
                 'header_id' => $header->id,
                 'group_id' => $itemData['group_id'],
@@ -114,6 +119,7 @@ class EntryController extends Controller
                 'amount' => $itemData['amount'],
                 'group_type' => $groupType,
                 'note' => $itemData['note'] ?? null,
+                'badges' => $badges,
             ]);
         }
 
