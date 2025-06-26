@@ -65,4 +65,7 @@ return [
     'place_suggest_min_length' => env('PLACE_SUGGEST_MIN_LENGTH', 3),
     'location_suggest_min_length' => env('LOCATION_SUGGEST_MIN_LENGTH', 3),
     'debounce_delay' => env('DEBOUNCE_DELAY', 300), // in milliseconds
+    'badges_per_item' => env('BADGES_PER_ITEM', 3),
+    'badges_per_user' => env('BADGES_PER_USER', 10),
+    'badges_per_demo_user' => env('BADGES_PER_DEMO_USER', 3),
 ];

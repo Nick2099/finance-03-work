@@ -19,6 +19,7 @@ return new class extends Migration
             $table->tinyInteger('group_type')->nullable();
             $table->decimal('amount', 10, 2);
             $table->string('note')->nullable();
+            $table->string('badges')->nullable();
             $table->timestamps();
         });
     }

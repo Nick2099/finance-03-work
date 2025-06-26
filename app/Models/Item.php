@@ -17,6 +17,11 @@ class Item extends Model
         'group_type',
         'amount',
         'note',
+        'badges', // Add badges to fillable so it can be mass-assigned
+    ];
+
+    protected $casts = [
+        'badges' => 'array', // Automatically cast badges to array
     ];
 
     public function header()

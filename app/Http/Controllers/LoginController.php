@@ -73,7 +73,7 @@ class LoginController extends Controller
             // Regenerate the session to prevent session fixation attacks
             // and to ensure the user is logged in with a new session
             request()->session()->regenerate();
-            return redirect()->route('home')->with('success', 'Logged in successfully!');
+            return redirect()->route('entry.create')->with('success', 'Logged in successfully!');
         } else {
             // If login fails, increment the wrong login attempts and lock the user if necessary
             $this->wrongLoginAttempt($validatedData['username']);
