@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileBadgesController extends Controller
 {
@@ -75,7 +76,10 @@ class ProfileBadgesController extends Controller
         $badge->delete();
 
         // Remove badge_id from all items that used this badge (remove all occurrences)
-        $items = $user->collection->items()->whereJsonContains('badges', $badge->badge_id)->get();
+        $items = Item::whereJsonContains('badges', $badge->badge_id)
+            ->whereHas('header', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->get();
         foreach ($items as $item) {
             $badges = is_array($item->badges) ? $item->badges : json_decode($item->badges, true);
             if (!is_array($badges)) $badges = [];
