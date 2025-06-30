@@ -129,13 +129,25 @@ class EntryController extends Controller
         }
 
         // Create the items (for both create and update)
+        // Map badge_id to internal id for all badges for this user
+        $badgeIdToInternalId = [];
+        foreach ($user->badges as $badge) {
+            $badgeIdToInternalId[$badge->badge_id] = $badge->id;
+        }
         foreach ($validatedData['items'] as $itemData) {
             if (floatval($itemData['amount']) == 0) {
                 continue;
             }
             $groupType = $groupTypeMap[$itemData['group_id']] ?? null;
-            // Save badges as array (will be cast to JSON)
-            $badges = $itemData['badges'] ?? [];
+            // Convert badge_id to internal id before saving
+            $badges = [];
+            if (!empty($itemData['badges']) && is_array($itemData['badges'])) {
+                foreach ($itemData['badges'] as $badgeId) {
+                    if (isset($badgeIdToInternalId[$badgeId])) {
+                        $badges[] = $badgeIdToInternalId[$badgeId];
+                    }
+                }
+            }
             Item::create([
                 'header_id' => $header->id,
                 'group_id' => $itemData['group_id'],

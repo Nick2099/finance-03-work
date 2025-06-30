@@ -83,9 +83,9 @@
                 <div id="badge-modal-message" style="margin-bottom:1em;">Badge button clicked</div>
                 <div id="badge-checkboxes">
                     @if(isset($allBadges) && count($allBadges) > 0)
-                        @foreach($allBadges as $badge)
+                        @foreach($allBadges->sortBy(function($b){ return mb_strtolower($b->name); }) as $badge)
                             <label style="display:block; margin-bottom:0.5em;">
-                                <input type="checkbox" class="badge-checkbox" value="{{ $badge->id }}"> {{ $badge->name }}
+                                <input type="checkbox" class="badge-checkbox" value="{{ $badge->badge_id }}"> {{ $badge->name }}
                             </label>
                         @endforeach
                         <button type="button" id="save-badges-btn" class="btn btn-primary" style="margin-top:1em;">Save</button>
@@ -166,11 +166,19 @@
             let items = [];
             if (Array.isArray(listOfItems) && listOfItems.length > 0) {
                 // Map group and subgroup names for each item
+                // Convert any badge IDs from DB (which may be internal IDs) to badge_id if possible
+                const badgeIdMap = {};
+                @if(isset($allBadges) && count($allBadges) > 0)
+                @foreach($allBadges as $badge)
+                    badgeIdMap[{{ $badge->id }}] = {{ $badge->badge_id }};
+                @endforeach
+                @endif
                 items = listOfItems.map(item => {
-                    // Find group and subgroup names from groupSubgroupMap
                     const group = groupSubgroupMapJSON.find(g => g.id == item.group_id);
                     const groupText = group ? group.name : '';
                     const subgroupText = group && group.subgroups[item.subgroup_id] ? group.subgroups[item.subgroup_id] : '';
+                    // Convert badges to badge_id if needed
+                    let badges = Array.isArray(item.badges) ? item.badges.map(bid => badgeIdMap[bid] || bid) : [];
                     return {
                         groupId: item.group_id,
                         groupText: groupText,
@@ -178,7 +186,7 @@
                         subgroupText: subgroupText,
                         amount: item.amount,
                         note: item.note || '',
-                        badges: item.badges || []
+                        badges: badges || [],
                     };
                 });
                 renderItems();
