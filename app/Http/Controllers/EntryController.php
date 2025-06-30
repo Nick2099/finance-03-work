@@ -80,8 +80,6 @@ class EntryController extends Controller
             }
         }
 
-        // dd($request->all()); // Debugging line to see the request data
-
         // Validate the request data (adjust rules as needed for your fields)
         $validatedData = $request->validate([
             'date' => 'required|date',
@@ -129,9 +127,7 @@ class EntryController extends Controller
         }
 
         // Create the items (for both create and update)
-        // Map badge_id to internal id for all badges for this user
-        $badgeIdToInternalId = [];
-        foreach ($user->badges as $badge) {
+       foreach ($user->badges as $badge) {
             $badgeIdToInternalId[$badge->badge_id] = $badge->id;
         }
         foreach ($validatedData['items'] as $itemData) {
@@ -139,15 +135,6 @@ class EntryController extends Controller
                 continue;
             }
             $groupType = $groupTypeMap[$itemData['group_id']] ?? null;
-            // Convert badge_id to internal id before saving
-            $badges = [];
-            if (!empty($itemData['badges']) && is_array($itemData['badges'])) {
-                foreach ($itemData['badges'] as $badgeId) {
-                    if (isset($badgeIdToInternalId[$badgeId])) {
-                        $badges[] = $badgeIdToInternalId[$badgeId];
-                    }
-                }
-            }
             Item::create([
                 'header_id' => $header->id,
                 'group_id' => $itemData['group_id'],
@@ -155,7 +142,7 @@ class EntryController extends Controller
                 'amount' => $itemData['amount'],
                 'group_type' => $groupType,
                 'note' => $itemData['note'] ?? null,
-                'badges' => $badges,
+                'badges' => $itemData['badges'] ?: [], // Ensure badges is always an array
             ]);
         }
 

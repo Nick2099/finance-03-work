@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProfileBadgesController extends Controller
 {
@@ -72,6 +73,19 @@ class ProfileBadgesController extends Controller
         $user = $request->user();
         $badge = $user->badges()->findOrFail($badgeId);
         $badge->delete();
+
+        // Remove badge_id from all items that used this badge (remove all occurrences)
+        $items = $user->collection->items()->whereJsonContains('badges', $badge->badge_id)->get();
+        foreach ($items as $item) {
+            $badges = is_array($item->badges) ? $item->badges : json_decode($item->badges, true);
+            if (!is_array($badges)) $badges = [];
+            $badges = array_values(array_filter($badges, function($b) use ($badge) {
+                return $b != $badge->badge_id;
+            }));
+            $item->badges = $badges;
+            $item->save();
+        }
+
         return redirect()->route('profile.badges');
     }
 }
