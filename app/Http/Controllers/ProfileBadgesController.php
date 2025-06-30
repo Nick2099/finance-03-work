@@ -10,6 +10,21 @@ use Illuminate\Support\Facades\Auth;
 class ProfileBadgesController extends Controller
 {
     /**
+     * Get the max badges allowed for a user.
+     */
+    protected function getMaxBadges($user)
+    {
+        $isDemo = $user->demo ?? false;
+        $userType = $user->type ?? "basic";
+        if ($isDemo) {
+            return config('appoptions.badges_per_demo_user');
+        } elseif ($userType === 'premium') {
+            return config('appoptions.badges_per_premium_user');
+        } else {
+            return config('appoptions.badges_per_basic_user');
+        }
+    }
+    /**
      * Display the user's badges page.
      */
     public function index(Request $request)
@@ -20,10 +35,7 @@ class ProfileBadgesController extends Controller
 
         $user = $request->user();
         $badges = $user->badges()->orderBy('id')->get();
-        $isDemo = $user->demo ?? false;
-        $maxBadges = $isDemo
-            ? config('appoptions.badges_per_demo_user')
-            : config('appoptions.badges_per_user');
+        $maxBadges = $this->getMaxBadges($user);
         return view('profile-badges', [
             'badges' => $badges,
             'maxBadges' => $maxBadges,
@@ -33,10 +45,7 @@ class ProfileBadgesController extends Controller
     public function add(Request $request)
     {
         $user = $request->user();
-        $isDemo = $user->demo ?? false;
-        $maxBadges = $isDemo
-            ? config('appoptions.badges_per_demo_user')
-            : config('appoptions.badges_per_user');
+        $maxBadges = $this->getMaxBadges($user);
         $count = $user->badges()->count();
         if ($count >= $maxBadges) {
             return redirect()->route('profile.badges')->withErrors('Badge limit reached.');
