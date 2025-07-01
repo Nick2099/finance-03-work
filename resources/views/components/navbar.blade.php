@@ -1,19 +1,26 @@
-<nav class="navbar">
+<nav>
     <ul>
-        <x-nav-link href="{{ route('home') }}" :active="request()->is('/')">Home</x-nav-link>
-        <x-nav-link href="{{ route('about') }}" :active="request()->is('about')">About</x-nav-link>
-        <x-nav-link href="{{ route('contact') }}" :active="request()->is('contact')">Contact</x-nav-link>
+        <x-nav-link href="{{ route('home') }}" :active="Route::is('home')">Home</x-nav-link>
+        <x-nav-link href="{{ route('about') }}" :active="Route::is('about')">About</x-nav-link>
+        <x-nav-link href="{{ route('contact') }}" :active="Route::is('contact')">Contact</x-nav-link>
         @auth
-            <x-nav-link href="{{ route('entry.create') }}" :active="request()->is('entry.create')">New entry</x-nav-link>
-            <x-nav-link href="{{ route('entry.list') }}" :active="request()->is('entry.list')">List</x-nav-link>
-            <x-nav-link href="{{ route('profile') }}" :active="request()->is('profile')">Profile</x-nav-link>
+            <x-nav-link href="{{ route('entry.create') }}" :active="Route::is('entry.create')">New entry</x-nav-link>
+            <x-nav-links href="#" text="Views">
+                <ul>
+                    <x-nav-link href="{{ route('entry.list') }}" :active="Route::is('entry.list')">List</x-nav-link>
+                    <li><a href="#">Themes</a></li>
+                    <li><a href="#">Plugins</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                </ul>   
+            </x-nav-links>
+            <x-nav-link href="{{ route('profile') }}" :active="Route::is('profile')">Profile</x-nav-link>
         @endauth
         @auth
-            <x-nav-link href="{{ route('logout') }}" :active="request()->is('logout')">Log out</x-nav-link>
+        <x-nav-link href="{{ route('logout') }}" :active="Route::is('logout')">Log out</x-nav-link>
         @endauth
         @guest
-            <x-nav-link href="{{ route('register') }}" :active="request()->is('register')">Register</x-nav-link>
-            <x-nav-link href="{{ route('login') }}" :active="request()->is('login')">Log in</x-nav-link>
+        <x-nav-link href="{{ route('register') }}" :active="Route::is('register')">Register</x-nav-link>
+        <x-nav-link href="{{ route('login') }}" :active="Route::is('login')">Log in</x-nav-link>
         @endguest
     </ul>
     <div style="position: relative; display: inline-block; float: right; margin-right: 2em;">

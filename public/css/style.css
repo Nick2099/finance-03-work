@@ -44,31 +44,50 @@ body {
     }
 }
 
-.navbar {
+nav {
     background-color: #333;
-    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
 }
-.navbar ul {
+nav ul {
+    position: relative;
     list-style-type: none;
     margin: 0;
     padding: 0;
+    background-color: #333;
 }
-.navbar ul li {
-    float: left;
+nav ul li {
+    display:inline-block;
+    position: relative;
 }
-.navbar ul li a {
+nav a {
     display: block;
     padding: 8px;
     color: white;
     text-decoration: none;
+    transition: background-color 0.3s;
 }
-.navbar ul li a:hover {
-    background-color: #ddd;
+nav a:hover {
+    background-color: #7ce67f;
     color: black;
 }
-.navbar ul li a.active {
+nav a.active {
     background-color: #4CAF50;
     color: white;
+}
+
+nav ul li ul {
+    display: none;
+    position: absolute;
+}
+
+nav ul li:hover ul {
+    display: block;
+}
+
+nav ul li ul li {
+    display: block;
+    white-space: nowrap;
 }
 
 .alert  {
