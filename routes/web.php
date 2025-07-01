@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\SetUserLocale;
+use App\Http\Middleware\MyMiddleware;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LocaleController;
@@ -10,7 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfileBadgesController;
 use App\Http\Controllers\RegisterUserController;
 
-Route::middleware([SetUserLocale::class])->group(function () {
+Route::middleware([MyMiddleware::class])->group(function () {
     Route::get('/', function () {
         return view('home');
     })->name('home');
@@ -22,6 +22,10 @@ Route::middleware([SetUserLocale::class])->group(function () {
     Route::get('/contact', function () {
         return view('contact');
     })->name('contact');
+
+    Route::get('/maintenance', function () {
+        return view('errors.maintenance');
+    })->name('errors.maintenance');
 
     Route::get('/register', [RegisterUserController::class, 'create'])
         ->name('register');

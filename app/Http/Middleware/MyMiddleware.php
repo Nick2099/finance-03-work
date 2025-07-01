@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class SetUserLocale
+class MyMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,6 +17,14 @@ class SetUserLocale
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (config('appoptions.maintenance_lock_up')) {
+            Auth::logout(); // Ensure the user is logged out if in maintenance mode
+            $whitelistedRoutes = ['home', 'about', 'contact'];
+            if (!in_array($request->route()?->getName(), $whitelistedRoutes)) {
+                return response()->view('errors.maintenance');
+            }
+        }
+
         if (session()->has('locale')) {
             App::setLocale(session('locale'));
         } elseif (Auth::check()) {
