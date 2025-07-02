@@ -23,16 +23,16 @@
         <x-nav-link href="{{ route('login') }}" :active="Route::is('login')">Log in</x-nav-link>
         @endguest
     </ul>
-    <div style="position: relative; display: inline-block; float: right; margin-right: 2em;">
-        <button id="lang-btn" style="background: none; border: none; cursor: pointer; font-size: 1.5em; margin-top: 0;" title="Change language">
+    <div class="language">
+        <button type="button" id="lang-btn" name="lang-btn" title="Change language">
             🌐
         </button>
-        <div id="lang-menu" style="display: none; position: fixed; right: 0; background: #fff; border: 1px solid #ccc; z-index: 1000; min-width: 120px;">
-            <form method="POST" action="{{ route('set-locale') }}" style="margin: 0;">
+        <div id="lang-menu">
+            <form method="POST" action="{{ route('set-locale') }}">
                 @csrf
-                <button type="submit" name="locale" value="en" style="width: 100%; text-align: left; padding: 0.5em 1em; background: none; border: none; cursor: pointer;">English</button>
-                <button type="submit" name="locale" value="de" style="width: 100%; text-align: left; padding: 0.5em 1em; background: none; border: none; cursor: pointer;">Deutsch</button>
-                <button type="submit" name="locale" value="hr" style="width: 100%; text-align: left; padding: 0.5em 1em; background: none; border: none; cursor: pointer;">Hrvatski</button>
+                <button type="submit" name="locale" value="en">English</button>
+                <button type="submit" name="locale" value="de">Deutsch</button>
+                <button type="submit" name="locale" value="hr">Hrvatski</button>
                 <!-- Add more languages as needed -->
             </form>
         </div>

@@ -30,6 +30,7 @@ class MyMiddleware
         } elseif (Auth::check()) {
             App::setLocale(Auth::user()->language);
         }
+
         return $next($request);
     }
 }
