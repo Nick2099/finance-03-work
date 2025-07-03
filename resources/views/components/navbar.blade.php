@@ -7,7 +7,7 @@
             <x-nav-link href="{{ route('entry.create') }}" :active="Route::is('entry.create')">New entry</x-nav-link>
             <x-nav-links href="#" text="Views">
                 <ul>
-                    <x-nav-link href="{{ route('entry.list') }}" :active="Route::is('entry.list')">List</x-nav-link>
+                    <x-nav-link href="{{ route('entry.list') }}" :active="Route::is('entry.list')">List (edit)</x-nav-link>
                     <x-nav-link href="{{ route('graphs.inex') }}" :active="Route::is('graphs.inex')">Income-Expenses</x-nav-link>
                     <li><a href="#">Themes</a></li>
                     <li><a href="#">Plugins</a></li>

@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Graphs;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Header;
-use App\Models\Item;
-use App\Models\Group;
 use Illuminate\Support\Facades\Lang;
 
 class InExController extends Controller
@@ -69,6 +67,12 @@ class InExController extends Controller
         $income = __('charts.income');
         $expense = __('charts.expense');
         $correction = __('charts.correction');
-        return view('graphs.inex', compact('months', 'incomeData', 'expenseData', 'correctionData', 'years', 'selectedYear', 'income', 'expense', 'correction'));
+        $year = __('charts.year');
+        if (Lang::has('charts.heading')) {
+            $heading = __('charts.heading');
+        } else {
+            $heading = __('charts.income') . ' vs ' . __('charts.expense') . ' incl. ' . __('charts.correction');
+        }
+        return view('graphs.inex', compact('months', 'incomeData', 'expenseData', 'correctionData', 'years', 'selectedYear', 'income', 'expense', 'correction', 'heading', 'year'));
     }
 }
