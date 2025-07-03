@@ -15,7 +15,7 @@
         </select>
     </form>
 
-    <div style="max-width: 100%; margin: 0.5em auto;">
+    <div>
         <canvas id="inexChart"></canvas>
     </div>
 
