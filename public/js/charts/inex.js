@@ -44,21 +44,5 @@ function drawChart() {
     });
 }
 
-function resizeCanvas() {
-    if (canvas.width < canvas.height) {
-        let w = window.innerWidth;
-        let h = window.innerHeight;
-        let size = Math.min(w, h);
-        canvas.width = size * 0.9;
-        canvas.height = size * 0.9;
-    } else {
-        canvas.width = window.innerWidth * 0.9;
-        canvas.height = window.innerHeight * 0.8;
-    }
-    
-    console.log(`Canvas resized to ${canvas.width}x${canvas.height}`);
-    drawChart();
-}
-
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
+drawChart();
+window.addEventListener("resize", drawChart);

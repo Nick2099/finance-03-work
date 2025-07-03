@@ -15,8 +15,8 @@
         </select>
     </form>
 
-    <div>
-        <canvas id="inexChart"></canvas>
+    <div class="chart-container">
+        <canvas id="inexChart" style="width: 100%; height: 100%"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

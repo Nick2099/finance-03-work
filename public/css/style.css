@@ -176,3 +176,23 @@ nav ul li ul li {
     background-color: #7ce67f;
     color: black;
 }
+
+.chart-container, canvas {
+    box-sizing: border-box;
+}
+
+.chart-container {
+    width: 100vw;
+    max-width: 1500px;
+    height: 75vw;
+    max-height: 600px;
+    padding: 4px;
+}
+@media (orientation: portrait) {
+    .chart-container {
+        width: 100vw;
+        height: 90vw;
+        max-width: 100vw;
+        max-height: 90vw;
+    }
+}
