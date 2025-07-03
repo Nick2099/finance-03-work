@@ -46,7 +46,9 @@
                     <option value="2" {{ $selectedType == 2 ? 'selected' : '' }}>Expense</option>
                     <option value="1" {{ $selectedType == 1 ? 'selected' : '' }}>Income</option>
                     <option value="0" {{ $selectedType == 0 ? 'selected' : '' }}>State</option>
-                    <option value="3" {{ $selectedType == 3 ? 'selected' : '' }} disabled>Correction</option>
+                    {{-- <option value="3" {{ $selectedType == 3 ? 'selected' : '' }} disabled>Correction</option> --}}
+                    {{-- Temporary enabled for testing--}}
+                    <option value="3" {{ $selectedType == 3 ? 'selected' : '' }}>Correction</option>
                 </select>
             </div>
         </x-form-field>

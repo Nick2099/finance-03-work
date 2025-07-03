@@ -72,4 +72,7 @@ return [
     
     // Maintenance mode configuration
     'maintenance_lock_up' => env('MAINTENANCE_LOCK_UP', false),
+
+    // Charts configuration
+    'months' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 ];

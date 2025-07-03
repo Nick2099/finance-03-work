@@ -115,6 +115,15 @@ class DatabaseSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        Group::factory()->create([
+            'name' => 'Correction',
+            'description' => 'Difference between state and expenses/income, for example when you forgot to add an expense or income.',
+            'type' => 3, // correction
+            'privacy' => 0, // public
+            'collection_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         Subgroup::factory()->create([
             'name' => 'Bank account',
@@ -322,6 +331,14 @@ class DatabaseSeeder extends Seeder
             'description' => 'This is the subscriptions subgroup.',
             'privacy' => 0, // public
             'group_id' => 7,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'Expenses',
+            'description' => 'This is the expenses subgroup.',
+            'privacy' => 0, // public
+            'group_id' => 8,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

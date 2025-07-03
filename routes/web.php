@@ -9,6 +9,7 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfileBadgesController;
 use App\Http\Controllers\RegisterUserController;
+use App\Http\Controllers\Graphs\InExController;
 
 Route::middleware([MyMiddleware::class])->group(function () {
     Route::get('/', function () {
@@ -105,4 +106,6 @@ Route::middleware([MyMiddleware::class])->group(function () {
         ->name('locations.suggest');
 
     Route::post('/set-locale', [LocaleController::class, 'setLocale'])->name('set-locale');
+
+    Route::get('/graphs/inex', [InExController::class, 'index'])->name('graphs.inex');
 });
