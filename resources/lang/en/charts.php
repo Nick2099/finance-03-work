@@ -11,4 +11,11 @@ return [
     "select_year" => "Select Year",
     "no_data" => "No data available for the selected year.",
     "select_month" => "Select Month",
+    "ex" => [
+        "heading" => "Expensens by Group",
+        "income" => "Income",
+        "expense" => "Expense",
+        "correction" => "Correction",
+        "total" => "Total",
+    ],
 ];
