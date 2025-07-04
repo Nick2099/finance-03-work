@@ -11,18 +11,29 @@ console.log("Group Data:", groupData);
 
 const canvas = document.getElementById("exChart");
 let exChart;
+let currentChartType = 'grouped'; // default
+let currentChartStyle = 'bar'; // default
 
 function getDatasets() {
     // groupNames: {id: name}, groupData: {id: [amounts]}
     const datasets = [];
     for (const groupId in groupNames) {
         if (groupData[groupId]) {
-            datasets.push({
+            const color = getColorForGroup(groupId);
+            const dataset = {
                 label: groupNames[groupId],
                 data: groupData[groupId],
-                backgroundColor: getColorForGroup(groupId),
-                stack: 'expense',
-            });
+                backgroundColor: color,
+                stack: currentChartType === 'stacked' ? 'expense' : undefined,
+            };
+            // If line chart, set borderColor and pointBackgroundColor
+            if (currentChartStyle === 'line') {
+                dataset.borderColor = color;
+                dataset.pointBackgroundColor = color;
+                dataset.backgroundColor = color + '33'; // semi-transparent fill
+                dataset.fill = false;
+            }
+            datasets.push(dataset);
         }
     }
     return datasets;
@@ -42,8 +53,9 @@ function drawChart() {
     if (exChart) {
         exChart.destroy();
     }
+    const isStacked = currentChartType === 'stacked';
     exChart = new Chart(ctx, {
-        type: "bar",
+        type: currentChartStyle,
         data: {
             labels: monthsLabels,
             datasets: getDatasets(),
@@ -56,12 +68,32 @@ function drawChart() {
                 title: { display: false },
             },
             scales: {
-                x: { stacked: true },
-                y: { stacked: true, beginAtZero: true },
+                x: { stacked: isStacked },
+                y: { stacked: isStacked, beginAtZero: true },
             },
         },
     });
 }
 
-drawChart();
+// Dropdown for chart type
+document.addEventListener('DOMContentLoaded', function() {
+    const chartTypeSelect = document.getElementById('chartTypeSelect');
+    if (chartTypeSelect) {
+        chartTypeSelect.addEventListener('change', function(e) {
+            currentChartType = e.target.value;
+            drawChart();
+        });
+    }
+
+    const chartStyleSelect = document.getElementById('chartStyleSelect');
+    if (chartStyleSelect) {
+        chartStyleSelect.addEventListener('change', function(e) {
+            currentChartStyle = e.target.value;
+            drawChart();
+        });
+    }
+
+    drawChart();
+});
+
 window.addEventListener("resize", drawChart);

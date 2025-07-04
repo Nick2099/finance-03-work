@@ -13,6 +13,18 @@
                 </option>
             @endforeach
         </select>
+
+        <label for="chartTypeSelect">Chart Type:</label>
+        <select id="chartTypeSelect">
+            <option value="grouped" selected>Grouped</option>
+            <option value="stacked">Stacked</option>
+        </select>
+
+        <label for="chartStyleSelect">Chart Style:</label>
+        <select id="chartStyleSelect">
+            <option value="bar" selected>Columns</option>
+            <option value="line">Lines</option>
+        </select>
     </form>
 
     <div class="chart-container">
