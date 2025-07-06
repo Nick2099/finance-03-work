@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProfileBadgesController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\Graphs\ExController;
+use App\Http\Controllers\Graphs\ExgrController;
 use App\Http\Controllers\Graphs\InExController;
 
 Route::middleware([MyMiddleware::class])->group(function () {
@@ -111,4 +112,6 @@ Route::middleware([MyMiddleware::class])->group(function () {
     Route::get('/graphs/inex', [InExController::class, 'index'])->name('graphs.inex');
 
     Route::get('/graphs/ex', [ExController::class, 'index'])->name('graphs.ex');
+
+    Route::get('/graphs/exgr', [ExgrController::class, 'index'])->name('graphs.exgr');
 });
