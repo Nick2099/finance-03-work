@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Graphs;
 
+use App\Models\Group;
+use App\Models\Header;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Header;
 use Illuminate\Support\Facades\Lang;
 
 class ExController extends Controller
@@ -65,7 +66,7 @@ class ExController extends Controller
 
             // Only fetch names for group_ids present in $groupData
             $groupIds = array_keys($groupData);
-            $groupNamesFromDb = \App\Models\Group::whereIn('id', $groupIds)->pluck('name', 'id');
+            $groupNamesFromDb = Group::whereIn('id', $groupIds)->pluck('name', 'id');
             foreach (array_keys($groupData) as $group_id) {
                 $groupNames[$group_id] = $groupNamesFromDb[$group_id] ?? 'Unknown';
             }

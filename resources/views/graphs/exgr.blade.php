@@ -15,7 +15,7 @@
         </select>
 
         <label for="groupSelect">Select group:</label>
-        <select name="group" id="groupSelect">
+        <select name="group" id="groupSelect" onchange="this.form.submit()">
             @foreach ($groupNames as $group)
                 <option value="{{ $group->id }}" @if (request('group', $selectedGroup ?? null) == $group->id) selected @endif>
                     {{ $group->name }}
@@ -44,8 +44,9 @@
 
     <script>
         const monthsLabels = @json($months ?? []);
-        const groupData = @json($groupData ?? []);
         const groupNames = @json($groupNames ?? []);
+        const subgroupData = @json($subgroupData ?? []);
+        const subgroupNames = @json($subgroupNames ?? []);
     </script>
     <script src="{{ asset('js/charts/exgr.js') }}"></script>
 

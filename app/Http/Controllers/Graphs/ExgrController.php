@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Graphs;
 
 use App\Models\Group;
 use App\Models\Header;
+use App\Models\Subgroup;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
@@ -37,47 +38,52 @@ class ExgrController extends Controller
             $months = config('appoptions.months');
         }
 
-
         // Get the collection_id for this user (assuming one collection per user)
         $collectionId = $user->collection_id;
         // Get only groups that belong to this collection
-        $userGroups = Group::where('collection_id', $collectionId)->orderBy('name')->get();
-        $groupNames = $userGroups;
+        $groupNames = Group::where('collection_id', $collectionId)->orderBy('name')->get();
 
         // Determine selected group (from GET or default to first)
         $selectedGroup = request('group');
-        if (!$selectedGroup || !$userGroups->pluck('id')->contains($selectedGroup)) {
-            $selectedGroup = $userGroups->first() ? $userGroups->first()->id : null;
+        if (!$selectedGroup || !$groupNames->pluck('id')->contains($selectedGroup)) {
+            $selectedGroup = $groupNames->first() ? $groupNames->first()->id : null;
         }
 
-        $groupData = [];
+        $subgroupNames = [];
+        $subgroupData = [];
         if ($selectedYear && $selectedGroup) {
             // Get all headers for the selected year and user
             $headers = Header::where('user_id', $user->id)
                 ->whereYear('date', $selectedYear)
                 ->get();
 
-            // For each header, sum only expense amounts for the selected group by month
             foreach ($headers as $header) {
                 $monthIdx = (int)date('n', strtotime($header->date)) - 1;
                 foreach ($header->items as $item) {
                     $group = $item->group;
-                    if (!$group || (isset($group->type) && $group->type !== 2)) {
-                        continue; // Only sum if group type is 'expense'
+                    if (!$group) {
+                        continue;
                     }
                     if ($item->group_id != $selectedGroup) {
                         continue; // Only include items for the selected group
                     }
-                    if (!isset($groupData[$selectedGroup])) {
-                        $groupData[$selectedGroup] = array_fill(0, 12, 0);
+                    if (!isset($subgroupData[$item->subgroup_id])) {
+                        $subgroupData[$item->subgroup_id] = array_fill(0, 12, 0);
                     }
-                    $groupData[$selectedGroup][$monthIdx] += $item->amount;
+                    $subgroupData[$item->subgroup_id][$monthIdx] += $item->amount;
                 }
+            }
+
+            // Only fetch names for subgroup_ids present in $subgroupData
+            $subgroupIds = array_keys($subgroupData);
+            $subgroupNamesFromDb = Subgroup::whereIn('id', $subgroupIds)->pluck('name', 'id');
+            foreach (array_keys($subgroupData) as $subgroup_id) {
+                $subgroupNames[$subgroup_id] = $subgroupNamesFromDb[$subgroup_id] ?? 'Unknown';
             }
         }
 
         $year = __('charts.year');
         $heading = __('charts.exgr.heading');
-        return view('graphs.exgr', compact('months', 'years', 'selectedYear', 'heading', 'year', 'groupData', 'groupNames', 'selectedGroup'));
+        return view('graphs.exgr', compact('months', 'years', 'selectedYear', 'heading', 'year', 'subgroupData', 'groupNames', 'subgroupNames', 'selectedGroup'));
     }
 }

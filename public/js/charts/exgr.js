@@ -7,22 +7,23 @@
 console.log("ExgrController.js loaded");
 console.log("Months Labels:", monthsLabels);
 console.log("Group Names:", groupNames);
-console.log("Group Data:", groupData);
+console.log("Subgroup Names:", subgroupNames);
+console.log("Subgroup Data:", subgroupData);
 
 const canvas = document.getElementById("exgrChart");
-let exChart;
+let exgrChart;
 let currentChartType = 'grouped'; // default
 let currentChartStyle = 'bar'; // default
 
 function getDatasets() {
     // groupNames: {id: name}, groupData: {id: [amounts]}
     const datasets = [];
-    for (const groupId in groupNames) {
-        if (groupData[groupId]) {
-            const color = getColorForGroup(groupId);
+    for (const subgroupId in subgroupNames) {
+        if (subgroupData[subgroupId]) {
+            const color = getColorForGroup(subgroupId);
             const dataset = {
-                label: groupNames[groupId],
-                data: groupData[groupId],
+                label: subgroupNames[subgroupId],
+                data: subgroupData[subgroupId],
                 backgroundColor: color,
                 stack: currentChartType === 'stacked' ? 'expense' : undefined,
             };
@@ -39,22 +40,22 @@ function getDatasets() {
     return datasets;
 }
 
-function getColorForGroup(groupId) {
+function getColorForGroup(subgroupId) {
     // Simple color palette, can be improved
     const palette = [
         '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc949',
         '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#b07aa1', '#7a9ba1'
     ];
-    return palette[groupId % palette.length];
+    return palette[subgroupId % palette.length];
 }
 
 function drawChart() {
     const ctx = canvas.getContext("2d");
-    if (exChart) {
-        exChart.destroy();
+    if (exgrChart) {
+        exgrChart.destroy();
     }
     const isStacked = currentChartType === 'stacked';
-    exChart = new Chart(ctx, {
+    exgrChart = new Chart(ctx, {
         type: currentChartStyle,
         data: {
             labels: monthsLabels,
