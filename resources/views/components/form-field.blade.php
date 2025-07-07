@@ -1,5 +1,5 @@
 @props(['name' => 'Test name', 'label' => 'Test label', 'description' => null, 'help' => null])
-<div>
+<div id="{{ $name }}-wrapper">
     <div class="form-field">
         <label for="{{ $name }}" class="form-field-label">
             {{ $label }}

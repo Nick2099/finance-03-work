@@ -46,8 +46,8 @@
                     <option value="2" {{ $selectedType == 2 ? 'selected' : '' }}>Expense</option>
                     <option value="1" {{ $selectedType == 1 ? 'selected' : '' }}>Income</option>
                     <option value="0" {{ $selectedType == 0 ? 'selected' : '' }}>State</option>
-                    {{-- <option value="3" {{ $selectedType == 3 ? 'selected' : '' }} disabled>Correction</option> --}}
                     {{-- Temporary enabled for testing--}}
+                    {{-- <option value="3" {{ $selectedType == 3 ? 'selected' : '' }} disabled>Correction</option> --}}
                     <option value="3" {{ $selectedType == 3 ? 'selected' : '' }}>Correction</option>
                 </select>
             </div>
@@ -58,18 +58,16 @@
                 step="0.01" class="decimal" required />
         </x-form-field>
 
-        <x-form-field name="place" label="Place of purchase" required>
+        <x-form-field id="place" name="place" label="Place of purchase" required>
             <div>
-                <input list="places" name="place" id="place" value="{{ old('place', $header->place_of_purchase ?? '') }}" autocomplete="off"
-                    required class="form-input" />
+                <input list="places" name="place" id="place" value="{{ old('place', $header->place_of_purchase ?? '') }}" autocomplete="off" class="form-input" required />
                 <datalist id="places"></datalist>
             </div>
         </x-form-field>
 
-        <x-form-field name="location" label="Location" required>
+        <x-form-field id="loaction" name="location" label="Location" required>
             <div>
-                <input list="locations" name="location" id="location" value="{{ old('location', $header->location ?? '') }}" autocomplete="off"
-                    required class="form-input" />
+                <input list="locations" name="location" id="location" value="{{ old('location', $header->location ?? '') }}" autocomplete="off" class="form-input" required />
                 <datalist id="locations"></datalist>
             </div>
         </x-form-field>
@@ -165,6 +163,7 @@
             const headerId = @json($header->id ?? null);
             const bottomLine = document.getElementById('bottom-line');
             const typeSelect = document.getElementById('type');
+
             let items = [];
             if (Array.isArray(listOfItems) && listOfItems.length > 0) {
                 // Map group and subgroup names for each item
@@ -713,6 +712,7 @@
             // Update group dropdown when type changes
             typeSelect.addEventListener('change', function() {
                 updateGroupDropdown(this.value);
+                hidePlaceAndLocationFields(this.value);
             });
 
             // Badge modal logic (now inside the same DOMContentLoaded as items)
@@ -764,6 +764,31 @@
                     document.getElementById('badge-modal').style.display = 'none';
                 }
             });
+
+            const placeWrapper = document.getElementById('place-wrapper');
+            const locationWrapper = document.getElementById('location-wrapper');
+            function hidePlaceAndLocationFields(selectedType) {
+                if (selectedType === "0") {
+                    if (placeWrapper) {
+                        placeWrapper.style.display = 'none';
+                        placeInput.required = false;
+                    }
+                    if (locationWrapper) {
+                        locationWrapper.style.display = 'none';
+                        locationInput.required = false;
+                    }
+                } else {
+                    if (placeWrapper) {
+                        placeWrapper.style.display = 'block';
+                        placeInput.required = true;
+                    }
+                    if (locationWrapper) {
+                        locationWrapper.style.display = 'block';
+                        locationInput.required = true;
+                    }
+                }
+            }
+            hidePlaceAndLocationFields(typeSelect.value);
         });
 
 

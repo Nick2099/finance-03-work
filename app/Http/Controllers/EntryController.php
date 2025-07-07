@@ -83,8 +83,8 @@ class EntryController extends Controller
         // Validate the request data (adjust rules as needed for your fields)
         $validatedData = $request->validate([
             'date' => 'required|date',
-            'place' => 'required|string|max:50',
-            'location' => 'required|string|max:50',
+            'place' => 'nullable|string|max:50',
+            'location' => 'nullable|string|max:50',
             'note' => 'nullable|string',
             'amount' => 'required|numeric|min:0',
             'items' => 'required|array|min:1',
@@ -107,8 +107,8 @@ class EntryController extends Controller
             $header = Header::where('user_id', $user->id)->findOrFail($request->input('header_id'));
             $header->update([
                 'date' => $validatedData['date'],
-                'place_of_purchase' => $validatedData['place'],
-                'location' => $validatedData['location'],
+                'place_of_purchase' => $validatedData['place'] !== null ? $validatedData['place'] : '',
+                'location' => $validatedData['location'] !== null ? $validatedData['location'] : '',
                 'note' => $validatedData['note'] ?? null,
                 'amount' => $validatedData['amount'],
             ]);
@@ -119,8 +119,8 @@ class EntryController extends Controller
             $header = Header::create([
                 'user_id' => $user->id,
                 'date' => $validatedData['date'],
-                'place_of_purchase' => $validatedData['place'],
-                'location' => $validatedData['location'],
+                'place_of_purchase' => $validatedData['place'] !== null ? $validatedData['place'] : '',
+                'location' => $validatedData['location'] !== null ? $validatedData['location'] : '',
                 'note' => $validatedData['note'] ?? null,
                 'amount' => $validatedData['amount'],
             ]);
