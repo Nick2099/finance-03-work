@@ -1,26 +1,56 @@
-const canvas = document.getElementById("exgrChart");
-let exgrChart;
+const canvas = document.getElementById("chart");
+let chart;
+
+console.log("Months Labels:", monthsLabels);
+console.log("Subgroup Names:", subgroupNames);
+console.log("Subgroup Data:", subgroupData);
+console.log("Data Source:", dataSource);
 
 function getDatasets() {
     const datasets = [];
-    for (const subgroupId in subgroupNames) {
-        if (subgroupData[subgroupId]) {
-            const color = getColorForGroup(subgroupId);
-            const dataset = {
-                label: subgroupNames[subgroupId],
-                data: subgroupData[subgroupId],
-                backgroundColor: color,
-                stack: currentChartType === "stacked" ? "expense" : undefined,
-            };
-            if (currentChartStyle === "line") {
-                dataset.borderColor = color;
-                dataset.pointBackgroundColor = color;
-                dataset.backgroundColor = color + "33"; // semi-transparent fill
-                dataset.fill = false;
+    if (dataSource === "groups") {
+        for (const subgroupId in subgroupNames) {
+            if (subgroupData[subgroupId]) {
+                const color = getColorForGroup(subgroupId);
+                const dataset = {
+                    label: subgroupNames[subgroupId],
+                    data: subgroupData[subgroupId],
+                    backgroundColor: color,
+                    stack:
+                        currentChartType === "stacked" ? "expense" : undefined,
+                };
+                if (currentChartStyle === "line") {
+                    dataset.borderColor = color;
+                    dataset.pointBackgroundColor = color;
+                    dataset.backgroundColor = color + "33"; // semi-transparent fill
+                    dataset.fill = false;
+                }
+                datasets.push(dataset);
             }
-            datasets.push(dataset);
+        }
+    } else if (dataSource === "income-vs-expense") {
+        for (const groupId in groupNames) {
+            if (groupData[groupId]) {
+                const color = getColorForGroup(groupId);
+                const dataset = {
+                    label: groupNames[groupId],
+                    data: groupData[groupId],
+                    backgroundColor: color,
+                    stack:
+                        currentChartType === "stacked" ? "expense" : undefined,
+                };
+                // If line chart, set borderColor and pointBackgroundColor
+                if (currentChartStyle === "line") {
+                    dataset.borderColor = color;
+                    dataset.pointBackgroundColor = color;
+                    dataset.backgroundColor = color + "33"; // semi-transparent fill
+                    dataset.fill = false;
+                }
+                datasets.push(dataset);
+            }
         }
     }
+    console.log("Datasets:", datasets);
     return datasets;
 }
 
@@ -45,11 +75,11 @@ function getColorForGroup(subgroupId) {
 
 function drawChart() {
     const ctx = canvas.getContext("2d");
-    if (exgrChart) {
-        exgrChart.destroy();
+    if (chart) {
+        chart.destroy();
     }
     const isStacked = currentChartType === "stacked";
-    exgrChart = new Chart(ctx, {
+    chart = new Chart(ctx, {
         type: currentChartStyle,
         data: {
             labels: monthsLabels,

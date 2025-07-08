@@ -1,17 +1,18 @@
 <?php
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\MyMiddleware;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProfileBadgesController;
-use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\Graphs\ExController;
 use App\Http\Controllers\Graphs\ExgrController;
 use App\Http\Controllers\Graphs\InExController;
+use App\Http\Controllers\RegisterUserController;
+use App\Http\Controllers\ProfileBadgesController;
+use App\Http\Controllers\GraphsNew\GraphsController;
 
 Route::middleware([MyMiddleware::class])->group(function () {
     Route::get('/', function () {
@@ -114,4 +115,8 @@ Route::middleware([MyMiddleware::class])->group(function () {
     Route::get('/graphs/ex', [ExController::class, 'index'])->name('graphs.ex');
 
     Route::get('/graphs/exgr', [ExgrController::class, 'index'])->name('graphs.exgr');
+
+    Route::get('/graphs-new/groups', [GraphsController::class, 'indexGroups'])->name('graphs-new.groups');
+
+    Route::get('/graphs-new/income-vs-expense', [GraphsController::class, 'indexIncomeVsExpense'])->name('graphs-new.income-vs-expense');
 });

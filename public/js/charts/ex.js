@@ -11,8 +11,8 @@ console.log("Group Data:", groupData);
 
 const canvas = document.getElementById("exChart");
 let exChart;
-let currentChartType = 'grouped'; // default
-let currentChartStyle = 'bar'; // default
+let currentChartType = "grouped"; // default
+let currentChartStyle = "bar"; // default
 
 function getDatasets() {
     // groupNames: {id: name}, groupData: {id: [amounts]}
@@ -24,13 +24,13 @@ function getDatasets() {
                 label: groupNames[groupId],
                 data: groupData[groupId],
                 backgroundColor: color,
-                stack: currentChartType === 'stacked' ? 'expense' : undefined,
+                stack: currentChartType === "stacked" ? "expense" : undefined,
             };
             // If line chart, set borderColor and pointBackgroundColor
-            if (currentChartStyle === 'line') {
+            if (currentChartStyle === "line") {
                 dataset.borderColor = color;
                 dataset.pointBackgroundColor = color;
-                dataset.backgroundColor = color + '33'; // semi-transparent fill
+                dataset.backgroundColor = color + "33"; // semi-transparent fill
                 dataset.fill = false;
             }
             datasets.push(dataset);
@@ -42,8 +42,18 @@ function getDatasets() {
 function getColorForGroup(groupId) {
     // Simple color palette, can be improved
     const palette = [
-        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc949',
-        '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#b07aa1', '#7a9ba1'
+        "#4e79a7",
+        "#f28e2b",
+        "#e15759",
+        "#76b7b2",
+        "#59a14f",
+        "#edc949",
+        "#af7aa1",
+        "#ff9da7",
+        "#9c755f",
+        "#bab0ab",
+        "#b07aa1",
+        "#7a9ba1",
     ];
     return palette[groupId % palette.length];
 }
@@ -53,7 +63,7 @@ function drawChart() {
     if (exChart) {
         exChart.destroy();
     }
-    const isStacked = currentChartType === 'stacked';
+    const isStacked = currentChartType === "stacked";
     exChart = new Chart(ctx, {
         type: currentChartStyle,
         data: {
@@ -76,18 +86,18 @@ function drawChart() {
 }
 
 // Dropdown for chart type
-document.addEventListener('DOMContentLoaded', function() {
-    const chartTypeSelect = document.getElementById('chartTypeSelect');
+document.addEventListener("DOMContentLoaded", function () {
+    const chartTypeSelect = document.getElementById("chartTypeSelect");
     if (chartTypeSelect) {
-        chartTypeSelect.addEventListener('change', function(e) {
+        chartTypeSelect.addEventListener("change", function (e) {
             currentChartType = e.target.value;
             drawChart();
         });
     }
 
-    const chartStyleSelect = document.getElementById('chartStyleSelect');
+    const chartStyleSelect = document.getElementById("chartStyleSelect");
     if (chartStyleSelect) {
-        chartStyleSelect.addEventListener('change', function(e) {
+        chartStyleSelect.addEventListener("change", function (e) {
             currentChartStyle = e.target.value;
             drawChart();
         });
