@@ -23,16 +23,19 @@
             @endforeach
         </select>
 
-        <label for="chartTypeSelect">Chart Type:</label>
-        <select id="chartTypeSelect">
-            <option value="grouped" selected>Grouped</option>
-            <option value="stacked">Stacked</option>
+        <label for="chartStyleSelect">Chart Style:</label>
+        <select name="chartStyle" id="chartStyleSelect" onchange="this.form.submit()">
+            <option value="bar" {{ request('chartStyle', 'bar') == 'bar' ? 'selected' : '' }}>Columns</option>
+            <option value="line" {{ request('chartStyle', 'bar') == 'line' ? 'selected' : '' }}>Lines</option>
         </select>
 
-        <label for="chartStyleSelect">Chart Style:</label>
-        <select id="chartStyleSelect">
-            <option value="bar" selected>Columns</option>
-            <option value="line">Lines</option>
+        <label for="chartTypeSelect">Chart Type:</label>
+        <select name="chartType" id="chartTypeSelect" onchange="this.form.submit()">
+            <option value="grouped" {{ ($currentChartType ?? 'grouped') == 'grouped' ? 'selected' : '' }}>Grouped</option>
+            <option value="stacked" 
+                {{ ($currentChartType ?? 'grouped') == 'stacked' ? 'selected' : '' }}
+                @if(($currentChartStyle ?? 'bar') !== 'bar') disabled @endif
+            >Stacked</option>
         </select>
     </form>
 
@@ -47,6 +50,8 @@
         const groupNames = @json($groupNames ?? []);
         const subgroupData = @json($subgroupData ?? []);
         const subgroupNames = @json($subgroupNames ?? []);
+        const currentChartType = @json($currentChartType ?? []);
+        const currentChartStyle = @json($currentChartStyle ?? []);
     </script>
     <script src="{{ asset('js/charts/exgr.js') }}"></script>
 

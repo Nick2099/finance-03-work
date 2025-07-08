@@ -58,7 +58,7 @@
                 step="0.01" class="decimal" required />
         </x-form-field>
 
-        <x-form-field id="place" name="place" label="Place of purchase" required>
+        <x-form-field id="place" name="place" label="Place / Institution" required>
             <div>
                 <input list="places" name="place" id="place" value="{{ old('place', $header->place_of_purchase ?? '') }}" autocomplete="off" class="form-input" required />
                 <datalist id="places"></datalist>

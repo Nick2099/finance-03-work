@@ -38,6 +38,19 @@ class ExgrController extends Controller
             $months = config('appoptions.months');
         }
 
+        $currentChartStyle = request('chartStyle');
+        if (!$currentChartStyle || !in_array($currentChartStyle, ['bar', 'line'])) {
+            $currentChartStyle = 'bar'; // default
+        }
+
+        $currentChartType = request('chartType');
+        if (!$currentChartType || !in_array($currentChartType, ['grouped', 'stacked'])) {
+            $currentChartType = 'grouped'; // default
+        }
+        if ($currentChartStyle === 'line') {
+            $currentChartType = 'grouped'; // Reset to grouped for line charts
+        }
+
         // Get the collection_id for this user (assuming one collection per user)
         $collectionId = $user->collection_id;
         // Get only groups that belong to this collection
@@ -84,6 +97,6 @@ class ExgrController extends Controller
 
         $year = __('charts.year');
         $heading = __('charts.exgr.heading');
-        return view('graphs.exgr', compact('months', 'years', 'selectedYear', 'heading', 'year', 'subgroupData', 'groupNames', 'subgroupNames', 'selectedGroup'));
+        return view('graphs.exgr', compact('months', 'years', 'selectedYear', 'heading', 'year', 'subgroupData', 'groupNames', 'subgroupNames', 'selectedGroup', 'currentChartType', 'currentChartStyle'));
     }
 }

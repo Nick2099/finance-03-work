@@ -1,22 +1,15 @@
-// Data passed from Blade (ex.blade.php) via @json
-// Example:
-// let monthsLabels = [...];
-// let groupNames = {...}; // {1: 'Food', 2: 'Transport', ...}
-// let groupData = {...}; // {1: [100,120,...], 2: [80,90,...], ...}
-
 console.log("ExgrController.js loaded");
 console.log("Months Labels:", monthsLabels);
 console.log("Group Names:", groupNames);
 console.log("Subgroup Names:", subgroupNames);
 console.log("Subgroup Data:", subgroupData);
+console.log("Current chart type:", currentChartType);
+console.log("Current chart style:", currentChartStyle);
 
 const canvas = document.getElementById("exgrChart");
 let exgrChart;
-let currentChartType = 'grouped'; // default
-let currentChartStyle = 'bar'; // default
 
 function getDatasets() {
-    // groupNames: {id: name}, groupData: {id: [amounts]}
     const datasets = [];
     for (const subgroupId in subgroupNames) {
         if (subgroupData[subgroupId]) {
@@ -25,13 +18,12 @@ function getDatasets() {
                 label: subgroupNames[subgroupId],
                 data: subgroupData[subgroupId],
                 backgroundColor: color,
-                stack: currentChartType === 'stacked' ? 'expense' : undefined,
+                stack: currentChartType === "stacked" ? "expense" : undefined,
             };
-            // If line chart, set borderColor and pointBackgroundColor
-            if (currentChartStyle === 'line') {
+            if (currentChartStyle === "line") {
                 dataset.borderColor = color;
                 dataset.pointBackgroundColor = color;
-                dataset.backgroundColor = color + '33'; // semi-transparent fill
+                dataset.backgroundColor = color + "33"; // semi-transparent fill
                 dataset.fill = false;
             }
             datasets.push(dataset);
@@ -43,8 +35,18 @@ function getDatasets() {
 function getColorForGroup(subgroupId) {
     // Simple color palette, can be improved
     const palette = [
-        '#4e79a7', '#f28e2b', '#e15759', '#76b7b2', '#59a14f', '#edc949',
-        '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab', '#b07aa1', '#7a9ba1'
+        "#4e79a7",
+        "#f28e2b",
+        "#e15759",
+        "#76b7b2",
+        "#59a14f",
+        "#edc949",
+        "#af7aa1",
+        "#ff9da7",
+        "#9c755f",
+        "#bab0ab",
+        "#b07aa1",
+        "#7a9ba1",
     ];
     return palette[subgroupId % palette.length];
 }
@@ -54,7 +56,7 @@ function drawChart() {
     if (exgrChart) {
         exgrChart.destroy();
     }
-    const isStacked = currentChartType === 'stacked';
+    const isStacked = currentChartType === "stacked";
     exgrChart = new Chart(ctx, {
         type: currentChartStyle,
         data: {
@@ -77,26 +79,33 @@ function drawChart() {
 }
 
 // Dropdown for chart type
-document.addEventListener('DOMContentLoaded', function() {
-    const chartTypeSelect = document.getElementById('chartTypeSelect');
+document.addEventListener("DOMContentLoaded", function () {
+    const chartTypeSelect = document.getElementById("chartTypeSelect");
     if (chartTypeSelect) {
-        chartTypeSelect.addEventListener('change', function(e) {
+        chartTypeSelect.addEventListener("change", function (e) {
             currentChartType = e.target.value;
             drawChart();
         });
     }
 
-    const chartStyleSelect = document.getElementById('chartStyleSelect');
+    const chartStyleSelect = document.getElementById("chartStyleSelect");
     if (chartStyleSelect) {
-        chartStyleSelect.addEventListener('change', function(e) {
+        chartStyleSelect.addEventListener("change", function (e) {
             currentChartStyle = e.target.value;
+            if (currentChartStyle === "line") {
+                // chartTypeSelect.value = "grouped"; // Reset to grouped for line charts
+                // currentChartType = "grouped";
+                // Submit the form to update the URL and reload with correct params
+                chartStyleSelect.form.submit();
+                return; // Prevent drawChart() since page will reload
+            }
             drawChart();
         });
     }
 
-    const groupSelect = document.getElementById('groupSelect');
+    const groupSelect = document.getElementById("groupSelect");
     if (groupSelect) {
-        groupSelect.addEventListener('change', function(e) {
+        groupSelect.addEventListener("change", function (e) {
             currentGroup = e.target.value;
             drawChart();
         });
