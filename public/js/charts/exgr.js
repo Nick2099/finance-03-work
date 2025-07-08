@@ -93,8 +93,8 @@ document.addEventListener("DOMContentLoaded", function () {
         chartStyleSelect.addEventListener("change", function (e) {
             currentChartStyle = e.target.value;
             if (currentChartStyle === "line") {
-                // chartTypeSelect.value = "grouped"; // Reset to grouped for line charts
-                // currentChartType = "grouped";
+                chartTypeSelect.value = "grouped"; // Reset to grouped for line charts
+                currentChartType = "grouped";
                 // Submit the form to update the URL and reload with correct params
                 chartStyleSelect.form.submit();
                 return; // Prevent drawChart() since page will reload

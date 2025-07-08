@@ -25,8 +25,8 @@
 
         <label for="chartStyleSelect">Chart Style:</label>
         <select name="chartStyle" id="chartStyleSelect" onchange="this.form.submit()">
-            <option value="bar" {{ request('chartStyle', 'bar') == 'bar' ? 'selected' : '' }}>Columns</option>
-            <option value="line" {{ request('chartStyle', 'bar') == 'line' ? 'selected' : '' }}>Lines</option>
+            <option value="bar" {{ ($currentChartStyle ?? 'bar') == 'bar' ? 'selected' : '' }}>Columns</option>
+            <option value="line" {{ ($currentChartStyle ?? 'bar') == 'line' ? 'selected' : '' }}>Lines</option>
         </select>
 
         <label for="chartTypeSelect">Chart Type:</label>

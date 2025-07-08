@@ -51,6 +51,23 @@ class ExgrController extends Controller
             $currentChartType = 'grouped'; // Reset to grouped for line charts
         }
 
+        $query = request()->query();
+        $needsRedirect = false;
+
+        // Always use validated values in the URL
+        if (($query['chartStyle'] ?? 'bar') !== $currentChartStyle) {
+            $query['chartStyle'] = $currentChartStyle;
+            $needsRedirect = true;
+        }
+        if (($query['chartType'] ?? 'grouped') !== $currentChartType) {
+            $query['chartType'] = $currentChartType;
+            $needsRedirect = true;
+        }
+
+        if ($needsRedirect) {
+            return redirect()->route('graphs.exgr', $query);
+        }
+
         // Get the collection_id for this user (assuming one collection per user)
         $collectionId = $user->collection_id;
         // Get only groups that belong to this collection
