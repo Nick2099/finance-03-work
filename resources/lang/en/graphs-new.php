@@ -16,5 +16,10 @@ return [
         "income" => "Income",
         "expense" => "Expense",
         "correction" => "Correction",
-    ]
+    ],
+    "expenses" => [
+        "heading" => "Expenses",
+        "header" => "Expenses incl. Correction",
+        "correction" => "Correction",
+    ],
 ];

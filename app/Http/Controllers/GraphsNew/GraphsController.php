@@ -15,8 +15,8 @@ class GraphsController extends Controller
     {
         return $this->index([
             'dataSource' => 'groups',
-            'labelHeading' => Lang::get('charts-new.groups.heading'),
-            'labelHeader' => Lang::get('charts-new.groups.header'),
+            'labelHeading' => Lang::get('graphs-new.groups.heading'),
+            'labelHeader' => Lang::get('graphs-new.groups.header'),
             'chooseYear' => true,
             'chooseGroup' => true,
             'chooseChartStyle' => true,
@@ -28,8 +28,8 @@ class GraphsController extends Controller
     {
         return $this->index([
             'dataSource' => 'income-vs-expense',
-            'labelHeading' => Lang::get('charts-new.income-vs-expense.heading'),
-            'labelHeader' => Lang::get('charts-new.income-vs-expense.header'),
+            'labelHeading' => Lang::get('graphs-new.income-vs-expense.heading'),
+            'labelHeader' => Lang::get('graphs-new.income-vs-expense.header'),
             'chooseYear' => true,
             'chooseGroup' => false,
             'chooseChartStyle' => true,
@@ -41,8 +41,8 @@ class GraphsController extends Controller
     {
         return $this->index([
             'dataSource' => 'expenses',
-            'labelHeading' => Lang::get('charts-new.expenses.heading'),
-            'labelHeader' => Lang::get('charts-new.expenses.header'),
+            'labelHeading' => Lang::get('graphs-new.expenses.heading'),
+            'labelHeader' => Lang::get('graphs-new.expenses.header'),
             'chooseYear' => true,
             'chooseGroup' => false,
             'chooseChartStyle' => true,
@@ -87,7 +87,7 @@ class GraphsController extends Controller
         }
 
         // Prepare months labels
-        $months = Lang::get('charts-new.months');
+        $months = Lang::get('graphs-new.months');
         if (!is_array($months) || count($months) !== 12) {
             $months = config('appoptions.months');
         }
@@ -129,7 +129,7 @@ class GraphsController extends Controller
         $graphLabels = [];
         $graphData = [];
 
-        if ($dataSource == 'groups' && $collectionId) {
+        if ($dataSource == 'groups') {
 
             // Get only groups that belong to this collection
             $groupNames = Group::where('collection_id', $collectionId)->orderBy('name')->get();
@@ -209,9 +209,9 @@ class GraphsController extends Controller
             }
 
             $graphLabels = [
-                'income' => Lang::get('charts-new.income-vs-expense.income'),
-                'expense' => Lang::get('charts-new.income-vs-expense.expense'),
-                'correction' => Lang::get('charts-new.income-vs-expense.correction'),
+                'income' => Lang::get('graphs-new.income-vs-expense.income'),
+                'expense' => Lang::get('graphs-new.income-vs-expense.expense'),
+                'correction' => Lang::get('graphs-new.income-vs-expense.correction'),
             ];
             $graphData = [
                 'income' => $incomeData,
@@ -220,10 +220,49 @@ class GraphsController extends Controller
             ];
         }
 
-        $labelYear = Lang::get('charts-new.year');
-        $labelGroup = Lang::get('charts-new.group');
-        $labelChartStyle = Lang::get('charts-new.chart-style');
-        $labelChartType = Lang::get('charts-new.chart-type');
+        if ($dataSource == 'expenses') {
+            // Logic to prepare data for expenses graph: columns for every group of type 2 (expense) plus correction
+            $expenseGroups = Group::where('collection_id', $collectionId)->where('type', 2)->orderBy('name')->get();
+            $groupIds = $expenseGroups->pluck('id')->toArray();
+            $groupNamesMap = $expenseGroups->pluck('name', 'id')->toArray();
+
+            // Initialize data arrays for each group and for correction
+            $expenseData = [];
+            foreach ($groupIds as $gid) {
+                $expenseData[$gid] = array_fill(0, 12, 0);
+            }
+            $correctionData = array_fill(0, 12, 0);
+
+            if ($selectedYear) {
+                $headers = Header::where('user_id', $user->id)
+                    ->whereYear('date', $selectedYear)
+                    ->get();
+                foreach ($headers as $header) {
+                    $monthIdx = (int)date('n', strtotime($header->date)) - 1;
+                    foreach ($header->items as $item) {
+                        $group = $item->group;
+                        if ($group && isset($group->type)) {
+                            if ($group->type == 2 && isset($expenseData[$item->group_id])) {
+                                $expenseData[$item->group_id][$monthIdx] += (float)$item->amount;
+                            } elseif ($group->type == 3) { // correction
+                                $correctionData[$monthIdx] += (float)$item->amount;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Prepare labels and data for chart
+            $graphLabels = $groupNamesMap;
+            $graphLabels['correction'] = Lang::get('graphs-new.expenses.correction');
+            $graphData = $expenseData;
+            $graphData['correction'] = $correctionData;
+        }
+
+        $labelYear = Lang::get('graphs-new.year');
+        $labelGroup = Lang::get('graphs-new.group');
+        $labelChartStyle = Lang::get('graphs-new.chart-style');
+        $labelChartType = Lang::get('graphs-new.chart-type');
 
         // Default method to handle the index view
         return view('graphs-new.graphs', compact(
