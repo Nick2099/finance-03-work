@@ -37,6 +37,20 @@ class GraphsController extends Controller
         ]);
     }
 
+    public function indexExpenses()
+    {
+        return $this->index([
+            'dataSource' => 'expenses',
+            'labelHeading' => Lang::get('charts-new.expenses.heading'),
+            'labelHeader' => Lang::get('charts-new.expenses.header'),
+            'chooseYear' => true,
+            'chooseGroup' => false,
+            'chooseChartStyle' => true,
+            'chooseChartType' => true,
+        ]);
+    }
+
+
     public function indexCashFlow()
     {
         // Logic to fetch and prepare data for the cash flow graph
@@ -110,48 +124,102 @@ class GraphsController extends Controller
 
         // Get the collection_id for this user (assuming one collection per user)
         $collectionId = $user->collection_id;
-        // Get only groups that belong to this collection
-        $groupNames = Group::where('collection_id', $collectionId)->orderBy('name')->get();
+        $groupNames = [];
+        $selectedGroup = null;
+        $graphLabels = [];
+        $graphData = [];
 
-        // Determine selected group (from GET or default to first)
-        $selectedGroup = request('group');
-        if (!$selectedGroup || !$groupNames->pluck('id')->contains($selectedGroup)) {
-            $selectedGroup = $groupNames->first() ? $groupNames->first()->id : null;
-        }
+        if ($dataSource == 'groups' && $collectionId) {
 
-        $subgroupNames = [];
-        $subgroupData = [];
-        if ($selectedYear && $selectedGroup) {
-            // Get all headers for the selected year and user
-            $headers = Header::where('user_id', $user->id)
-                ->whereYear('date', $selectedYear)
-                ->get();
-
-            foreach ($headers as $header) {
-                $monthIdx = (int)date('n', strtotime($header->date)) - 1;
-                foreach ($header->items as $item) {
-                    $group = $item->group;
-                    if (!$group) {
-                        continue;
+            // Get only groups that belong to this collection
+            $groupNames = Group::where('collection_id', $collectionId)->orderBy('name')->get();
+    
+            // Determine selected group (from GET or default to first)
+            $selectedGroup = request('group');
+            if (!$selectedGroup || !$groupNames->pluck('id')->contains($selectedGroup)) {
+                $selectedGroup = $groupNames->first() ? $groupNames->first()->id : null;
+            }
+    
+            $subgroupNames = [];
+            $subgroupData = [];
+            if ($selectedYear && $selectedGroup) {
+                // Get all headers for the selected year and user
+                $headers = Header::where('user_id', $user->id)
+                    ->whereYear('date', $selectedYear)
+                    ->get();
+    
+                foreach ($headers as $header) {
+                    $monthIdx = (int)date('n', strtotime($header->date)) - 1;
+                    foreach ($header->items as $item) {
+                        $group = $item->group;
+                        if (!$group) {
+                            continue;
+                        }
+                        if ($item->group_id != $selectedGroup) {
+                            continue; // Only include items for the selected group
+                        }
+                        if (!isset($subgroupData[$item->subgroup_id])) {
+                            $subgroupData[$item->subgroup_id] = array_fill(0, 12, 0);
+                        }
+                        $subgroupData[$item->subgroup_id][$monthIdx] += $item->amount;
                     }
-                    if ($item->group_id != $selectedGroup) {
-                        continue; // Only include items for the selected group
-                    }
-                    if (!isset($subgroupData[$item->subgroup_id])) {
-                        $subgroupData[$item->subgroup_id] = array_fill(0, 12, 0);
-                    }
-                    $subgroupData[$item->subgroup_id][$monthIdx] += $item->amount;
+                }
+    
+                // Only fetch names for subgroup_ids present in $subgroupData
+                $subgroupIds = array_keys($subgroupData);
+                $subgroupNamesFromDb = Subgroup::whereIn('id', $subgroupIds)->pluck('name', 'id');
+                foreach (array_keys($subgroupData) as $subgroup_id) {
+                    $subgroupNames[$subgroup_id] = $subgroupNamesFromDb[$subgroup_id] ?? 'Unknown';
                 }
             }
 
-            // Only fetch names for subgroup_ids present in $subgroupData
-            $subgroupIds = array_keys($subgroupData);
-            $subgroupNamesFromDb = Subgroup::whereIn('id', $subgroupIds)->pluck('name', 'id');
-            foreach (array_keys($subgroupData) as $subgroup_id) {
-                $subgroupNames[$subgroup_id] = $subgroupNamesFromDb[$subgroup_id] ?? 'Unknown';
-            }
+            $graphLabels = $subgroupNames;
+            $graphData = $subgroupData;
         }
         
+        if ($dataSource == 'income-vs-expense') {
+            // Logic to prepare data for income vs expense graph
+            $incomeData = array_fill(0, 12, 0);
+            $expenseData = array_fill(0, 12, 0);
+            $correctionData = array_fill(0, 12, 0);
+
+            if ($selectedYear) {
+                // Get all headers for the selected year and user
+                $headers = Header::where('user_id', $user->id)
+                    ->whereYear('date', $selectedYear)
+                    ->get();
+
+                // For each header, sum income, expense, and correction by month
+                foreach ($headers as $header) {
+                    $monthIdx = (int)date('n', strtotime($header->date)) - 1;
+                    // For each item in header, check group type
+                    foreach ($header->items as $item) {
+                        $group = $item->group;
+                        if ($group && isset($group->type)) {
+                            if ($group->type == 1) { // income
+                                $incomeData[$monthIdx] += (float)$item->amount;
+                            } elseif ($group->type == 2) { // expense
+                                $expenseData[$monthIdx] += (float)$item->amount;
+                            } elseif ($group->type == 3) { // correction
+                                $correctionData[$monthIdx] += (float)$item->amount;
+                            }
+                        }
+                    }
+                }
+            }
+
+            $graphLabels = [
+                'income' => Lang::get('charts-new.income-vs-expense.income'),
+                'expense' => Lang::get('charts-new.income-vs-expense.expense'),
+                'correction' => Lang::get('charts-new.income-vs-expense.correction'),
+            ];
+            $graphData = [
+                'income' => $incomeData,
+                'expense' => $expenseData,
+                'correction' => $correctionData,
+            ];
+        }
+
         $labelYear = Lang::get('charts-new.year');
         $labelGroup = Lang::get('charts-new.group');
         $labelChartStyle = Lang::get('charts-new.chart-style');
@@ -159,7 +227,7 @@ class GraphsController extends Controller
 
         // Default method to handle the index view
         return view('graphs-new.graphs', compact(
-            'dataSource',
+            // 'dataSource',
             'chooseYear',
             'chooseGroup',
             'chooseChartStyle',
@@ -176,8 +244,8 @@ class GraphsController extends Controller
             'labelChartStyle',
             'labelChartType',
             'groupNames',
-            'subgroupData',
-            'subgroupNames',
+            'graphLabels',
+            'graphData',
             'selectedGroup'
         ));
     }

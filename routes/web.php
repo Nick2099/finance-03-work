@@ -119,4 +119,6 @@ Route::middleware([MyMiddleware::class])->group(function () {
     Route::get('/graphs-new/groups', [GraphsController::class, 'indexGroups'])->name('graphs-new.groups');
 
     Route::get('/graphs-new/income-vs-expense', [GraphsController::class, 'indexIncomeVsExpense'])->name('graphs-new.income-vs-expense');
+
+    Route::get('/graphs-new/expenses', [GraphsController::class, 'indexExpenses'])->name('graphs-new.expenses');
 });
