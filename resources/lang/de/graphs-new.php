@@ -6,6 +6,10 @@ return [
     "group" => "Gruppe",
     "chart-style" => "Diagrammstil",
     "chart-type" => "Diagrammtyp",
+    "grouped" => "Gruppiert",
+    "stacked" => "Gestapelt",
+    "columns" => "Spalten",
+    "lines" => "Linien",
     "groups" => [
         "heading" => "Monatlich nach Gruppe",
         "header" => "Monatlich nach Gruppe",

@@ -31,18 +31,19 @@
         @if (isset($chooseChartType) && $chooseChartType)
             <label for="chartTypeSelect">{{ $labelChartType }}:</label>
             <select name="chartType" id="chartTypeSelect" onchange="this.form.submit()">
-                <option value="grouped" {{ ($currentChartType ?? 'grouped') == 'grouped' ? 'selected' : '' }}>Grouped
+                <option value="grouped" {{ ($currentChartType ?? 'grouped') == 'grouped' ? 'selected' : '' }}>
+                    {{ $labelGrouped ?? 'Grouped' }}
                 </option>
                 <option value="stacked" {{ ($currentChartType ?? 'grouped') == 'stacked' ? 'selected' : '' }}
-                    @if (($currentChartStyle ?? 'bar') !== 'bar') disabled @endif>Stacked</option>
+                    @if (($currentChartStyle ?? 'bar') !== 'bar') disabled @endif>{{ $labelStacked ?? "Stacked"}}</option>
             </select>
         @endif
 
         @if (isset($chooseChartStyle) && $chooseChartStyle)
             <label for="chartStyleSelect">{{ $labelChartStyle }}:</label>
             <select name="chartStyle" id="chartStyleSelect" onchange="this.form.submit()">
-                <option value="bar" {{ ($currentChartStyle ?? 'bar') == 'bar' ? 'selected' : '' }}>Columns</option>
-                <option value="line" {{ ($currentChartStyle ?? 'bar') == 'line' ? 'selected' : '' }}>Lines</option>
+                <option value="bar" {{ ($currentChartStyle ?? 'bar') == 'bar' ? 'selected' : '' }}>{{ $labelColumns ?? "Columns"}}</option>
+                <option value="line" {{ ($currentChartStyle ?? 'bar') == 'line' ? 'selected' : '' }}>{{ $labelLines ?? "Lines"}}</option>
             </select>
         @endif
 

@@ -1,12 +1,12 @@
 const canvas = document.getElementById("chart");
 let chart;
 
-console.log("Months Labels:", monthsLabels);
-console.log("Graph Labels:", graphLabels);
-console.log("Graph Data:", graphData);
-console.log("Current Chart Type:", currentChartType);
-console.log("Current Chart Style:", currentChartStyle);
-console.log("Stacked Groups:", stackedGroups);
+// console.log("Months Labels:", monthsLabels);
+// console.log("Graph Labels:", graphLabels);
+// console.log("Graph Data:", graphData);
+// console.log("Current Chart Type:", currentChartType);
+// console.log("Current Chart Style:", currentChartStyle);
+// console.log("Stacked Groups:", stackedGroups);
 
 function getStackForKey(key, stackedGroups) {
     if (!stackedGroups || currentChartType !== "stacked") return undefined;
@@ -21,7 +21,7 @@ function getStackForKey(key, stackedGroups) {
 function getDatasets() {
     const datasets = [];
     for (const labelId in graphLabels) {
-        console.log("Processing labelId:", labelId);
+        // console.log("Processing labelId:", labelId);
         if (graphData[labelId]) {
             const color = getColorForGroup(labelId);
             const dataset = {
@@ -39,7 +39,7 @@ function getDatasets() {
             datasets.push(dataset);
         }
     }
-    console.log("Datasets:", datasets);
+    // console.log("Datasets:", datasets);
     return datasets;
 }
 

@@ -126,7 +126,7 @@ class GraphsController extends Controller
         }
 
         if ($needsRedirect) {
-            return redirect()->route('graphs.exgr', $query);
+            return redirect()->route('graphs-new.groups', $query);
         }
 
         // Get the collection_id for this user (assuming one collection per user)
@@ -266,6 +266,10 @@ class GraphsController extends Controller
             $graphData['correction'] = $correctionData;
         }
 
+        $labelGrouped = Lang::get('graphs-new.grouped');
+        $labelStacked = Lang::get('graphs-new.stacked');
+        $labelColumns = Lang::get('graphs-new.columns');
+        $labelLines = Lang::get('graphs-new.lines');
         $labelYear = Lang::get('graphs-new.year');
         $labelGroup = Lang::get('graphs-new.group');
         $labelChartStyle = Lang::get('graphs-new.chart-style');
@@ -282,6 +286,10 @@ class GraphsController extends Controller
             'months',
             'currentChartStyle',
             'currentChartType',
+            'labelGrouped',
+            'labelStacked',
+            'labelColumns',
+            'labelLines',
             'labelHeading',
             'labelHeader',
             'labelYear',
