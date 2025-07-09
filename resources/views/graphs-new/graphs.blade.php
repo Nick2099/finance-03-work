@@ -55,13 +55,12 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // const dataSource = @json($dataSource ?? null);
         const monthsLabels = @json($months ?? []);
-        // const groupNames = @json($groupNames ?? []);
         const graphLabels = @json($graphLabels ?? []);
         const graphData = @json($graphData ?? []);
         const currentChartType = @json($currentChartType ?? []);
         const currentChartStyle = @json($currentChartStyle ?? []);
+        const stackedGroups = @json($stackedGroups ?? []);
     </script>
 
     <script type="module" src="{{ asset('js/graphs-new/graphs.js') }}"></script>

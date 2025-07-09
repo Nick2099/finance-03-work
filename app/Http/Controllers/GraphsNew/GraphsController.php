@@ -21,6 +21,7 @@ class GraphsController extends Controller
             'chooseGroup' => true,
             'chooseChartStyle' => true,
             'chooseChartType' => true,
+            'stackedGroups' => [],
         ]);
     }
 
@@ -34,6 +35,10 @@ class GraphsController extends Controller
             'chooseGroup' => false,
             'chooseChartStyle' => true,
             'chooseChartType' => true,
+            'stackedGroups' => [
+                'income' => ['income'],
+                'expense-correction' => ['expense', 'correction'],
+            ],
         ]);
     }
 
@@ -47,6 +52,7 @@ class GraphsController extends Controller
             'chooseGroup' => false,
             'chooseChartStyle' => true,
             'chooseChartType' => true,
+            'stackedGroups' => [],
         ]);
     }
 
@@ -71,6 +77,7 @@ class GraphsController extends Controller
         $chooseGroup = $params['chooseGroup'] ?? false;
         $chooseChartStyle = $params['chooseChartStyle'] ?? false;
         $chooseChartType = $params['chooseChartType'] ?? false;
+        $stackedGroups = $params['stackedGroups'] ?? [];
 
         // Get all years from headers for this user
         $years = Header::where('user_id', $user->id)
@@ -266,7 +273,6 @@ class GraphsController extends Controller
 
         // Default method to handle the index view
         return view('graphs-new.graphs', compact(
-            // 'dataSource',
             'chooseYear',
             'chooseGroup',
             'chooseChartStyle',
@@ -285,7 +291,8 @@ class GraphsController extends Controller
             'groupNames',
             'graphLabels',
             'graphData',
-            'selectedGroup'
+            'selectedGroup',
+            'stackedGroups',
         ));
     }
 }

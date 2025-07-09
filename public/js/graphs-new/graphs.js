@@ -4,17 +4,31 @@ let chart;
 console.log("Months Labels:", monthsLabels);
 console.log("Graph Labels:", graphLabels);
 console.log("Graph Data:", graphData);
+console.log("Current Chart Type:", currentChartType);
+console.log("Current Chart Style:", currentChartStyle);
+console.log("Stacked Groups:", stackedGroups);
+
+function getStackForKey(key, stackedGroups) {
+    if (!stackedGroups || currentChartType !== "stacked") return undefined;
+    for (const [stackName, keys] of Object.entries(stackedGroups)) {
+        if (keys.includes(key)) {
+            return stackName;
+        }
+    }
+    return undefined;
+}
 
 function getDatasets() {
     const datasets = [];
     for (const labelId in graphLabels) {
+        console.log("Processing labelId:", labelId);
         if (graphData[labelId]) {
             const color = getColorForGroup(labelId);
             const dataset = {
                 label: graphLabels[labelId],
                 data: graphData[labelId],
                 backgroundColor: color,
-                stack: currentChartType === "stacked" ? "expense" : undefined,
+                stack: getStackForKey(labelId, stackedGroups),
             };
             if (currentChartStyle === "line") {
                 dataset.borderColor = color;
