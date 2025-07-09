@@ -8,9 +8,6 @@
             <x-nav-links href="#" text="Views">
                 <ul>
                     <x-nav-link href="{{ route('entry.list') }}" :active="Route::is('entry.list')">List (edit)</x-nav-link>
-                    <x-nav-link href="{{ route('graphs.inex') }}" :active="Route::is('graphs.inex')">Income-Expenses</x-nav-link>
-                    <x-nav-link href="{{ route('graphs.ex') }}" :active="Route::is('graphs.ex')">Expenses</x-nav-link>
-                    <x-nav-link href="{{ route('graphs.exgr') }}" :active="Route::is('graphs.exgr')">Monthly by group</x-nav-link>
                     <li style="pointer-events:none;opacity:0.6;"><hr style="margin:4px 0;"></li>
                     <x-nav-link href="{{ route('graphs-new.groups') }}" :active="Route::is('graphs-new.groups')">Monthly by group</x-nav-link>
                     <x-nav-link href="{{ route('graphs-new.income-vs-expense') }}" :active="Route::is('graphs-new.income-vs-expense')">Income vs expenses</x-nav-link>

@@ -110,12 +110,6 @@ Route::middleware([MyMiddleware::class])->group(function () {
 
     Route::post('/set-locale', [LocaleController::class, 'setLocale'])->name('set-locale');
 
-    Route::get('/graphs/inex', [InExController::class, 'index'])->name('graphs.inex');
-
-    Route::get('/graphs/ex', [ExController::class, 'index'])->name('graphs.ex');
-
-    Route::get('/graphs/exgr', [ExgrController::class, 'index'])->name('graphs.exgr');
-
     Route::get('/graphs-new/groups', [GraphsController::class, 'indexGroups'])->name('graphs-new.groups');
 
     Route::get('/graphs-new/income-vs-expense', [GraphsController::class, 'indexIncomeVsExpense'])->name('graphs-new.income-vs-expense');
