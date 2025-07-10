@@ -81,6 +81,7 @@ class DatabaseSeeder extends Seeder
     {
         // Create groups for the default english collection with ID 1
         $collection = 1;
+        // State - type 0
         Group::factory()->create([
             'name' => 'State',
             'description' => 'All kinds of state, for example bank accounts, cash, etc.',
@@ -90,6 +91,7 @@ class DatabaseSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        // Income - type 1
         Group::factory()->create([
             'name' => 'Income',
             'description' => 'All kinds of income, for example salary, gifts, etc.',
@@ -99,6 +101,18 @@ class DatabaseSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+        // Correction - type 3
+        Group::factory()->create([
+            'name' => 'Correction',
+            'description' => 'Difference between state and expenses/income, for example when you forgot to add an expense or income.',
+            'type' => 3, // correction
+            'privacy' => 0, // public
+            'collection_id' => $collection,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Expenses - all of them are type 2
         Group::factory()->create([
             'name' => 'Food',
             'description' => 'All kinds of food expenses, for example groceries, restaurants, etc.',
@@ -145,9 +159,18 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Group::factory()->create([
-            'name' => 'Correction',
-            'description' => 'Difference between state and expenses/income, for example when you forgot to add an expense or income.',
-            'type' => 3, // correction
+            'name' => 'Hygiene, cosmetics...',
+            'description' => 'All kinds of hygiene, makeup and personal care expenses, for example cosmetics, toiletries, etc.',
+            'type' => 2, // expense
+            'privacy' => 0, // public
+            'collection_id' => $collection,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Group::factory()->create([
+            'name' => 'Health, medicines...',
+            'description' => 'All kinds of health and medicine expenses, for example doctor visits, medications, etc.',
+            'type' => 2, // expense
             'privacy' => 0, // public
             'collection_id' => $collection,
             'created_at' => now(),
@@ -209,6 +232,17 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        
+        $groupId = $this->getGroupId('Correction', 1);
+        Subgroup::factory()->create([
+            'name' => 'Correction',
+            'description' => 'This is the correction subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $groupId = $this->getGroupId('Food', 1);
         Subgroup::factory()->create([
             'name' => 'Groceries',
@@ -237,6 +271,14 @@ class DatabaseSeeder extends Seeder
         Subgroup::factory()->create([
             'name' => 'Restaurants',
             'description' => 'This is the restaurants subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'Meal at work',
+            'description' => 'This is the meal at work subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
             'created_at' => now(),
@@ -411,10 +453,44 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $groupId = $this->getGroupId('Correction', 1);
+        $groupId = $this->getGroupId('Hygiene, cosmetics...', 1);
         Subgroup::factory()->create([
-            'name' => 'Correction',
-            'description' => 'This is the correction subgroup.',
+            'name' => 'Personal care',
+            'description' => 'This is the personal care subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'Cosmetics',
+            'description' => 'This is the cosmetics subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'Cleaning products',
+            'description' => 'This is the cleaning products subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $groupId = $this->getGroupId('Health, medicines...', 1);
+        Subgroup::factory()->create([
+            'name' => 'Medicaments',
+            'description' => 'This is the medicaments subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'Health checks etc.',
+            'description' => 'This is the health checks subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
             'created_at' => now(),
