@@ -7,6 +7,7 @@ use App\Models\Header;
 use App\Models\Subgroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Lang;
 
 class EntryController extends Controller
 {
@@ -45,23 +46,49 @@ class EntryController extends Controller
 
         // If validation failed, repopulate items from old('items')
         if (old('items')) {
-            $listOfItems = collect(old('items'))->map(function($item) {
+            $listOfItems = collect(old('items'))->map(function ($item) {
                 return (object)$item;
             });
         }
 
         // Create a variable with all groups and their subgroups (id => name), subgroups sorted alphabetically (case-insensitive)
-        $groupSubgroupMap = $groups->map(function ($group) {
-            $sortedSubgroups = $group->subgroups->sortBy(function ($subgroup) {
-                return mb_strtolower($subgroup->name);
+        $groupSubgroupMap = $groups
+            ->map(function ($group) use ($collection) {
+                if ($collection->id == 1) {
+                    // If collection is 1, use the translations from standard group
+                    $translatedName = Lang::get('std-groups.group-name.' . $group->name);
+                    $sortedSubgroups = $group->subgroups->sortBy(function ($subgroup) {
+                        return mb_strtolower($subgroup->name);
+                    });
+                    $translatedSubgroups = $sortedSubgroups->mapWithKeys(function ($subgroup) {
+                        return [
+                            $subgroup->id => Lang::get('std-groups.subgroup-name.' . $subgroup->name)
+                        ];
+                    });
+                } else {
+                    // Otherwise, use the group's and subgroups' names directly
+                    $translatedName = $group->name;
+                    $sortedSubgroups = $group->subgroups->sortBy(function ($subgroup) {
+                        return mb_strtolower($subgroup->name);
+                    });
+                    $translatedSubgroups = $sortedSubgroups->pluck('name', 'id');
+                }
+                return [
+                    'id' => $group->id,
+                    'name' => $translatedName,
+                    'type' => $group->type,
+                    'subgroups' => $translatedSubgroups->toArray(),
+                    'sort_key' => mb_strtolower($translatedName),
+                ];
+            })
+            ->sortBy('sort_key')
+            ->values()
+            ->map(function ($group) {
+                unset($group['sort_key']);
+                return $group;
             });
-            return [
-                'id' => $group->id,
-                'name' => $group->name,
-                'type' => $group->type, // Add type here
-                'subgroups' => $sortedSubgroups->pluck('name', 'id')->toArray(),
-            ];
-        });
+
+        // dump($groupSubgroupMap);
 
         return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges'));
     }
@@ -95,7 +122,7 @@ class EntryController extends Controller
             'items.*.badges' => 'nullable|array',
             'items.*.badges.*' => 'integer',
         ]);
-        
+
         $user = Auth::user();
         $collection = $user->collection;
         $groups = $collection->groups()->get();
@@ -127,7 +154,7 @@ class EntryController extends Controller
         }
 
         // Create the items (for both create and update)
-       foreach ($user->badges as $badge) {
+        foreach ($user->badges as $badge) {
             $badgeIdToInternalId[$badge->badge_id] = $badge->id;
         }
         foreach ($validatedData['items'] as $itemData) {
@@ -207,7 +234,7 @@ class EntryController extends Controller
 
         return view('entries.list', compact('headers', 'dateFormat'));
     }
-    
+
     public function destroy($id)
     {
         if (!Auth::check()) {

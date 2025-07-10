@@ -148,7 +148,7 @@
             </tbody>
         </table>
         <div id="items-hidden-fields"></div>
-        <x-form-button>{{ empty($header) ? 'Save entry' : 'Update entry' }}</x-form-button>
+        <x-form-button id="save-entry-btn">{{ empty($header) ? 'Save entry' : 'Update entry' }}</x-form-button>
         <x-form-button type="reset">Reset</x-form-button>
         <div>
             <input type="checkbox" name="negative" id="negative" value="negative" {{ old('negative') ? 'checked' : '' }} />
@@ -204,7 +204,9 @@
             const itemAmountInput = document.getElementById('item_amount');
             itemAmountInput.disabled = true; // Disable item_amount input initially
 
-            const saveEntryBtn = document.querySelector('button[type="submit"]');
+            // next line was disabling first button of submit type
+            // const saveEntryBtn = document.querySelector('button[type="submit"]');
+            const saveEntryBtn = document.getElementById('save-entry-btn');
             saveEntryBtn.disabled = true; // Disable save button initially
 
             if (amountInput) {
