@@ -191,7 +191,7 @@ class DatabaseSeeder extends Seeder
     {
         $groupId = $this->getGroupId('State', 1);
         Subgroup::factory()->create([
-            'name' => 'Bank account 1',
+            'name' => 'state.bank-account-1',
             'description' => 'This is the bank account subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -199,7 +199,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Bank account 2',
+            'name' => 'state.bank-account-2',
             'description' => 'This is the bank account subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -207,7 +207,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Cash',
+            'name' => 'state.cash',
             'description' => 'This is the cash subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -215,7 +215,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Cash - savings',
+            'name' => 'state.cash-savings',
             'description' => 'This is the cash subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -225,7 +225,7 @@ class DatabaseSeeder extends Seeder
         
         $groupId = $this->getGroupId('Income', 1);
         Subgroup::factory()->create([
-            'name' => 'Salary',
+            'name' => 'income.salary',
             'description' => 'This is the salary subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -233,18 +233,25 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Minijob',
+            'name' => 'income.minijob',
             'description' => 'This is the minijob subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
+        Subgroup::factory()->create([
+            'name' => 'income.other-income',
+            'description' => 'This is the other-income subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         
         $groupId = $this->getGroupId('Correction', 1);
         Subgroup::factory()->create([
-            'name' => 'Correction',
+            'name' => 'correction.correction',
             'description' => 'This is the correction subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -254,7 +261,7 @@ class DatabaseSeeder extends Seeder
 
         $groupId = $this->getGroupId('Food', 1);
         Subgroup::factory()->create([
-            'name' => 'Groceries',
+            'name' => 'food.groceries',
             'description' => 'This is the groceries subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -262,7 +269,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Sweets',
+            'name' => 'food.sweets',
             'description' => 'This is the sweets subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -270,7 +277,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Takeaway',
+            'name' => 'food.takeaway',
             'description' => 'This is the takeaway subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -278,7 +285,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Restaurants',
+            'name' => 'food.restaurants',
             'description' => 'This is the restaurants subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -286,7 +293,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Meal at work',
+            'name' => 'food.meal-at-work',
             'description' => 'This is the meal at work subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -296,7 +303,7 @@ class DatabaseSeeder extends Seeder
 
         $groupId = $this->getGroupId('Housing', 1);
         Subgroup::factory()->create([
-            'name' => 'Credit',
+            'name' => 'housing.credit',
             'description' => 'This is the credit subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -304,7 +311,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Rent',
+            'name' => 'housing.rent',
             'description' => 'This is the rent subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -312,7 +319,15 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Taxes',
+            'name' => 'housing.mortgage',
+            'description' => 'This is the mortgage subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'housing.taxes',
             'description' => 'This is the taxes subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -320,7 +335,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Insurance',
+            'name' => 'housing.insurance',
             'description' => 'This is the insurance subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -328,7 +343,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Maintenance & Repairs',
+            'name' => 'housing.maintenance',
             'description' => 'This is the maintenance and repairs subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -338,7 +353,7 @@ class DatabaseSeeder extends Seeder
 
         $groupId = $this->getGroupId('Utilities', 1);
         Subgroup::factory()->create([
-            'name' => 'Trash & Recycling',
+            'name' => 'utilities.trash',
             'description' => 'This is the trash and recycling subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -346,7 +361,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Heating',
+            'name' => 'utilities.heating',
             'description' => 'This is the heating subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -354,7 +369,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Cooling',
+            'name' => 'utilities.cooling',
             'description' => 'This is the heating subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -362,7 +377,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Electricity',
+            'name' => 'utilities.electricity',
             'description' => 'This is the electricity subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -370,7 +385,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Gas',
+            'name' => 'utilities.gas',
             'description' => 'This is the gas subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -378,7 +393,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Water',
+            'name' => 'utilities.water',
             'description' => 'This is the water subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -386,7 +401,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Sewage',
+            'name' => 'utilities.sewage',
             'description' => 'This is the sewage subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -394,7 +409,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Hot water',
+            'name' => 'utilities.hot-water',
             'description' => 'This is the hot water subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -404,7 +419,7 @@ class DatabaseSeeder extends Seeder
 
         $groupId = $this->getGroupId('Clothes', 1);
         Subgroup::factory()->create([
-            'name' => 'Clothes',
+            'name' => 'clothes.clothes',
             'description' => 'This is the clothes subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -412,7 +427,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Shoes',
+            'name' => 'clothes.shoes',
             'description' => 'This is the shoes subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -420,7 +435,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Accessories',
+            'name' => 'clothes.accessories',
             'description' => 'This is the accessories subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -430,7 +445,7 @@ class DatabaseSeeder extends Seeder
 
         $groupId = $this->getGroupId('Subscriptions', 1);
         Subgroup::factory()->create([
-            'name' => 'Internet',
+            'name' => 'subscriptions.internet',
             'description' => 'This is the internet subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -438,7 +453,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Mobile Phone',
+            'name' => 'subscriptions.mobile',
             'description' => 'This is the mobile phone subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -446,7 +461,15 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Streaming Services',
+            'name' => 'subscriptions.tv',
+            'description' => 'This is the television subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'subscriptions.streaming',
             'description' => 'This is the streaming services subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -454,7 +477,23 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Other subscriptions',
+            'name' => 'subscriptions.gaming',
+            'description' => 'This is the gaming subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'subscriptions.newspaper',
+            'description' => 'This is the gaming subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'subscriptions.other',
             'description' => 'This is the subscriptions subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -464,7 +503,7 @@ class DatabaseSeeder extends Seeder
 
         $groupId = $this->getGroupId('Hygiene', 1);
         Subgroup::factory()->create([
-            'name' => 'Personal care',
+            'name' => 'hygiene.personal',
             'description' => 'This is the personal care subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -472,7 +511,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Cosmetics',
+            'name' => 'hygiene.cosmetics',
             'description' => 'This is the cosmetics subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -480,8 +519,24 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Cleaning products',
+            'name' => 'hygiene.hairdresser',
+            'description' => 'This is the hairdresser subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'hygiene.cleaning',
             'description' => 'This is the cleaning products subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'hygiene.other',
+            'description' => 'This is the other hygiene subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
             'created_at' => now(),
@@ -490,16 +545,40 @@ class DatabaseSeeder extends Seeder
 
         $groupId = $this->getGroupId('Health', 1);
         Subgroup::factory()->create([
-            'name' => 'Medicaments',
-            'description' => 'This is the medicaments subgroup.',
+            'name' => 'health.medicines',
+            'description' => 'This is the medicines subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Health checks etc.',
-            'description' => 'This is the health checks subgroup.',
+            'name' => 'health.doctor',
+            'description' => 'This is the doctor visits subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'health.dentist',
+            'description' => 'This is the dentist visits subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'health.insurance',
+            'description' => 'This is the health insurance subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'health.other',
+            'description' => 'This is the other health subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
             'created_at' => now(),
@@ -508,7 +587,7 @@ class DatabaseSeeder extends Seeder
 
         $groupId = $this->getGroupId('Car', 1);
         Subgroup::factory()->create([
-            'name' => 'Credit',
+            'name' => 'car.credit',
             'description' => 'This is the car credit subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -516,7 +595,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Fuel',
+            'name' => 'car.fuel',
             'description' => 'This is the car fuel subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -524,7 +603,15 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Parts',
+            'name' => 'car.insurance',
+            'description' => 'This is the car insurance subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'car.parts',
             'description' => 'This is the car parts subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
@@ -532,8 +619,40 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
         Subgroup::factory()->create([
-            'name' => 'Service',
-            'description' => 'This is the car service subgroup.',
+            'name' => 'car.repairs',
+            'description' => 'This is the car repairs subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'car.parking',
+            'description' => 'This is the car parking subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'car.tolls',
+            'description' => 'This is the car tolls subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'car.wash',
+            'description' => 'This is the car wash subgroup.',
+            'privacy' => 0, // public
+            'group_id' => $groupId,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        Subgroup::factory()->create([
+            'name' => 'car.other',
+            'description' => 'This is the car other subgroup.',
             'privacy' => 0, // public
             'group_id' => $groupId,
             'created_at' => now(),
