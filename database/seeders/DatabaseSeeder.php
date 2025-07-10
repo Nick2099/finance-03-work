@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         Collection::factory()->create([
             'name' => 'Default collection',
-            'description' => 'This is the default collection.',
+            'description' => 'This is the default english collection.',
             'type' => 1,
             'created_at' => now(),
             'updated_at' => now(),

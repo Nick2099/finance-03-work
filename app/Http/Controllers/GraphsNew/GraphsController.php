@@ -125,8 +125,15 @@ class GraphsController extends Controller
             $needsRedirect = true;
         }
 
+        // redirect have to be done acording to the data source
         if ($needsRedirect) {
-            return redirect()->route('graphs-new.groups', $query);
+            if ($dataSource === 'income-vs-expense') {
+                return redirect()->route('graphs-new.income-vs-expense', $query);
+            } elseif ($dataSource === 'expenses') {
+                return redirect()->route('graphs-new.expenses', $query);
+            } else {
+                return redirect()->route('graphs-new.groups', $query);
+            }
         }
 
         // Get the collection_id for this user (assuming one collection per user)
