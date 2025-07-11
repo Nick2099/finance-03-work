@@ -183,7 +183,11 @@ class GraphsController extends Controller
                 $subgroupIds = array_keys($subgroupData);
                 $subgroupNamesFromDb = Subgroup::whereIn('id', $subgroupIds)->pluck('name', 'id');
                 foreach (array_keys($subgroupData) as $subgroup_id) {
-                    $subgroupNames[$subgroup_id] = $subgroupNamesFromDb[$subgroup_id] ?? 'Unknown';
+                    if ($collectionId == 1) {
+                        $subgroupNames[$subgroup_id] = Lang::get('std-groups.subgroup-name.' .$subgroupNamesFromDb[$subgroup_id]) ?? 'Unknown';
+                    } else {
+                        $subgroupNames[$subgroup_id] = $subgroupNamesFromDb[$subgroup_id] ?? 'Unknown';
+                    }
                 }
             }
 
@@ -238,7 +242,14 @@ class GraphsController extends Controller
             // Logic to prepare data for expenses graph: columns for every group of type 2 (expense) plus correction
             $expenseGroups = Group::where('collection_id', $collectionId)->where('type', 2)->orderBy('name')->get();
             $groupIds = $expenseGroups->pluck('id')->toArray();
-            $groupNamesMap = $expenseGroups->pluck('name', 'id')->toArray();
+            // Use translated names if collectionId == 1, else use DB names
+            if ($collectionId == 1) {
+                $groupNamesMap = $expenseGroups->mapWithKeys(function($group) {
+                    return [$group->id => Lang::get('std-groups.group-name.' . $group->name)];
+                })->toArray();
+            } else {
+                $groupNamesMap = $expenseGroups->pluck('name', 'id')->toArray();
+            }
 
             // Initialize data arrays for each group and for correction
             $expenseData = [];
