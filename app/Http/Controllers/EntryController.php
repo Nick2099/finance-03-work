@@ -8,6 +8,7 @@ use App\Models\Subgroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EntryController extends Controller
 {
@@ -31,6 +32,7 @@ class EntryController extends Controller
 
         if ($id) {
             $header = Header::where('user_id', $user->id)->findOrFail($id);
+            $header->blade = request('blade');
             $listOfItems = $header->items()->with('group', 'subgroup')->get();
             // Ensure badges is always an array (force update on the model, not just the collection)
             foreach ($listOfItems as $item) {
@@ -174,8 +176,12 @@ class EntryController extends Controller
         }
 
         // Redirect or return response
-        if ($request->has('header_id')) {
-            return redirect()->route('entry.list')->with('success', 'Entry updated successfully.');
+        if ($request->has('header_id') && $request->has('blade')) {
+            if ($request->input('blade') === 'list-badges') {
+                return redirect()->route('entry.list-badges')->with('success', 'Entry updated successfully.');
+            } else {
+                return redirect()->route('entry.list')->with('success', 'Entry updated successfully.');
+            } 
         } else {
             return redirect()->route('entry.create')->with('success', 'Entry saved successfully.');
         }
@@ -233,6 +239,65 @@ class EntryController extends Controller
         $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
 
         return view('entries.list', compact('headers', 'dateFormat'));
+    }
+
+    public function listBadges()
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        $user = Auth::user();
+
+        /*
+        $headers = Header::where('user_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->filter(function ($header) {
+                return !empty($header->badges());
+            })
+            ->values();
+            // ->paginate(15);
+        */
+
+        $listOfBadges = $user->badges;
+        $selectedBadge = request('badge-id');
+        if ($selectedBadge === null && $listOfBadges && $listOfBadges->count() > 0) {
+            $selectedBadge = $listOfBadges->first()->id;
+        }
+
+        $perPage = 1;
+        $page = request('page', 1);
+
+        $filtered = Header::where('user_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->filter(function ($header) use ($selectedBadge) {
+                $badges = $header->badges();
+                return !empty($badges) && ($selectedBadge === null || array_key_exists($selectedBadge, $badges));
+            })
+            ->values();
+
+        $headers = new LengthAwarePaginator(
+            $filtered->forPage($page, $perPage),
+            $filtered->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        // dump($headers);
+
+        // dump($listOfBadges);
+
+        $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
+        $badges = [];
+
+        $labelBadge = Lang::get('list-badges.label-badge');
+
+        return view('entries.list-badges', compact('headers', 'dateFormat', 'badges', 'listOfBadges', 'labelBadge', 'selectedBadge'));
     }
 
     public function destroy($id)

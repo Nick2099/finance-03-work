@@ -220,13 +220,25 @@ body {
 #header-list-body .income {
     color: #4CAF50;
 }
+
 #header-list-body .expense {
     /* color: #f44336; */
     color: black;
 }
+
 #header-list-body .correction {
     color: #FF9800;
 }
+
 #header-list-body .state{
     color: #2196F3;
+}
+
+#header-list-body .amount {
+    text-align: right;
+}
+
+#header-list-body td {
+    border-top: 1px solid #ddd;
+    padding: 0 4px;
 }
