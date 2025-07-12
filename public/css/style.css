@@ -53,13 +53,13 @@ body {
     }
 }
 
-nav {
+.navbar {
     background-color: #333;
     display: flex;
     justify-content: space-between;
 }
 
-nav ul {
+.navbar ul {
     position: relative;
     list-style-type: none;
     margin: 0;
@@ -67,12 +67,12 @@ nav ul {
     background-color: #333;
 }
 
-nav ul li {
+.navbar ul li {
     display: inline-block;
     position: relative;
 }
 
-nav a {
+.navbar a {
     display: block;
     padding: 8px;
     color: white;
@@ -80,26 +80,26 @@ nav a {
     transition: background-color 0.3s;
 }
 
-nav a:hover {
+.navbar a:hover {
     background-color: #7ce67f;
     color: black;
 }
 
-nav a.active {
+.navbar a.active {
     background-color: #4CAF50;
     color: white;
 }
 
-nav ul li ul {
+.navbar ul li ul {
     display: none;
     position: absolute;
 }
 
-nav ul li:hover ul {
+.navbar ul li:hover ul {
     display: block;
 }
 
-nav ul li ul li {
+.navbar ul li ul li {
     display: block;
     white-space: nowrap;
 }
@@ -130,10 +130,30 @@ nav ul li ul li {
     justify-content: center;
     margin-top: 20px;
     list-style: none;
+    background-color: white;
 }
 
-.pagination li {
-    margin: 0 5px;
+.pagination ul {
+    display: flex;
+    position: relative;
+    list-style-type: none;
+}
+
+.pagination ul li {
+    display: inline-block;
+    position: relative;
+}
+
+.pagination a, span {
+    display: block;
+    padding: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.pagination a:hover {
+    background-color: #7ce67f;
+    color: black;
 }
 
 .language {
@@ -195,4 +215,18 @@ nav ul li ul li {
         max-width: 100vw;
         max-height: 90vw;
     }
+}
+
+#header-list-body .income {
+    color: #4CAF50;
+}
+#header-list-body .expense {
+    /* color: #f44336; */
+    color: black;
+}
+#header-list-body .correction {
+    color: #FF9800;
+}
+#header-list-body .state{
+    color: #2196F3;
 }

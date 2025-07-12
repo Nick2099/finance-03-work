@@ -29,4 +29,10 @@ class Header extends Model
     {
         return $this->hasMany(Item::class);
     }
+
+    public function type()
+    {
+        $firstItem = $this->items()->first();
+        return $firstItem ? $firstItem->group_type : null;
+    }
 }

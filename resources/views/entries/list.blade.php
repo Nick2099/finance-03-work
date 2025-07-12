@@ -14,26 +14,46 @@
                     <th>{{ __('list.amount') }}</th>
                     <th>{{ __('list.place_of_purchase') }}</th>
                     <th>{{ __('list.location') }}</th>
-                    <th>{{ __('list.description') }}</th>
+                    <th>{{ __('list.note') }}</th>
                     <th>{{ __('list.actions') }}</th>
                 </tr>
             </thead>
             <tbody id="header-list-body">
                 @foreach ($headers as $header)
-                    <tr>
-                        <td>{{ \Carbon\Carbon::parse($header->date)->format($dateFormat) }}</td>
+                    @php
+                        // type = 0: state,  1: income, 2: expense, 3: correction
+                        $lineClass = "state";
+                        if ($header->type() == 1) {
+                            $lineClass = "income";
+                        } elseif ($header->type() == 2) {
+                            $lineClass = "expense";
+                        } elseif ($header->type() == 3) {
+                            $lineClass = "correction";
+                        }
+                    @endphp
+                    <tr class="{{ $lineClass }}">
+                        <td>{{ \Carbon\Carbon::parse($header->date)->format($dateFormat) }} {{ $lineClass }}</td>
                         <td>{{ number_format($header->amount, 2) }}</td>
-                        <td>{{ $header->place_of_purchase }}</td>
+                        <td>
+                            @if ($header->type() == 0)
+                                {{ __('list.state') }}
+                            @else
+                                {{ $header->place_of_purchase }}
+                            @endif
+                        </td>
                         <td>{{ $header->location }}</td>
                         <td>{{ $header->description }}</td>
                         <td>
-                            <form action="{{ route('entry.create', $header->id) }}" method="GET" style="display:inline-block;">
-                                <button type="submit" class="btn btn-primary" >{{ __('list.edit') }}</button>
+                            <form action="{{ route('entry.create', $header->id) }}" method="GET"
+                                style="display:inline-block;">
+                                <button type="submit" class="btn btn-primary">{{ __('list.edit') }}</button>
                             </form>
-                            <form action="{{ route('entry.destroy', $header->id) }}" method="POST" style="display:inline-block;">
+                            <form action="{{ route('entry.destroy', $header->id) }}" method="POST"
+                                style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('{{ __('list.delete_confirmation') }}');">{{ __('list.delete') }}</button>
+                                <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('{{ __('list.delete_confirmation') }}');">{{ __('list.delete') }}</button>
                             </form>
                         </td>
                     </tr>

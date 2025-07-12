@@ -7,9 +7,11 @@ return [
     'amount' => 'Iznos',
     'place_of_purchase' => 'Podrijetlo',
     'location' => 'Lokacija',
-    'note' => 'Opis',
+    'note' => 'Bilješka',
     'actions' => 'Akcije',
     'edit' => 'Uredi',
     'delete' => 'Obriši',
     'delete_confirmation' => 'Jeste li sigurni da želite obrisati ovaj unos?',
+    'state' => 'Stanje',
+    'correction' => 'Ispravak',
 ];

@@ -1,4 +1,4 @@
-<nav>
+<nav class="navbar">
     <ul>
         <x-nav-link href="{{ route('home') }}" :active="Route::is('home')">Home</x-nav-link>
         <x-nav-link href="{{ route('about') }}" :active="Route::is('about')">About</x-nav-link>

@@ -12,4 +12,6 @@ return [
     'edit' => 'Edit',
     'delete' => 'Delete',
     'delete_confirmation' => 'Are you sure you want to delete this entry?',
+    'state' => 'State',
+    'correction' => 'Corrected',
 ];

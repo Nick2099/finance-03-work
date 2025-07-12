@@ -228,7 +228,7 @@ class EntryController extends Controller
         $headers = Header::where('user_id', $user->id)
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(5); // or ->get() if you don't want pagination
+            ->paginate(15); // or ->get() if you don't want pagination
 
         $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
 
