@@ -183,7 +183,7 @@ class EntryController extends Controller
                 return redirect()->route('entry.list-badges', ['page' => $page, 'badge-id' => $selectedBadge])->with('success', 'Entry updated successfully.');
             } else {
                 return redirect()->route('entry.list', ['page' => $page])->with('success', 'Entry updated successfully.');
-            } 
+            }
         } else {
             return redirect()->route('entry.create')->with('success', 'Entry saved successfully.');
         }
@@ -271,6 +271,11 @@ class EntryController extends Controller
             })
             ->values();
 
+        $totalBadgeAmount = $filtered->sum(function ($header) use ($selectedBadge) {
+            $badges = $header->badges();
+            return isset($badges[$selectedBadge]) ? $badges[$selectedBadge] : 0;
+        });
+
         $headers = new LengthAwarePaginator(
             $filtered->forPage($page, $itemsOnPage),
             $filtered->count(),
@@ -279,16 +284,17 @@ class EntryController extends Controller
             ['path' => request()->url(), 'query' => request()->query()]
         );
 
-        // dump($headers);
-
-        // dump($listOfBadges);
+        $totalPageBadgeAmount = $headers->sum(function ($header) use ($selectedBadge) {
+            $badges = $header->badges();
+            return isset($badges[$selectedBadge]) ? $badges[$selectedBadge] : 0;
+        });
 
         $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
         $badges = [];
 
-        $labelBadge = Lang::get('list-badges.label-badge');
+        $labelBadge = Lang::get('list-badges.label_badge');
 
-        return view('entries.list-badges', compact('headers', 'dateFormat', 'badges', 'listOfBadges', 'labelBadge', 'selectedBadge'));
+        return view('entries.list-badges', compact('headers', 'dateFormat', 'badges', 'listOfBadges', 'labelBadge', 'selectedBadge', 'totalBadgeAmount', 'totalPageBadgeAmount'));
     }
 
     public function destroy($id)

@@ -81,582 +81,119 @@ class DatabaseSeeder extends Seeder
     {
         // Create groups for the default english collection with ID 1
         $collection = 1;
-        // State - type 0
-        Group::factory()->create([
-            'name' => 'State',
-            'description' => 'All kinds of state, for example bank accounts, cash, etc.',
-            'type' => 0, // state
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        // Income - type 1
-        Group::factory()->create([
-            'name' => 'Income',
-            'description' => 'All kinds of income, for example salary, gifts, etc.',
-            'type' => 1, // income
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        // Correction - type 3
-        Group::factory()->create([
-            'name' => 'Correction',
-            'description' => 'Difference between state and expenses/income, for example when you forgot to add an expense or income.',
-            'type' => 3, // correction
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Expenses - all of them are type 2
-        Group::factory()->create([
-            'name' => 'Food',
-            'description' => 'All kinds of food expenses, for example groceries, restaurants, etc.',
-            'type' => 2, // expense
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Group::factory()->create([
-            'name' => 'Housing',
-            'description' => 'All kinds of housing expenses, for example rent, mortgage, utilities, etc.',
-            'type' => 2, // expense
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Group::factory()->create([
-            'name' => 'Utilities',
-            'description' => 'All kinds of utility expenses, for example electricity, water, gas, etc.',
-            'type' => 2, // expense
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Group::factory()->create([
-            'name' => 'Clothes',
-            'description' => 'All kinds of clothing expenses, for example clothes, shoes, accessories, etc.',
-            'type' => 2, // expense
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Group::factory()->create([
-            'name' => 'Subscriptions',
-            'description' => 'All kinds of entertainment and subscription expenses, for example streaming services, internet, mobile phone plans etc.',
-            'type' => 2, // expense
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Group::factory()->create([
-            'name' => 'Hygiene',
-            'description' => 'All kinds of hygiene, makeup and personal care expenses, for example cosmetics, toiletries, etc.',
-            'type' => 2, // expense
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Group::factory()->create([
-            'name' => 'Health',
-            'description' => 'All kinds of health and medicine expenses, for example doctor visits, medications, etc.',
-            'type' => 2, // expense
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Group::factory()->create([
-            'name' => 'Car',
-            'description' => 'All kinds of car and transport expenses, for example fuel, public transport, etc.',
-            'type' => 2, // expense
-            'privacy' => 0, // public
-            'collection_id' => $collection,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $groups = [
+            ['name' => 'state', 'type' => 0],
+            ['name' => 'income', 'type' => 1],
+            ['name' => 'correction', 'type' => 3],
+            ['name' => 'food', 'type' => 2],
+            ['name' => 'housing', 'type' => 2],
+            ['name' => 'utilities', 'type' => 2],
+            ['name' => 'clothes', 'type' => 2],
+            ['name' => 'subscriptions', 'type' => 2],
+            ['name' => 'hygiene', 'type' => 2],
+            ['name' => 'health', 'type' => 2],
+            ['name' => 'car', 'type' => 2],
+            ['name' => 'hobby', 'type' => 2],
+            ['name' => 'other', 'type' => 2],
+        ];
+        foreach ($groups as $group) {
+            Group::factory()->create([
+                'name' => $group['name'],
+                'description' => $group['name'] . '-desc.',
+                'type' => $group['type'],
+                'privacy' => 0, // public
+                'collection_id' => $collection,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 
     private function createSubgroups(): void
     {
-        $groupId = $this->getGroupId('State', 1);
-        Subgroup::factory()->create([
-            'name' => 'state.bank-account-1',
-            'description' => 'This is the bank account subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'state.bank-account-2',
-            'description' => 'This is the bank account subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'state.cash',
-            'description' => 'This is the cash subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'state.cash-savings',
-            'description' => 'This is the cash subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        
-        $groupId = $this->getGroupId('Income', 1);
-        Subgroup::factory()->create([
-            'name' => 'income.salary',
-            'description' => 'This is the salary subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'income.minijob',
-            'description' => 'This is the minijob subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'income.other-income',
-            'description' => 'This is the other-income subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        
-        $groupId = $this->getGroupId('Correction', 1);
-        Subgroup::factory()->create([
-            'name' => 'correction.correction',
-            'description' => 'This is the correction subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $groupId = $this->getGroupId('Food', 1);
-        Subgroup::factory()->create([
-            'name' => 'food.groceries',
-            'description' => 'This is the groceries subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'food.sweets',
-            'description' => 'This is the sweets subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'food.takeaway',
-            'description' => 'This is the takeaway subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'food.restaurants',
-            'description' => 'This is the restaurants subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'food.meal-at-work',
-            'description' => 'This is the meal at work subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $groupId = $this->getGroupId('Housing', 1);
-        Subgroup::factory()->create([
-            'name' => 'housing.credit',
-            'description' => 'This is the credit subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'housing.rent',
-            'description' => 'This is the rent subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'housing.mortgage',
-            'description' => 'This is the mortgage subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'housing.taxes',
-            'description' => 'This is the taxes subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'housing.insurance',
-            'description' => 'This is the insurance subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'housing.maintenance',
-            'description' => 'This is the maintenance and repairs subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $groupId = $this->getGroupId('Utilities', 1);
-        Subgroup::factory()->create([
-            'name' => 'utilities.trash',
-            'description' => 'This is the trash and recycling subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'utilities.heating',
-            'description' => 'This is the heating subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'utilities.cooling',
-            'description' => 'This is the heating subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'utilities.electricity',
-            'description' => 'This is the electricity subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'utilities.gas',
-            'description' => 'This is the gas subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'utilities.water',
-            'description' => 'This is the water subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'utilities.sewage',
-            'description' => 'This is the sewage subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'utilities.hot-water',
-            'description' => 'This is the hot water subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $groupId = $this->getGroupId('Clothes', 1);
-        Subgroup::factory()->create([
-            'name' => 'clothes.clothes',
-            'description' => 'This is the clothes subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'clothes.shoes',
-            'description' => 'This is the shoes subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'clothes.accessories',
-            'description' => 'This is the accessories subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $groupId = $this->getGroupId('Subscriptions', 1);
-        Subgroup::factory()->create([
-            'name' => 'subscriptions.internet',
-            'description' => 'This is the internet subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'subscriptions.mobile',
-            'description' => 'This is the mobile phone subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'subscriptions.tv',
-            'description' => 'This is the television subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'subscriptions.streaming',
-            'description' => 'This is the streaming services subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'subscriptions.gaming',
-            'description' => 'This is the gaming subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'subscriptions.newspaper',
-            'description' => 'This is the gaming subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'subscriptions.other',
-            'description' => 'This is the subscriptions subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $groupId = $this->getGroupId('Hygiene', 1);
-        Subgroup::factory()->create([
-            'name' => 'hygiene.personal',
-            'description' => 'This is the personal care subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'hygiene.cosmetics',
-            'description' => 'This is the cosmetics subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'hygiene.hairdresser',
-            'description' => 'This is the hairdresser subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'hygiene.cleaning',
-            'description' => 'This is the cleaning products subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'hygiene.other',
-            'description' => 'This is the other hygiene subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $groupId = $this->getGroupId('Health', 1);
-        Subgroup::factory()->create([
-            'name' => 'health.medicines',
-            'description' => 'This is the medicines subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'health.doctor',
-            'description' => 'This is the doctor visits subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'health.dentist',
-            'description' => 'This is the dentist visits subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'health.insurance',
-            'description' => 'This is the health insurance subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'health.other',
-            'description' => 'This is the other health subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $groupId = $this->getGroupId('Car', 1);
-        Subgroup::factory()->create([
-            'name' => 'car.credit',
-            'description' => 'This is the car credit subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'car.fuel',
-            'description' => 'This is the car fuel subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'car.insurance',
-            'description' => 'This is the car insurance subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'car.parts',
-            'description' => 'This is the car parts subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'car.repairs',
-            'description' => 'This is the car repairs subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'car.parking',
-            'description' => 'This is the car parking subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'car.tolls',
-            'description' => 'This is the car tolls subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'car.wash',
-            'description' => 'This is the car wash subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Subgroup::factory()->create([
-            'name' => 'car.other',
-            'description' => 'This is the car other subgroup.',
-            'privacy' => 0, // public
-            'group_id' => $groupId,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $subgroups = [
+            // group_name, subgroup_name
+            ['state', 'state.bank-account-1'],
+            ['state', 'state.bank-account-2'],
+            ['state', 'state.cash'],
+            ['state', 'state.cash-savings'],
+            ['income', 'income.salary'],
+            ['income', 'income.minijob'],
+            ['income', 'income.other-income'],
+            ['correction', 'correction.correction'],
+            ['food', 'food.groceries'],
+            ['food', 'food.sweets'],
+            ['food', 'food.takeaway'],
+            ['food', 'food.restaurants'],
+            ['food', 'food.meal-at-work'],
+            ['housing', 'housing.credit'],
+            ['housing', 'housing.rent'],
+            ['housing', 'housing.mortgage'],
+            ['housing', 'housing.taxes'],
+            ['housing', 'housing.insurance'],
+            ['housing', 'housing.maintenance'],
+            ['utilities', 'utilities.trash'],
+            ['utilities', 'utilities.heating'],
+            ['utilities', 'utilities.cooling'],
+            ['utilities', 'utilities.electricity'],
+            ['utilities', 'utilities.gas'],
+            ['utilities', 'utilities.water'],
+            ['utilities', 'utilities.sewage'],
+            ['utilities', 'utilities.hot-water'],
+            ['clothes', 'clothes.clothes'],
+            ['clothes', 'clothes.shoes'],
+            ['clothes', 'clothes.accessories'],
+            ['subscriptions', 'subscriptions.internet'],
+            ['subscriptions', 'subscriptions.mobile'],
+            ['subscriptions', 'subscriptions.tv'],
+            ['subscriptions', 'subscriptions.streaming'],
+            ['subscriptions', 'subscriptions.gaming'],
+            ['subscriptions', 'subscriptions.newspaper'],
+            ['subscriptions', 'subscriptions.other'],
+            ['hygiene', 'hygiene.personal'],
+            ['hygiene', 'hygiene.cosmetics'],
+            ['hygiene', 'hygiene.hairdresser'],
+            ['hygiene', 'hygiene.cleaning'],
+            ['hygiene', 'hygiene.other'],
+            ['health', 'health.medicines'],
+            ['health', 'health.doctor'],
+            ['health', 'health.dentist'],
+            ['health', 'health.insurance'],
+            ['health', 'health.other'],
+            ['car', 'car.credit'],
+            ['car', 'car.fuel'],
+            ['car', 'car.insurance'],
+            ['car', 'car.parts'],
+            ['car', 'car.repairs'],
+            ['car', 'car.parking'],
+            ['car', 'car.tolls'],
+            ['car', 'car.wash'],
+            ['car', 'car.other'],
+            ['hobby', 'hobby.sports'],
+            ['hobby', 'hobby.music'],
+            ['hobby', 'hobby.travel'],
+            ['hobby', 'hobby.books'],
+            ['hobby', 'hobby.games'],
+            ['hobby', 'hobby.other'],
+            ['other', 'other.gifts'],
+            ['other', 'other.charity'],
+            ['other', 'other.fines'],
+            ['other', 'other.other'],
+            ['other', 'other.vacation'],
+            ['other', 'other.education'],
+            ['other', 'other.pets'],
+            ['other', 'other.tools'],
+        ];
+        foreach ($subgroups as [$groupName, $subgroupName]) {
+            $groupId = $this->getGroupId($groupName, 1);
+            Subgroup::factory()->create([
+                'name' => $subgroupName,
+                'description' => $subgroupName . '-desc.',
+                'privacy' => 0, // public
+                'group_id' => $groupId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

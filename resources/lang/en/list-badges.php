@@ -14,6 +14,8 @@ return [
     'delete_confirmation' => 'Are you sure you want to delete this entry?',
     'state' => 'State',
     'correction' => 'Corrected',
-    'label-badge' => 'Badge',
+    'label_badge' => 'Badge',
     'amount_badge' => 'Badge amount',
+    'page_total' => 'Page total',
+    'total' => 'Badge total',
 ];

@@ -74,6 +74,16 @@
                         </td>
                     </tr>
                 @endforeach
+                <tr>
+                    <td colspan="4" class="text-right"><strong>{{ __('list-badges.page_total') }}:</strong></td>
+                    <td class="amount">{{ number_format($totalPageBadgeAmount, 2) }}</td>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="text-right"><strong>{{ __('list-badges.total') }}:</strong></td>
+                    <td class="amount">{{ number_format($totalBadgeAmount, 2) }}</td>
+                    <td colspan="2"></td>
+                </tr>
             </tbody>
         </table>
         <div class="pagination">
