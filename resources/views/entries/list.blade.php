@@ -47,6 +47,7 @@
                             <form action="{{ route('entry.create', $header->id) }}" method="GET"
                                 style="display:inline-block;">
                                 <input type="hidden" name="blade" value="list" />
+                                <input type="hidden" name="page" value="{{ request('page', 1) }}">
                                 <button type="submit" class="btn btn-primary">{{ __('list.edit') }}</button>
                             </form>
                             <form action="{{ route('entry.destroy', $header->id) }}" method="POST"

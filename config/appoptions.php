@@ -69,6 +69,7 @@ return [
     'badges_per_demo_user' => env('BADGES_PER_DEMO_USER', 3),
     'badges_per_basic_user' => env('BADGES_PER_BASIC_USER', 10),
     'badges_per_premium_user' => env('BADGES_PER_PREMIUM_USER', 50),
+    'list_default_length' => env('LIST_DEFAULT_LENGTH',20),
     
     // Maintenance mode configuration
     'maintenance_lock_up' => env('MAINTENANCE_LOCK_UP', false),

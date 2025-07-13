@@ -22,6 +22,12 @@
         @if (!empty($header) && $header->blade)
             <input type="hidden" name="blade" value="{{ $header->blade }}" /> 
         @endif
+        @if(request('page'))
+            <input type="hidden" name="page" value="{{ request('page') }}">
+        @endif
+        @if(request('badge-id'))
+            <input type="hidden" name="badge-id" value="{{ request('badge-id') }}">
+        @endif
 
         <x-form-field name="date" label="Date" required>
             <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />

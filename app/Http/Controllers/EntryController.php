@@ -176,11 +176,13 @@ class EntryController extends Controller
         }
 
         // Redirect or return response
+        $page = $request->input('page', 1);
+        $selectedBadge = $request->input('badge-id', null);
         if ($request->has('header_id') && $request->has('blade')) {
             if ($request->input('blade') === 'list-badges') {
-                return redirect()->route('entry.list-badges')->with('success', 'Entry updated successfully.');
+                return redirect()->route('entry.list-badges', ['page' => $page, 'badge-id' => $selectedBadge])->with('success', 'Entry updated successfully.');
             } else {
-                return redirect()->route('entry.list')->with('success', 'Entry updated successfully.');
+                return redirect()->route('entry.list', ['page' => $page])->with('success', 'Entry updated successfully.');
             } 
         } else {
             return redirect()->route('entry.create')->with('success', 'Entry saved successfully.');
@@ -230,11 +232,12 @@ class EntryController extends Controller
         }
 
         $user = Auth::user();
+        $itemsOnPage = config('appoptions.list_default_length', 20);
         // Assuming your Header model has a user_id column
         $headers = Header::where('user_id', $user->id)
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
-            ->paginate(15); // or ->get() if you don't want pagination
+            ->paginate($itemsOnPage); // or ->get() if you don't want pagination
 
         $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
 
@@ -249,25 +252,13 @@ class EntryController extends Controller
 
         $user = Auth::user();
 
-        /*
-        $headers = Header::where('user_id', $user->id)
-            ->orderBy('date', 'desc')
-            ->orderBy('id', 'desc')
-            ->get()
-            ->filter(function ($header) {
-                return !empty($header->badges());
-            })
-            ->values();
-            // ->paginate(15);
-        */
-
         $listOfBadges = $user->badges;
         $selectedBadge = request('badge-id');
         if ($selectedBadge === null && $listOfBadges && $listOfBadges->count() > 0) {
             $selectedBadge = $listOfBadges->first()->id;
         }
 
-        $perPage = 1;
+        $itemsOnPage = config('appoptions.list_default_length', 20);;
         $page = request('page', 1);
 
         $filtered = Header::where('user_id', $user->id)
@@ -281,9 +272,9 @@ class EntryController extends Controller
             ->values();
 
         $headers = new LengthAwarePaginator(
-            $filtered->forPage($page, $perPage),
+            $filtered->forPage($page, $itemsOnPage),
             $filtered->count(),
-            $perPage,
+            $itemsOnPage,
             $page,
             ['path' => request()->url(), 'query' => request()->query()]
         );

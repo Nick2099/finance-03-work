@@ -60,6 +60,8 @@
                             <form action="{{ route('entry.create', $header->id) }}" method="GET"
                                 style="display:inline-block;">
                                 <input type="hidden" name="blade" value="list-badges" />
+                                <input type="hidden" name="page" value="{{ request('page', 1) }}">
+                                <input type="hidden" name="badge-id" value="{{ $selectedBadge ?? '' }}">
                                 <button type="submit" class="btn btn-primary">{{ __('list-badges.edit') }}</button>
                             </form>
                             <form action="{{ route('entry.destroy', $header->id) }}" method="POST"
