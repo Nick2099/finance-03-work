@@ -103,6 +103,9 @@ Route::middleware([MyMiddleware::class])->group(function () {
     Route::delete('/entry/{id}', [EntryController::class, 'destroy'])
         ->name('entry.destroy');
 
+    Route::post('/entry/add-recurring/{id}', [EntryController::class, 'addRecurring'])
+        ->name('entry.add-recurring');
+
     Route::get('/subgroups/{group}', [EntryController::class, 'getSubgroups']);
 
     Route::get('/places/suggest', [EntryController::class, 'suggestPlaces'])

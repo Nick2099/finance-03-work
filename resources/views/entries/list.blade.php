@@ -57,6 +57,16 @@
                                 <button type="submit" class="btn btn-danger"
                                     onclick="return confirm('{{ __('list.delete_confirmation') }}');">{{ __('list.delete') }}</button>
                             </form>
+                            {{-- This have to be changed.
+                            It should be available only for headers that are still not recurring.
+                            For recurring should be edit recurring. --}}
+                            @if ($header->items()->count() == 1)
+                                <form action="{{ route('entry.add-recurring', $header->id) }}" method="POST"
+                                    style="display:inline-block;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-secondary">{{ __('list.add-recurring') }}</button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

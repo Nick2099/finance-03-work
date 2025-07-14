@@ -17,7 +17,7 @@ class EntryController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function create($id = null)
+    public function create($id = null, $recurring = false)
     {
         if (!Auth::check()) {
             return redirect('/')->with('error', 'You have to be logged in.');
@@ -92,7 +92,7 @@ class EntryController extends Controller
 
         // dump($groupSubgroupMap);
 
-        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges'));
+        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring'));
     }
 
     public function store(Request $request)
@@ -312,5 +312,10 @@ class EntryController extends Controller
 
         // Redirect back to the previous page (preserve pagination)
         return redirect()->back()->with('success', 'Entry deleted successfully.');
+    }
+
+    public function addRecurring($id)
+    {
+        return $this->create($id, true);
     }
 }

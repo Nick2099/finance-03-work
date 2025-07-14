@@ -14,4 +14,5 @@ return [
     'delete_confirmation' => 'Jeste li sigurni da želite obrisati ovaj unos?',
     'state' => 'Stanje',
     'correction' => 'Ispravak',
+    'add-recurring' => 'Učini ovaj unos ponavljajućim',
 ];

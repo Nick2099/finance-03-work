@@ -14,4 +14,5 @@ return [
     'delete_confirmation' => 'Are you sure you want to delete this entry?',
     'state' => 'State',
     'correction' => 'Corrected',
+    'add-recurring' => 'Make this entry recurring',
 ];

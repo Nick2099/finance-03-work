@@ -4,6 +4,7 @@
     $locationMinLength = config('appoptions.location_suggest_min_length');
     $debounceDelay = config('appoptions.suggest_debounce_delay', 250);
     $tempGroupSubgroupMap = $groupSubgroupMap;
+    $recurringMenu = config('menu-recurring');
     // dump($allBadges);
     // dump($groups);
     // dump($listOfItems);
@@ -13,7 +14,13 @@
     <x-slot:heading>
         {{ empty($header) ? 'New entry' : 'Edit entry' }}
     </x-slot>
-    <h1>{{ empty($header) ? 'New entry' : 'Edit entry' }}</h1>
+    <h1>
+        @if ($recurring)
+            {{ __('entry.heading-recurring') }}
+        @else
+            {{ empty($header) ? __('entry.new-entry') : __('entry.edit-entry') }}
+        @endif
+    </h1>
     <form method="POST" action="/entry">
         @csrf
         @if (!empty($header) && $header->id)
@@ -28,8 +35,33 @@
         @if(request('badge-id'))
             <input type="hidden" name="badge-id" value="{{ request('badge-id') }}">
         @endif
+        @if(request('badge-id'))
+            <input type="hidden" name="badge-id" value="{{ request('badge-id') }}">
+        @endif
 
-        <x-form-field name="date" label="Date" required>
+        @if ($recurring)
+        <div>
+            <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
+                <div>
+                    <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
+                        @forEach($recurringMenu as $option)
+                            <option value="{{ $option['value'] }}">{{ __('entry.'.$option['label']) }}</option>
+                        @endforeach
+                    </select>
+                    <select name="frequency" id="frequency" class="form-select block w-full mt-1">
+                        {{-- type = 0: state,  1: income, 2: expense, 3: correction --}}
+                        <option value="0">First working day of month</option>
+                        <option value="1">Last working day of month</option>
+                        <option value="2">Exactly on</option>
+                        <option value="3">First working day after</option>
+                        <option value="4">Last working day before</option>
+                    </select>
+                </div>
+            </x-form-field>
+        </div>
+        @endif
+
+        <x-form-field name="date" :label="__('entry.date')" required>
             <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
         </x-form-field>
 
