@@ -40,7 +40,7 @@
         @endif
 
         @if ($recurring)
-        <div>
+        <div id="recurring-options">
             <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
                 <div>
                     <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
@@ -48,13 +48,20 @@
                             <option value="{{ $option['value'] }}">{{ __('entry.'.$option['label']) }}</option>
                         @endforeach
                     </select>
+                </div>
+            </x-form-field>
+            <x-form-field name="frequency" :label="__('entry.frequency')" required>
+                <div>
                     <select name="frequency" id="frequency" class="form-select block w-full mt-1">
-                        {{-- type = 0: state,  1: income, 2: expense, 3: correction --}}
-                        <option value="0">First working day of month</option>
-                        <option value="1">Last working day of month</option>
-                        <option value="2">Exactly on</option>
-                        <option value="3">First working day after</option>
-                        <option value="4">Last working day before</option>
+                    </select>
+                </div>
+            </x-form-field>
+            <x-form-field name="day-of-month" :label="__('entry.day')" required>
+                <div>
+                    <select name="day-of-month" id="day-of-month" class="form-select block w-full mt-1">
+                        @for ($i = 1; $i <= 31; $i++)
+                            <option value="{{ $i }}">{{ $i }}</option>
+                        @endfor
                     </select>
                 </div>
             </x-form-field>
@@ -842,6 +849,90 @@
                 e.preventDefault();
                 window.location.reload();
             });
+        }
+
+        const recurrencySelect = document.getElementById('recurrency');
+        const frequenvySelect = document.getElementById('frequency');
+        // Pass PHP config to JS
+        const recurringMenuConfig = @json($recurringMenu);
+
+        // Helper to get the 'day' property of the selected frequency option
+        let selectedFrequencyDay = null;
+
+        // Pass translations for frequency labels to JS
+        const frequencyTranslations = @json(collect($recurringMenu)->flatMap(function($item){
+            return collect($item['options'])->mapWithKeys(function($opt, $key){
+                return [$opt['label'] => __("entry.".$opt['label'])];
+            });
+        }));
+
+        function updateFrequencyOptions() {
+            if (!recurrencySelect || !frequenvySelect) return;
+
+            const selectedValue = recurrencySelect.value;
+            frequenvySelect.innerHTML = '';
+
+            // Find the config for the selected recurrency (e.g., 'month' or 'week')
+            const config = recurringMenuConfig[selectedValue];
+            if (config && config.options) {
+                Object.entries(config.options).forEach(([key, opt]) => {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    // Use translation if available, otherwise fallback to label
+                    option.text = frequencyTranslations[opt.label] || opt.label;
+                    frequenvySelect.appendChild(option);
+                });
+                // Set selectedFrequencyDay for the first option (default selected)
+                const firstKey = Object.keys(config.options)[0];
+                selectedFrequencyDay = config.options[firstKey]?.day ?? null;
+            }
+        }
+
+        function updateDayOfMonthVisibility() {
+            if (!recurrencySelect || !frequenvySelect) return;
+
+            const selectedValue = recurrencySelect.value;
+            const config = recurringMenuConfig[selectedValue];
+            if (config && config.options) {
+                const selectedKey = frequenvySelect.value;
+                selectedFrequencyDay = config.options[selectedKey]?.day ?? null;
+            } else {
+                selectedFrequencyDay = null;
+            }
+            const dayOfMonth = document.getElementById('day-of-month-wrapper');
+            if (selectedFrequencyDay) {
+                dayOfMonth.style.display = 'block';
+            } else {
+                dayOfMonth.style.display = 'none';
+            }
+        }
+        // Update selectedFrequencyDay when frequency changes
+        /*
+        if (recurrencySelect && frequenvySelect) {
+            frequenvySelect.addEventListener('change', function() {
+                const selectedValue = recurrencySelect.value;
+                const config = recurringMenuConfig[selectedValue];
+                if (config && config.options) {
+                    const selectedKey = frequenvySelect.value;
+                    selectedFrequencyDay = config.options[selectedKey]?.day ?? null;
+                } else {
+                    selectedFrequencyDay = null;
+                }
+                const dayOfMonth = document.getElementById('day-of-month-wrapper');
+                if (selectedFrequencyDay) {
+                    dayOfMonth.style.display = 'block';
+                } else {
+                    dayOfMonth.style.display = 'none';
+                }
+            });
+        }
+        */
+
+        if (recurrencySelect && frequenvySelect) {
+            recurrencySelect.addEventListener('change', updateFrequencyOptions);
+            frequenvySelect.addEventListener('change', updateDayOfMonthVisibility);
+            updateFrequencyOptions();
+            updateDayOfMonthVisibility();
         }
     </script>
 

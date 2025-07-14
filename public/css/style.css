@@ -242,3 +242,11 @@ body {
     border-top: 1px solid #ddd;
     padding: 0 4px;
 }
+
+#recurring-options {
+    display: flex;
+}
+
+#recurring-options div {
+    margin-right: 8px;
+}
