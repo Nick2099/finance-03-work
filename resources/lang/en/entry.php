@@ -23,6 +23,8 @@ return [
     'weekday-6' => 'Saturday',
     'lasts-for' => 'Lasts for',
     'end-of-the-year' => 'End of the year',
+    'start-date' => 'Start date',
+    'end-date' => 'End date',
     'until-date' => 'Until date',
     'unlimited' => 'Unlimited',
     'month' => [
@@ -31,8 +33,8 @@ return [
         'last-working-day-of-the-month' => 'Last working day of the month',
         'exactly-on' => 'Exactly on',
         'exactly-on-after' => 'in month.',
-        'first-working-day-after' => 'First working day after',
-        'last-working-day-before' => 'Last working day before',
+        'first-working-day-after' => 'First working day on or after',
+        'last-working-day-before' => 'Last working day on or before',
     ],
     'week' => [
         'label' => 'Weekly',

@@ -43,6 +43,9 @@
         @if ($recurring)
         <div id="recurring-options">
             <div class="recurring-options-row">
+                <x-form-field name="start-date" :label="__('entry.start-date')" required>
+                    <x-form-input type="date" name="start-date" id="start-date" value="{{ old('start-date', $header->date ?? date('Y-m-d')) }}" required />
+                </x-form-field>
                 <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
                     <div>
                         <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
@@ -82,7 +85,7 @@
             <div class="recurring-options-row">
                 <x-form-field name="lasts-for" :label="__('entry.lasts-for')" required>
                     <div>
-                        <select name="until" id="until" class="form-select block w-full mt-1">
+                        <select name="lasts-for" id="lasts-for" class="form-select block w-full mt-1">
                             @foreach($recurringMenuUntil['options'] as $option)
                                 @foreach($option as $key => $label)
                                     <option value="{{ $key }}">{{ __('entry.'.$label) }}</option>
@@ -91,13 +94,19 @@
                         </select>
                     </div>
                 </x-form-field>
+                <x-form-field name="end-date" :label="__('entry.end-date')" required>
+                    <x-form-input type="date" name="end-date" id="end-date" value="{{ old('end-date', $header->date ?? date('Y-m-d')) }}" required />
+                </x-form-field>
+
             </div>
         </div>
         @endif
 
-        <x-form-field name="date" :label="__('entry.date')" required>
-            <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
-        </x-form-field>
+        @if (!$recurring)
+            <x-form-field name="date" :label="__('entry.date')" required>
+                <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
+            </x-form-field>
+        @endif
 
         <x-form-field name="type" label="Type" required>
             <div>
@@ -232,10 +241,18 @@
     </form>
 
     <script>
+        // Make those variables available globally
+        const headerId = @json($header->id ?? null);
+        const listOfItems = @json(old('items', $listOfItems ?? []));
+        const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
+        const recurringMenuConfig = @json($recurringMenu);
+        const frequencyTranslations = @json(collect($recurringMenu)->flatMap(function($item){
+            return collect($item['options'])->mapWithKeys(function($opt, $key){
+                return [$opt['label'] => __("entry.".$opt['label'])];
+            });
+        }));
+
         document.addEventListener('DOMContentLoaded', function() {
-            const listOfItems = @json(old('items', $listOfItems ?? []));
-            const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
-            const headerId = @json($header->id ?? null);
             const bottomLine = document.getElementById('bottom-line');
             const typeSelect = document.getElementById('type');
 
@@ -861,18 +878,9 @@
 
         const recurrencySelect = document.getElementById('recurrency');
         const frequenvySelect = document.getElementById('frequency');
-        // Pass PHP config to JS
-        const recurringMenuConfig = @json($recurringMenu);
 
         // Helper to get the 'day' property of the selected frequency option
         let selectedFrequencyDay = null;
-
-        // Pass translations for frequency labels to JS
-        const frequencyTranslations = @json(collect($recurringMenu)->flatMap(function($item){
-            return collect($item['options'])->mapWithKeys(function($opt, $key){
-                return [$opt['label'] => __("entry.".$opt['label'])];
-            });
-        }));
 
         function updateFrequencyOptions() {
             if (!recurrencySelect || !frequenvySelect) return;
@@ -923,13 +931,76 @@
             } else {
                 dayOfWeek.style.display = 'none';
             }
+            setRecurrencyValues();
         }
 
         if (recurrencySelect && frequenvySelect) {
             recurrencySelect.addEventListener('change', updateFrequencyOptions);
             frequenvySelect.addEventListener('change', updateDayOfMonthVisibility);
             updateFrequencyOptions();
-            updateDayOfMonthVisibility();
+            // updateDayOfMonthVisibility();
+            // setRecurrencyValues();
+        }
+
+        function setRecurrencyValues() {
+            const startDateValue = document.getElementById('start-date').value;
+            const recurrencySelectValue = document.getElementById('recurrency').value;
+            const frequencySelectValue = document.getElementById('frequency').value;
+            const dayOfMonthInputValue = document.getElementById('day-of-month').value;
+            const dayOfWeekInputValue = document.getElementById('day-of-week').value;
+            const endDateValue = document.getElementById('end-date').value;
+            const lastForValue = document.getElementById('lasts-for').value;
+
+            console.log('Setting recurrency values');
+            console.log('Start Date:', startDateValue);
+            console.log('Recurrency:', recurrencySelectValue);
+            console.log('Frequency:', frequencySelectValue);
+            console.log('Day of Month:', dayOfMonthInputValue);
+            console.log('Day of Week:', dayOfWeekInputValue);
+            console.log('End Date:', endDateValue);
+            console.log('Lasts For:', lastForValue);
+            console.log("Header ID:", headerId);
+
+            console.log('First Working Day of Month:', firstWorkingDayOfMonth(new Date(startDateValue)));
+            console.log('Last Working Day of Month:', lastWorkingDayOfMonth(new Date(startDateValue)));
+            console.log('First Working Day on or After:', firstWorkingDayOnOrAfter(new Date(startDateValue)));
+            console.log('Last Working Day on or Before:', lastWorkingDayOnOrBefore(new Date(startDateValue)));
+        }
+
+        function firstWorkingDayOfMonth(sentDate) {
+            let year = sentDate.getFullYear();
+            let month = sentDate.getMonth();
+            let date = new Date(year, month, 1);
+            while (date.getDay() === 0 || date.getDay() === 6) {
+                date.setDate(date.getDate() + 1);
+            }
+            return date;
+        }
+
+        function lastWorkingDayOfMonth(sentDate) {
+            let year = sentDate.getFullYear();
+            let month = sentDate.getMonth();
+            let date = new Date(year, month + 1, 0);
+            while (date.getDay() === 0 || date.getDay() === 6) {
+                date.setDate(date.getDate() - 1);
+            }
+            return date;
+        }
+
+        function firstWorkingDayOnOrAfter(sentDate) {
+            let date = new Date(sentDate);
+            while (date.getDay() === 0 || date.getDay() === 6) {
+                date.setDate(date.getDate() + 1);
+            }
+            return date;
+        }
+
+        function lastWorkingDayOnOrBefore(sentDate) {
+            let date = new Date(sentDate);
+            while (date.getDay() === 0 || date.getDay() === 6) {
+                date.setDate(date.getDate() - 1);
+            }
+            return date;
         }
     </script>
 
