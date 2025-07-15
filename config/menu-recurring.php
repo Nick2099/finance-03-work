@@ -18,9 +18,8 @@ return [
         "label" => "week.label",
         "every" => "every-n-weeks",
         "options" => [
-            "1" => ["label" => "week.first-working-day-of-the-week", "day" => false],
-            "2" => ["label" => "week.last-working-day-of-the-week", "day" => false],
-            "3" => ["label" => "week.exactly-on", "day" => true],
+            "1" => ["label" => "week.every", "day" => true],
+            "2" => ["label" => "week.every-2", "day" => true],
         ],
     ],
 ];

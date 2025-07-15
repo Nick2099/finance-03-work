@@ -1,0 +1,38 @@
+<?php
+
+return [
+    'heading-recurring' => 'Wiederkehrenden Eintrag bearbeiten',
+    'new-entry' => 'Neuer Eintrag',
+    'edit-entry' => 'Eintrag bearbeiten',
+    'date' => 'Datum',
+    'type' => 'Typ',
+    'amount' => 'Betrag',
+    'place_of_purchase' => 'Stelle / Institution',
+    'location' => 'Standort',
+    'note' => 'Notiz',
+    'recurrency' => 'Wiederholung',
+    'frequency' => 'Häufigkeit',
+    'day' => 'Tag',
+    'day-of-week' => 'Tag',
+    'weekday-0' => 'Sonntag',
+    'weekday-1' => 'Montag',
+    'weekday-2' => 'Dienstag',
+    'weekday-3' => 'Mittwoch',
+    'weekday-4' => 'Donnerstag',
+    'weekday-5' => 'Freitag',
+    'weekday-6' => 'Samstag',
+    'month' => [
+        'label' => 'Monatlich',
+        'first-working-day-of-the-month' => 'Erster Werktag des Monats',
+        'last-working-day-of-the-month' => 'Letzter Werktag des Monats',
+        'exactly-on' => 'Genau am',
+        'exactly-on-after' => 'im Monat.',
+        'first-working-day-after' => 'Erster Werktag nach',
+        'last-working-day-before' => 'Letzter Werktag vor',
+    ],
+    'week' => [
+        'label' => 'Wöchentlich',
+        'every' => 'Jede',
+        'every-2' => 'Alle 2 Wochen am',
+    ],
+];

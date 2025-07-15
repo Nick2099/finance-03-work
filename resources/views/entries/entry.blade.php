@@ -65,6 +65,15 @@
                     </select>
                 </div>
             </x-form-field>
+            <x-form-field name="day-of-week" :label="__('entry.day-of-week')" required>
+                <div>
+                    <select name="day-of-week" id="day-of-week" class="form-select block w-full mt-1">
+                        @for ($i = 0; $i < 7; $i++)
+                            <option value="{{ $i }}">{{ __('entry.weekday-'.$i) }}</option>
+                        @endfor
+                    </select>
+                </div>
+            </x-form-field>
         </div>
         @endif
 
@@ -240,7 +249,6 @@
                 });
                 renderItems();
             }
-            // console.log('Initial items:', items);
 
             // Set focus to the amount field when the form is shown
             const amountInput = document.getElementById('amount');
@@ -329,7 +337,6 @@
                     const query = this.value;
                     if (query.length < PLACE_MIN_LENGTH || query === lastPlaceQuery) return;
                     lastPlaceQuery = query;
-                    // console.log('Fetching places for:', lastPlaceQuery);
                     fetch(`/places/suggest?q=${encodeURIComponent(query)}`)
                         .then(response => response.json())
                         .then(data => {
@@ -353,7 +360,6 @@
                     const query = this.value;
                     if (query.length < LOCATION_MIN_LENGTH || query === lastLocationQuery) return;
                     lastLocationQuery = query;
-                    // console.log('Fetching locations for:', lastLocationQuery);
                     fetch(`/locations/suggest?q=${encodeURIComponent(query)}`)
                         .then(response => response.json())
                         .then(data => {
@@ -381,7 +387,6 @@
             }
 
             function updateItemNote(idx) {
-                console.log(`Updating note for item ${idx}`);
                 if (items[idx]) {
                     items[idx].note = document.querySelector(`input[name="item_${idx}_note"]`).value;;
                 }
@@ -456,7 +461,6 @@
                         const amountInput = itemsList.querySelector(`input[name='item_${idx}_amount']`);
                         let addValue = parseFloat(addInput.value.replace(',', '.'));
                         if (addValue < 0 && !negativeValues) {
-                            // console.log('Add amount: Negative values not allowed, resetting to 0.00');
                             addValue = 0.00;
                             addInput.value = '0.00';
                             // items[idx].amount = newValue.toFixed(2);
@@ -468,11 +472,9 @@
                         if (!isNaN(addValue) && addValue !== 0) {
                             // Limit addValue to the range [minAdd, maxAdd]
                             if ((addValue > maxAdd) && (!negativeValues)) {
-                                // console.log(`Add amount: Negative values not allowed, setting addValue to maxAdd: ${maxAdd}`);
                                 addValue = maxAdd;
                             }
                             if ((addValue < minAdd) && (!negativeValues)) {
-                                // console.log(`Add amount: Negative values not allowed, setting addValue to minAdd: ${minAdd}`);
                                 addValue = minAdd;
                             }
                             let currentAmount = parseFloat(items[idx].amount);
@@ -488,7 +490,6 @@
                         const amountInput = itemsList.querySelector(`input[name='item_${idx}_amount']`);
                         let newValue = parseFloat(amountInput.value.replace(',', '.'));
                         if (newValue < 0 && !negativeValues) {
-                            // console.log('Set amount: Negative values not allowed, resetting to 0.00');
                             newValue = 0.00;
                             amountInput.value = '0.00';
                             items[idx].amount = newValue.toFixed(2);
@@ -497,17 +498,14 @@
                         }
                         let maxValue = (parseFloat(items[0].amount) || 0) + (parseFloat(items[idx].amount) || 0);
                         let minValue = 0;
-                        // console.log(`Setting amount for item ${idx}: newValue=${newValue}, maxValue=${maxValue}, minValue=${minValue}`);
+
                         if (!isNaN(newValue)) {
                             if ((newValue > maxValue) && (!negativeValues)) {
-                                // console.log(`Set amount: Negative values not allowed, setting newValue to maxValue: ${maxValue}`);
                                 newValue = maxValue;
                             }
                             if ((newValue < minValue) && (!negativeValues)) {
-                                // console.log(`Set amount: Negative values not allowed, setting newValue to minValue: ${minValue}`);
                                 newValue = minValue;
                             }
-                            // Update the item's amount
                             items[idx].amount = newValue.toFixed(2);
                             renderItems();
                         }
@@ -518,7 +516,6 @@
                         const data = JSON.parse(btn.getAttribute('data-remove'));
                         // Remove the item from the items array
                         items.splice(data.idx, 1);
-                        // console.log(`Removing item at index ${data.idx}:`, data);
 
                         // Restore group option if not present, in alphabetical order
                         groupSelect = document.getElementById('group_id');
@@ -718,14 +715,11 @@
             // Attach to form submit
             const entryForm = document.querySelector('form[action="/entry"]');
             if (entryForm) {
-                console.log('Entry form found, attaching submit event listener');
                 entryForm.addEventListener('submit', function(e) {
                     try {
                         updateHiddenItemsFields();
                         // Debug: log the hidden fields before submit
-                        console.log('Submitting with hidden fields:', document.getElementById('items-hidden-fields').innerHTML);
                     } catch (err) {
-                        console.error('Error in submit handler:', err);
                         alert('A JavaScript error occurred: ' + err.message);
                     }
                 });
@@ -790,14 +784,11 @@
                     modal.style.display = 'block';
                 }
                 if (e.target && e.target.id === 'close-badge-modal') {
-                    console.log('Close badge modal clicked');
-                    document.getElementById('badge-modal').style.display = 'none';
+                   document.getElementById('badge-modal').style.display = 'none';
                 }
                 if (e.target && e.target.id === 'save-badges-btn') {
-                    console.log('Save badges button clicked');
                     // Save selected badges for new item or existing item
                     const checked = Array.from(document.querySelectorAll('#badge-checkboxes .badge-checkbox:checked')).map(cb => parseInt(cb.value));
-                    console.log('Checked badges:', checked);
                     if (currentBadgeIdx === 'null') {
                         document.getElementById('new_item_badges').value = JSON.stringify(checked);
                     } else {
@@ -806,7 +797,6 @@
                         if (Array.isArray(items) && items[currentBadgeIdx]) {
                             items[currentBadgeIdx].badges = checked;
                         }
-                        console.log('Updated items array:', items);
                     }
                     // Always update hidden fields after badge selection
                     updateHiddenItemsFields();
@@ -869,11 +859,11 @@
         function updateFrequencyOptions() {
             if (!recurrencySelect || !frequenvySelect) return;
 
-            const selectedValue = recurrencySelect.value;
+            const selectedRecurrency = recurrencySelect.value;
             frequenvySelect.innerHTML = '';
 
             // Find the config for the selected recurrency (e.g., 'month' or 'week')
-            const config = recurringMenuConfig[selectedValue];
+            const config = recurringMenuConfig[selectedRecurrency];
             if (config && config.options) {
                 Object.entries(config.options).forEach(([key, opt]) => {
                     const option = document.createElement('option');
@@ -885,48 +875,37 @@
                 // Set selectedFrequencyDay for the first option (default selected)
                 const firstKey = Object.keys(config.options)[0];
                 selectedFrequencyDay = config.options[firstKey]?.day ?? null;
+                updateDayOfMonthVisibility();
             }
         }
 
         function updateDayOfMonthVisibility() {
             if (!recurrencySelect || !frequenvySelect) return;
 
-            const selectedValue = recurrencySelect.value;
-            const config = recurringMenuConfig[selectedValue];
+            const selectedRecurrency = recurrencySelect.value;
+            const config = recurringMenuConfig[selectedRecurrency];
+
             if (config && config.options) {
                 const selectedKey = frequenvySelect.value;
                 selectedFrequencyDay = config.options[selectedKey]?.day ?? null;
             } else {
                 selectedFrequencyDay = null;
             }
+            
             const dayOfMonth = document.getElementById('day-of-month-wrapper');
-            if (selectedFrequencyDay) {
+            const dayOfWeek = document.getElementById('day-of-week-wrapper');
+            if (!dayOfMonth || !dayOfWeek) return;
+            if (selectedFrequencyDay && selectedRecurrency === 'month') {
                 dayOfMonth.style.display = 'block';
             } else {
                 dayOfMonth.style.display = 'none';
             }
+            if (selectedFrequencyDay && selectedRecurrency === 'week') {
+                dayOfWeek.style.display = 'block';
+            } else {
+                dayOfWeek.style.display = 'none';
+            }
         }
-        // Update selectedFrequencyDay when frequency changes
-        /*
-        if (recurrencySelect && frequenvySelect) {
-            frequenvySelect.addEventListener('change', function() {
-                const selectedValue = recurrencySelect.value;
-                const config = recurringMenuConfig[selectedValue];
-                if (config && config.options) {
-                    const selectedKey = frequenvySelect.value;
-                    selectedFrequencyDay = config.options[selectedKey]?.day ?? null;
-                } else {
-                    selectedFrequencyDay = null;
-                }
-                const dayOfMonth = document.getElementById('day-of-month-wrapper');
-                if (selectedFrequencyDay) {
-                    dayOfMonth.style.display = 'block';
-                } else {
-                    dayOfMonth.style.display = 'none';
-                }
-            });
-        }
-        */
 
         if (recurrencySelect && frequenvySelect) {
             recurrencySelect.addEventListener('change', updateFrequencyOptions);

@@ -13,6 +13,14 @@ return [
     'recurrency' => 'Recurrency',
     'frequency' => 'Frequency',
     'day' => 'Day',
+    'day-of-week' => 'Day',
+    'weekday-0' => 'Sunday',
+    'weekday-1' => 'Monday',
+    'weekday-2' => 'Tuesday',
+    'weekday-3' => 'Wednesday',
+    'weekday-4' => 'Thursday',
+    'weekday-5' => 'Friday',
+    'weekday-6' => 'Saturday',
     'month' => [
         'label' => 'Monthly',
         'first-working-day-of-the-month' => 'First working day of the month',
@@ -24,5 +32,7 @@ return [
     ],
     'week' => [
         'label' => 'Weekly',
+        'every' => 'Every',
+        'every-2' => 'Every 2 weeks on',
     ],
 ];
