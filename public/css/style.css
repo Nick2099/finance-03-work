@@ -243,10 +243,10 @@ body {
     padding: 0 4px;
 }
 
-#recurring-options {
+.recurring-options-row {
     display: flex;
 }
 
-#recurring-options div {
+.recurring-options-row div {
     margin-right: 8px;
 }

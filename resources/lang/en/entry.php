@@ -21,6 +21,10 @@ return [
     'weekday-4' => 'Thursday',
     'weekday-5' => 'Friday',
     'weekday-6' => 'Saturday',
+    'lasts-for' => 'Lasts for',
+    'end-of-the-year' => 'End of the year',
+    'until-date' => 'Until date',
+    'unlimited' => 'Unlimited',
     'month' => [
         'label' => 'Monthly',
         'first-working-day-of-the-month' => 'First working day of the month',

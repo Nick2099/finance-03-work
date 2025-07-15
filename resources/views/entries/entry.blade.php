@@ -5,6 +5,7 @@
     $debounceDelay = config('appoptions.suggest_debounce_delay', 250);
     $tempGroupSubgroupMap = $groupSubgroupMap;
     $recurringMenu = config('menu-recurring');
+    $recurringMenuUntil = config('menu-recurring-until');
     // dump($allBadges);
     // dump($groups);
     // dump($listOfItems);
@@ -41,39 +42,56 @@
 
         @if ($recurring)
         <div id="recurring-options">
-            <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
-                <div>
-                    <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
-                        @forEach($recurringMenu as $option)
-                            <option value="{{ $option['value'] }}">{{ __('entry.'.$option['label']) }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </x-form-field>
-            <x-form-field name="frequency" :label="__('entry.frequency')" required>
-                <div>
-                    <select name="frequency" id="frequency" class="form-select block w-full mt-1">
-                    </select>
-                </div>
-            </x-form-field>
-            <x-form-field name="day-of-month" :label="__('entry.day')" required>
-                <div>
-                    <select name="day-of-month" id="day-of-month" class="form-select block w-full mt-1">
-                        @for ($i = 1; $i <= 31; $i++)
-                            <option value="{{ $i }}">{{ $i }}</option>
-                        @endfor
-                    </select>
-                </div>
-            </x-form-field>
-            <x-form-field name="day-of-week" :label="__('entry.day-of-week')" required>
-                <div>
-                    <select name="day-of-week" id="day-of-week" class="form-select block w-full mt-1">
-                        @for ($i = 0; $i < 7; $i++)
-                            <option value="{{ $i }}">{{ __('entry.weekday-'.$i) }}</option>
-                        @endfor
-                    </select>
-                </div>
-            </x-form-field>
+            <div class="recurring-options-row">
+                <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
+                    <div>
+                        <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
+                            @forEach($recurringMenu as $option)
+                                <option value="{{ $option['value'] }}">{{ __('entry.'.$option['label']) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </x-form-field>
+            </div>
+            <div class="recurring-options-row">
+                <x-form-field name="frequency" :label="__('entry.frequency')" required>
+                    <div>
+                        <select name="frequency" id="frequency" class="form-select block w-full mt-1">
+                        </select>
+                    </div>
+                </x-form-field>
+                <x-form-field name="day-of-month" :label="__('entry.day')" required>
+                    <div>
+                        <select name="day-of-month" id="day-of-month" class="form-select block w-full mt-1">
+                            @for ($i = 1; $i <= 31; $i++)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                </x-form-field>
+                <x-form-field name="day-of-week" :label="__('entry.day-of-week')" required>
+                    <div>
+                        <select name="day-of-week" id="day-of-week" class="form-select block w-full mt-1">
+                            @for ($i = 0; $i < 7; $i++)
+                                <option value="{{ $i }}">{{ __('entry.weekday-'.$i) }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                </x-form-field>
+            </div>
+            <div class="recurring-options-row">
+                <x-form-field name="lasts-for" :label="__('entry.lasts-for')" required>
+                    <div>
+                        <select name="until" id="until" class="form-select block w-full mt-1">
+                            @foreach($recurringMenuUntil['options'] as $option)
+                                @foreach($option as $key => $label)
+                                    <option value="{{ $key }}">{{ __('entry.'.$label) }}</option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                    </div>
+                </x-form-field>
+            </div>
         </div>
         @endif
 
