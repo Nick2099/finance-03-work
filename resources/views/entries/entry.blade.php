@@ -43,9 +43,6 @@
         @if ($recurring)
         <div id="recurring-options">
             <div class="recurring-options-row">
-                <x-form-field name="start-date" :label="__('entry.start-date')" required>
-                    <x-form-input type="date" name="start-date" id="start-date" value="{{ old('start-date', $header->date ?? date('Y-m-d')) }}" required />
-                </x-form-field>
                 <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
                     <div>
                         <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
@@ -94,19 +91,23 @@
                         </select>
                     </div>
                 </x-form-field>
+            </div>
+            <div class="recurring-options-row">
+                <x-form-field name="start-date" :label="__('entry.start-date')" required>
+                    <x-form-input type="date" name="start-date" id="start-date" value="{{ old('start-date', $header->date ?? date('Y-m-d')) }}" required />
+                </x-form-field>
                 <x-form-field name="end-date" :label="__('entry.end-date')" required>
                     <x-form-input type="date" name="end-date" id="end-date" value="{{ old('end-date', $header->date ?? date('Y-m-d')) }}" required />
                 </x-form-field>
-
             </div>
         </div>
         @endif
 
-        @if (!$recurring)
+        {{-- @if (!$recurring) --}}
             <x-form-field name="date" :label="__('entry.date')" required>
                 <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
             </x-form-field>
-        @endif
+        {{-- @endif --}}
 
         <x-form-field name="type" label="Type" required>
             <div>
@@ -878,6 +879,8 @@
 
         const recurrencySelect = document.getElementById('recurrency');
         const frequenvySelect = document.getElementById('frequency');
+        const dayOfMonthInput = document.getElementById('day-of-month');
+        const dayOfWeekInput = document.getElementById('day-of-week');
 
         // Helper to get the 'day' property of the selected frequency option
         let selectedFrequencyDay = null;
@@ -932,6 +935,7 @@
                 dayOfWeek.style.display = 'none';
             }
             setRecurrencyValues();
+            updateStartDate();
         }
 
         if (recurrencySelect && frequenvySelect) {
@@ -940,6 +944,10 @@
             updateFrequencyOptions();
             // updateDayOfMonthVisibility();
             // setRecurrencyValues();
+        }
+
+        if (dayOfMonthInput) {
+            dayOfMonthInput.addEventListener('input', updateStartDate);
         }
 
         function setRecurrencyValues() {
@@ -961,19 +969,23 @@
             console.log('Lasts For:', lastForValue);
             console.log("Header ID:", headerId);
 
+            /*
             console.log('First Working Day of Month:', firstWorkingDayOfMonth(new Date(startDateValue)));
             console.log('Last Working Day of Month:', lastWorkingDayOfMonth(new Date(startDateValue)));
             console.log('First Working Day on or After:', firstWorkingDayOnOrAfter(new Date(startDateValue)));
             console.log('Last Working Day on or Before:', lastWorkingDayOnOrBefore(new Date(startDateValue)));
+            */
         }
 
         function firstWorkingDayOfMonth(sentDate) {
+            // console.log('Calculating first working day of month for:', sentDate);
             let year = sentDate.getFullYear();
             let month = sentDate.getMonth();
             let date = new Date(year, month, 1);
             while (date.getDay() === 0 || date.getDay() === 6) {
                 date.setDate(date.getDate() + 1);
             }
+            // console.log('First working day of month is:', date);
             return date;
         }
 
@@ -1002,6 +1014,63 @@
             }
             return date;
         }
-    </script>
 
+        function updateStartDate() {
+            const dateValue = document.getElementById('date').value;
+            const recurrencySelectValue = document.getElementById('recurrency').value;
+            const frequencySelectValue = document.getElementById('frequency').value;
+            const dayOfMonthInputValue = document.getElementById('day-of-month').value;
+            const dayOfWeekInputValue = document.getElementById('day-of-week').value;
+
+            if (recurrencySelectValue === 'month') {
+                if (frequencySelectValue === '1') { // First working day of the month
+                    const startDate = new Date(dateValue);
+                    const firstDay = firstWorkingDayOfMonth(startDate);
+                    const newDateValue = newDate(firstDay);
+                    document.getElementById('start-date').value = newDateValue;
+                } else if (frequencySelectValue === '2') { // Last working day of the month
+                    const startDate = new Date(dateValue);
+                    const lastDay = lastWorkingDayOfMonth(startDate);
+                    const newDateValue = newDate(lastDay);
+                    document.getElementById('start-date').value = newDateValue;
+                } else if (frequencySelectValue === '3') { // Day of month
+                    if (dayOfMonthInputValue) {
+                        const startDate = new Date(dateValue);
+                        startDate.setDate(parseInt(dayOfMonthInputValue, 10));
+                        const newDateValue = newDate(startDate);
+                        document.getElementById('start-date').value = newDateValue;
+                    }
+                } else if (frequencySelectValue === '4') { // First working day on or after
+                    const startDate = new Date(dateValue);
+                    const indexDate = changeDayInDate(startDate, dayOfMonthInputValue);
+                    const correctedDate = firstWorkingDayOnOrAfter(indexDate);
+                    const newDateValue = newDate(correctedDate);
+                    document.getElementById('start-date').value = newDateValue;
+                } else if (frequencySelectValue === '5') { // Last working day on or before
+                    const startDate = new Date(dateValue);
+                    const indexDate = changeDayInDate(startDate, dayOfMonthInputValue);
+                    const correctedDate = lastWorkingDayOnOrBefore(indexDate);
+                    const newDateValue = newDate(correctedDate);
+                    document.getElementById('start-date').value = newDateValue;
+                } else if (frequencySelectValue === '6') { // Custom date
+                    // Do nothing, let the user set the date manually
+                }
+            } else if (recurrencySelectValue === 'week') {
+            }
+        }
+
+        function newDate(date) {
+            const pad = n => n < 10 ? '0' + n : n;
+            const newDateValue = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+            return newDateValue;
+        }
+
+        function changeDayInDate(date, day) {
+            const newDate = new Date(date);
+            if (day) {
+                newDate.setDate(parseInt(day, 10));
+            }
+            return newDate;
+        }
+    </script>
 </x-layout>
