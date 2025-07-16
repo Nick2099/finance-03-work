@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('repetitions', function (Blueprint $table) {
+        Schema::create('recurrency_headers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('group_id')->constrained()->onDelete('cascade');
-            $table->foreignId('subgroup_id')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(\App\Models\Recurrency::class)->constrained()->onDelete('cascade');
+            $table->date('date');
             $table->decimal('amount', 10, 2);
-            $table->string('description')->nullable();
+            $table->string('place_of_purchase', length: 50);
+            $table->string('location', length: 50);
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('repetitions');
+        Schema::dropIfExists('recurrency_headers');
     }
 };

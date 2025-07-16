@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('recurrencies', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(\App\Models\User::class)->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('recurrency'); // e.g., 'monthly', 'weekly', etc.
+            $table->string('frequency'); // e.g., '1 month', '2 weeks', etc.
+            $table->string('day')->nullable(); // e.g., 'Monday', '1st', etc.
             $table->timestamps();
         });
     }

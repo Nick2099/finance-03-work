@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('recurrency_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Recurrency::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(\App\Models\RecurrencyHeader::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(\App\Models\Group::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(\App\Models\Subgroup::class)->constrained()->onDelete('cascade');
             $table->tinyInteger('group_type')->nullable();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('recurrency_items');
     }
 };
