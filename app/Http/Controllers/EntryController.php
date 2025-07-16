@@ -123,6 +123,7 @@ class EntryController extends Controller
             'items.*.note' => 'nullable|string',
             'items.*.badges' => 'nullable|array',
             'items.*.badges.*' => 'integer',
+            'recerrency_id' => 'nullable|integer',
         ]);
 
         $user = Auth::user();

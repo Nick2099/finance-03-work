@@ -24,7 +24,7 @@ return new class extends Migration
             // creation = 0: created manually, 1: created automatically, 2: created automatically but manually modified
             $table->tinyInteger('creation')->default(0);
             // series = 0: not a series, 1: first entry of a series, 2: middle entry of a series, 3: last entry of a series
-            $table->foreignIdFor(\App\Models\Recurrency::class)->constrained()->onDelete('cascade')->nullable()->default(null);
+            $table->foreignIdFor(\App\Models\Recurrency::class)->nullable()->default(null)->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
