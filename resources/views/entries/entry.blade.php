@@ -80,23 +80,24 @@
                 </x-form-field>
             </div>
             <div class="recurring-options-row">
-                <x-form-field name="lasts-for" :label="__('entry.lasts-for')" required>
+                <x-form-field name="lasts" :label="__('entry.lasts')">
                     <div>
-                        <select name="lasts-for" id="lasts-for" class="form-select block w-full mt-1">
-                            @foreach($recurringMenuUntil['options'] as $option)
-                                @foreach($option as $key => $label)
-                                    <option value="{{ $key }}">{{ __('entry.'.$label) }}</option>
-                                @endforeach
+                        <select name="lasts" id="lasts" class="form-select block w-full mt-1">
+                            @foreach($recurringMenuUntil['options'] as $key => $option)
+                                <option value="{{ $key }}">{{ __('entry.'.$option['label']) }}</option>
                             @endforeach
                         </select>
                     </div>
                 </x-form-field>
+                <x-form-field name="given-end-date" :label="__('entry.given-end-date')">
+                    <x-form-input type="date" name="given-end-date" id="given-end-date" value="{{ old('given-end-date', $header->date ?? date('Y-m-d')) }}" disabled />
+                </x-form-field>
             </div>
             <div class="recurring-options-row">
-                <x-form-field name="start-date" :label="__('entry.start-date')" required>
+                <x-form-field name="start-date" :label="__('entry.start-date')">
                     <x-form-input type="date" name="start-date" id="start-date" value="{{ old('start-date', $header->date ?? date('Y-m-d')) }}" disabled />
                 </x-form-field>
-                <x-form-field name="end-date" :label="__('entry.end-date')" required>
+                <x-form-field name="end-date" :label="__('entry.end-date')">
                     <x-form-input type="date" name="end-date" id="end-date" value="{{ old('end-date', $header->date ?? date('Y-m-d')) }}" disabled />
                 </x-form-field>
             </div>
@@ -882,6 +883,7 @@
         const frequenvySelect = document.getElementById('frequency');
         const dayOfMonthInput = document.getElementById('day-of-month');
         const dayOfWeekInput = document.getElementById('day-of-week');
+        const lastsInput = document.getElementById('lasts');
 
         // Helper to get the 'day' property of the selected frequency option
         let selectedFrequencyDay = null;
@@ -959,6 +961,11 @@
             document.getElementById('date').addEventListener('input', updateStartDate);
         }
 
+        if (lastsInput) {
+            lastsInput.addEventListener('input', showGivenEndDate);
+            showGivenEndDate();
+        }   
+
         function setRecurrencyValues() {
             const startDateValue = document.getElementById('start-date').value;
             const recurrencySelectValue = document.getElementById('recurrency').value;
@@ -966,7 +973,7 @@
             const dayOfMonthInputValue = document.getElementById('day-of-month').value;
             const dayOfWeekInputValue = document.getElementById('day-of-week').value;
             const endDateValue = document.getElementById('end-date').value;
-            const lastForValue = document.getElementById('lasts-for').value;
+            const lastForValue = document.getElementById('lasts').value;
 
             console.log('Setting recurrency values');
             /*
@@ -1055,6 +1062,16 @@
             return newDate;
         }
 
+        function showGivenEndDate() {
+            const lastsValue = document.getElementById('lasts').value;
+            const giveEndDateWrapper = document.getElementById('given-end-date-wrapper');
+            if (lastsValue === '2') { // Custom date
+                giveEndDateWrapper.style.display = 'block';
+            } else {
+                giveEndDateWrapper.style.display = 'none';
+            }
+        }
+
         function updateStartDate() {
             const dateValue = document.getElementById('date').value;
             const recurrencySelectValue = document.getElementById('recurrency').value;
@@ -1104,6 +1121,20 @@
                     document.getElementById('start-date').value = newDateValue;
                 };
             }
+        }
+
+        function updateEndDate() {
+            const dateValue = document.getElementById('date').value;
+            const recurrencySelectValue = document.getElementById('recurrency').value;
+            const frequencySelectValue = document.getElementById('frequency').value;
+            const dayOfMonthInputValue = document.getElementById('day-of-month').value;
+            const dayOfWeekInputValue = document.getElementById('day-of-week').value;
+            const lastsForValue = document.getElementById('lasts').value;
+
+            if (lastsForValue === '1') { // until end of the year
+
+            }
+            
         }
     </script>
 </x-layout>
