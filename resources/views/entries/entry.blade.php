@@ -72,7 +72,7 @@
                 <x-form-field name="day-of-week" :label="__('entry.day-of-week')" required>
                     <div>
                         <select name="day-of-week" id="day-of-week" class="form-select block w-full mt-1">
-                            @for ($i = 0; $i < 7; $i++)
+                            @for ($i = 1; $i < 8; $i++)
                                 <option value="{{ $i }}">{{ __('entry.weekday-'.$i) }}</option>
                             @endfor
                         </select>
@@ -94,10 +94,10 @@
             </div>
             <div class="recurring-options-row">
                 <x-form-field name="start-date" :label="__('entry.start-date')" required>
-                    <x-form-input type="date" name="start-date" id="start-date" value="{{ old('start-date', $header->date ?? date('Y-m-d')) }}" required />
+                    <x-form-input type="date" name="start-date" id="start-date" value="{{ old('start-date', $header->date ?? date('Y-m-d')) }}" disabled />
                 </x-form-field>
                 <x-form-field name="end-date" :label="__('entry.end-date')" required>
-                    <x-form-input type="date" name="end-date" id="end-date" value="{{ old('end-date', $header->date ?? date('Y-m-d')) }}" required />
+                    <x-form-input type="date" name="end-date" id="end-date" value="{{ old('end-date', $header->date ?? date('Y-m-d')) }}" disabled />
                 </x-form-field>
             </div>
         </div>
@@ -252,6 +252,7 @@
                 return [$opt['label'] => __("entry.".$opt['label'])];
             });
         }));
+        const recurring = @json($recurring ?? false);
 
         document.addEventListener('DOMContentLoaded', function() {
             const bottomLine = document.getElementById('bottom-line');
@@ -934,7 +935,7 @@
             } else {
                 dayOfWeek.style.display = 'none';
             }
-            setRecurrencyValues();
+            // setRecurrencyValues();
             updateStartDate();
         }
 
@@ -950,6 +951,14 @@
             dayOfMonthInput.addEventListener('input', updateStartDate);
         }
 
+        if (dayOfWeekInput) {
+            dayOfWeekInput.addEventListener('input', updateStartDate);
+        }
+
+        if (recurring) {
+            document.getElementById('date').addEventListener('input', updateStartDate);
+        }
+
         function setRecurrencyValues() {
             const startDateValue = document.getElementById('start-date').value;
             const recurrencySelectValue = document.getElementById('recurrency').value;
@@ -960,6 +969,7 @@
             const lastForValue = document.getElementById('lasts-for').value;
 
             console.log('Setting recurrency values');
+            /*
             console.log('Start Date:', startDateValue);
             console.log('Recurrency:', recurrencySelectValue);
             console.log('Frequency:', frequencySelectValue);
@@ -969,7 +979,6 @@
             console.log('Lasts For:', lastForValue);
             console.log("Header ID:", headerId);
 
-            /*
             console.log('First Working Day of Month:', firstWorkingDayOfMonth(new Date(startDateValue)));
             console.log('Last Working Day of Month:', lastWorkingDayOfMonth(new Date(startDateValue)));
             console.log('First Working Day on or After:', firstWorkingDayOnOrAfter(new Date(startDateValue)));
@@ -1015,6 +1024,37 @@
             return date;
         }
 
+        function newDate(date) {
+            const pad = n => n < 10 ? '0' + n : n;
+            const newDateValue = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+            return newDateValue;
+        }
+
+        function changeDayInDate(date, day) {
+            const newDate = new Date(date);
+            if (day) {
+                newDate.setDate(parseInt(day, 10));
+            }
+            return newDate;
+        }
+
+        function firstDayOfWeek(date) {
+            const day = date.getDay();
+            if (day === 0) {
+                date.setDate(date.getDate() - 7);
+            };
+            const firstDay = new Date(date);
+            firstDay.setDate(firstDay.getDate() - firstDay.getDay() + 1); // Set to Monday
+            return firstDay;
+        }
+
+        function addDays(date, days) {
+            days = days - 1;
+            const newDate = new Date(date);
+            newDate.setDate(newDate.getDate() + days);
+            return newDate;
+        }
+
         function updateStartDate() {
             const dateValue = document.getElementById('date').value;
             const recurrencySelectValue = document.getElementById('recurrency').value;
@@ -1056,21 +1096,14 @@
                     // Do nothing, let the user set the date manually
                 }
             } else if (recurrencySelectValue === 'week') {
+                if (frequencySelectValue === '1' || frequencySelectValue === '2') { // Every week on
+                    const startDate = new Date(dateValue);
+                    const dayOfWeek = parseInt(dayOfWeekInputValue, 10);
+                    const firstDay = firstDayOfWeek(startDate); 
+                    const newDateValue = newDate(addDays(firstDay, dayOfWeek));
+                    document.getElementById('start-date').value = newDateValue;
+                };
             }
-        }
-
-        function newDate(date) {
-            const pad = n => n < 10 ? '0' + n : n;
-            const newDateValue = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-            return newDateValue;
-        }
-
-        function changeDayInDate(date, day) {
-            const newDate = new Date(date);
-            if (day) {
-                newDate.setDate(parseInt(day, 10));
-            }
-            return newDate;
         }
     </script>
 </x-layout>
