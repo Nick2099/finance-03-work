@@ -41,13 +41,27 @@
         @endif
 
         {{-- @if (!$recurring) --}}
+        <div class="recurring-options-row">
             <x-form-field name="date" :label="__('entry.date')" required>
                 <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
             </x-form-field>
+            @if ($recurring)
+                <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
+                    <div>
+                        <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
+                            @forEach($recurringMenu as $option)
+                                <option value="{{ $option['value'] }}">{{ __('entry.'.$option['label']) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </x-form-field>
+            @endif
+        </div>
         {{-- @endif --}}
 
         @if ($recurring)
         <div id="recurring-options">
+            {{--
             <div class="recurring-options-row">
                 <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
                     <div>
@@ -59,6 +73,7 @@
                     </div>
                 </x-form-field>
             </div>
+            --}}
             <div class="recurring-options-row">
                 <x-form-field name="frequency" :label="__('entry.frequency')" required>
                     <div>
@@ -968,18 +983,21 @@
             givenEndDateInput.addEventListener('input', updateEndDate);
             // updateEndDate();
         }    
-        
+        // *************************************************
         // help functions for date calculations
-        function stringToDate(sentDate) {
-            if (!(sentDate instanceof Date) || isNaN(sentDate)) {
-                sentDate = new Date(sentDate);
+        // *************************************************
+        
+        function stringToDate(tmpDate) {
+            if (!(tmpDate instanceof Date) || isNaN(tmpDate)) {
+                tmpDate = new Date(tmpDate);
             }    
-            return sentDate;
+            return tmpDate;
         }    
 
-        function getLastDayOfMonth(sentDate) {
-            let year = sentDate.getFullYear();
-            let month = sentDate.getMonth();
+        // Get the last day of the month for a given date - checked, in use
+        function getLastDayOfMonth(tmpDate) {
+            let year = tmpDate.getFullYear();
+            let month = tmpDate.getMonth();
             let date = new Date(year, month + 1, 0);
             let day = date.getDate();
             return day;
@@ -991,20 +1009,17 @@
             return newDateValue;
         }
 
+        // Change the day in a date, ensuring it does not exceed the last day of the month - checked, in use
         function changeDayInDate(date, day) {
             day = parseInt(day, 10);
             let lastDay = getLastDayOfMonth(date);
             if (day > lastDay) {
                 day = lastDay;
             }
-            console.log('Final day:', day);
             const newDate = new Date(date);
-            console.log('New date before change:', newDate);
-            console.log('parseInt(day, 10) day to:', parseInt(day, 10));
             if (day) {
                 newDate.setDate(parseInt(day, 10));
             }
-            console.log('New date after change:', newDate);
             return newDate;
         }
 
@@ -1063,27 +1078,33 @@
             return lastDay;
         }
 
+        // *************************************************
         // recurrency functions
-        function firstWorkingDayOfMonth(sentDate) {
-            let year = sentDate.getFullYear();
-            let month = sentDate.getMonth();
+        // *************************************************
+
+        // Get the first working day of the month - checked, in use
+        function firstWorkingDayOfMonth(tmpDate) {
+            let year = tmpDate.getFullYear();
+            let month = tmpDate.getMonth();
             let date = new Date(year, month, 1);
-            while (date.getDay() === 0 || date.getDay() === 6) {
+            while (date.getDay() === 0 || date.getDay() === 6) { // 0 = Sunday, 6 = Saturday
                 date.setDate(date.getDate() + 1);
             }        
             return date;
         }        
 
-        function lastWorkingDayOfMonth(sentDate) {
-            let year = sentDate.getFullYear();
-            let month = sentDate.getMonth();
+        // Get the last working day of the month - checked, in use
+        function lastWorkingDayOfMonth(tmpDate) {
+            let year = tmpDate.getFullYear();
+            let month = tmpDate.getMonth();
             let date = new Date(year, month + 1, 0);
-            while (date.getDay() === 0 || date.getDay() === 6) {
+            while (date.getDay() === 0 || date.getDay() === 6) { // 0 = Sunday, 6 = Saturday
                 date.setDate(date.getDate() - 1);    
             }    
             return date;
         }        
 
+        // Get the exact day of the month - checked, in use
         function exactDayOfMonth(startDate, dayOfMonthInputValue) {
             const lastDay = getLastDayOfMonth(new Date(startDate));
             if (lastDay < dayOfMonthInputValue) {
@@ -1094,19 +1115,29 @@
             return date;
         }    
 
-        function firstWorkingDayOnOrAfter(sentDate) {
-            let date = new Date(sentDate);
+        // Get the first working day on or after a given date - checked, in use
+        function firstWorkingDayOnOrAfter(tmpDate) {
+            let date = new Date(tmpDate);
+            let tmpMonth = date.getMonth();
             while (date.getDay() === 0 || date.getDay() === 6) {
                 date.setDate(date.getDate() + 1);
-            }    
+            }
+            if (date.getMonth() > tmpMonth) {
+                date = lastWorkingDayOfMonth(new Date(tmpDate));
+            }
             return date;
         }    
 
-        function lastWorkingDayOnOrBefore(sentDate) {
-            let date = new Date(sentDate);
+        // Get the last working day on or before a given date - checked, in use
+        function lastWorkingDayOnOrBefore(tmpDate) {
+            let date = new Date(tmpDate);
+            let tmpMonth = date.getMonth();
             while (date.getDay() === 0 || date.getDay() === 6) {
                 date.setDate(date.getDate() - 1);
-            }    
+            }
+            if (date.getMonth() < tmpMonth) {
+                date = firstWorkingDayOfMonth(new Date(tmpDate));
+            }
             return date;
         }    
 
@@ -1146,7 +1177,7 @@
                     document.getElementById('start-date').value = newDateValue;
                 } 
             } else if (recurrencySelectValue === 'week') {
-                if (frequencySelectValue === '1' || frequencySelectValue === '2') { // Every week on
+                if (frequencySelectValue === '1' || frequencySelectValue === '2') { // Every week on or every 2 weeks
                     const dayOfWeek = parseInt(dayOfWeekInputValue, 10);
                     const firstDay = firstDayOfWeek(startDate); 
                     const newDateValue = newDate(addDays(firstDay, dayOfWeek));
