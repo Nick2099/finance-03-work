@@ -894,6 +894,11 @@
             });
         }
 
+
+        // *************************************************
+        // Recurring entry logic
+        // *************************************************
+
         const recurrencySelect = document.getElementById('recurrency');
         const frequenvySelect = document.getElementById('frequency');
         const dayOfMonthInput = document.getElementById('day-of-month');
@@ -976,17 +981,19 @@
 
         if (lastsInput) {
             lastsInput.addEventListener('input', showGivenEndDate);
+            lastsInput.addEventListener('input', updateEndDate);
             showGivenEndDate();
         }
 
         if (givenEndDateInput) {
             givenEndDateInput.addEventListener('input', updateEndDate);
-            // updateEndDate();
         }    
+
         // *************************************************
         // help functions for date calculations
         // *************************************************
         
+        // Convert string to Date object - checked, in use
         function stringToDate(tmpDate) {
             if (!(tmpDate instanceof Date) || isNaN(tmpDate)) {
                 tmpDate = new Date(tmpDate);
@@ -1023,13 +1030,17 @@
             return newDate;
         }
 
+        // Change the date to the first day of the month - not in use
+        /*
         function changeToLastDayInMonth(date) {
             const lastDay = getLastDayOfMonth(date);
             const newDate = new Date(date);
             newDate.setDate(lastDay);
             return newDate;
         }
+        */
 
+        // Get the first day of the week (Monday) for a given date - checked, in use
         function firstDayOfWeek(date) {
             const day = date.getDay();
             if (day === 0) {
@@ -1040,13 +1051,15 @@
             return firstDay;
         }
 
+        // Add days to a date - checked, in use
         function addDays(date, days) {
-            days = days - 1;
+            days = days - 1; // Adjust for the first day being counted as 1
             const newDate = new Date(date);
             newDate.setDate(newDate.getDate() + days);
             return newDate;
         }
 
+        // Update end date based on lasts and given end date - checked, in use
         function showGivenEndDate() {
             const lastsValue = document.getElementById('lasts').value;
             const giveEndDateWrapper = document.getElementById('given-end-date-wrapper');
@@ -1058,24 +1071,23 @@
             // updateEndDate();
         }
 
+        // Update end date based on lasts and given end date - checked, in use
         function lastDayInYear(date) {
             const d = new Date(date); // convert string to Date
             const year = d.getFullYear();
             return new Date(year, 11, 31); // December 31st of the same year
         }
 
+        // Get the last day of the year by a given day of the week - checked, in use
         function lastDayInYearByDay(date, requestedDayOfWeek) {
             requestedDayOfWeek = parseInt(requestedDayOfWeek, 10);
             if (requestedDayOfWeek == 7) {
                 requestedDayOfWeek = 0; // Convert 7 to 0 for Sunday
             }
-            const lastDay = lastDayInYear(date);
-            // const lastDayOfWeek = parseInt(lastDay.getDay());
-            while (lastDay.getDay() !== requestedDayOfWeek) {
-                lastDay.setDate(lastDay.getDate() - 1);
+            while (date.getDay() !== requestedDayOfWeek) {
+                date.setDate(date.getDate() - 1);
             }
-            
-            return lastDay;
+            return date;
         }
 
         // *************************************************
