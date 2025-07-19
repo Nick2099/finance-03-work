@@ -10,6 +10,7 @@ return [
     'place_of_purchase' => 'Place / Institution',
     'location' => 'Location',
     'note' => 'Note',
+    'base' => 'Base',
     'recurrency' => 'Recurrency',
     'frequency' => 'Frequency',
     'day' => 'Day',
@@ -28,6 +29,11 @@ return [
     'until-date' => 'until date',
     'unlimited' => 'unlimited',
     'given-end-date' => 'Approximate end date',
+    'week' => [
+        'label' => 'Weekly',
+        'every' => 'Every week on',
+        'every-2' => 'Every 2 weeks on',
+    ],
     'month' => [
         'label' => 'Monthly',
         'first-working-day-of-the-month' => 'First working day of the month',
@@ -37,9 +43,7 @@ return [
         'first-working-day-after' => 'First working day on or after',
         'last-working-day-before' => 'Last working day on or before',
     ],
-    'week' => [
-        'label' => 'Weekly',
-        'every' => 'Every week on',
-        'every-2' => 'Every 2 weeks on',
+    'year' => [
+        'label' => 'Yearly',
     ],
 ];

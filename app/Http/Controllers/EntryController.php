@@ -92,7 +92,16 @@ class EntryController extends Controller
 
         // dump($groupSubgroupMap);
 
-        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring'));
+        // recurrence dummy variable
+        $recurringData = $recurring ? [
+            'base' => 'month',
+            'frequency' => "2",
+            'rule' => "1",
+            'number_of_occurrences' => "2",
+            'date' => '2028-09-25',
+        ] : null;
+
+        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData'));
     }
 
     public function store(Request $request)

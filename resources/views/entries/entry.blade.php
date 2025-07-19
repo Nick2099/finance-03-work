@@ -6,11 +6,21 @@
     $tempGroupSubgroupMap = $groupSubgroupMap;
     $recurringMenu = config('menu-recurring');
     $recurringMenuUntil = config('menu-recurring-until');
+    $recurringMenuNew = config('menu-recurring-new');
     // dump($allBadges);
     // dump($groups);
     // dump($listOfItems);
-    // dd($groupSubgroupMap);
-    // dd($header);
+    // dump($groupSubgroupMap);
+    // dump($header);
+    // dump($recurringData);
+    $recurringData = $recurring ? [
+        'base' => 'month',
+        'frequency' => "3",
+        'rule' => "2",
+        'number_of_occurrences' => "2",
+        'date' => '2028-09-25',
+    ] : null;
+
     ?>
     <x-slot:heading>
         {{ empty($header) ? 'New entry' : 'Edit entry' }}
@@ -40,40 +50,63 @@
             <input type="hidden" name="badge-id" value="{{ request('badge-id') }}">
         @endif
 
-        {{-- @if (!$recurring) --}}
         <div class="recurring-options-row">
             <x-form-field name="date" :label="__('entry.date')" required>
                 <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
             </x-form-field>
-            @if ($recurring)
-                <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
+        </div>
+
+        {{-- New recurrency options: --}}
+        @if ($recurring)
+            <div class="recurring-options-row">
+                <x-form-field name="base" :label="__('entry.base')" required>
                     <div>
-                        <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
-                            @forEach($recurringMenu as $option)
-                                <option value="{{ $option['value'] }}">{{ __('entry.'.$option['label']) }}</option>
+                        <select name="base" id="base" class="form-select block w-full mt-1">
+                            @foreach($recurringMenuNew['base'] as $key => $option)
+                                <option value="{{ $key }}" {{ $recurringData['base'] == $key ? 'selected' : '' }}>{{ __('entry.'.$option['label']) }}</option>
                             @endforeach
                         </select>
                     </div>
                 </x-form-field>
-            @endif
-        </div>
-        {{-- @endif --}}
-
-        @if ($recurring)
-        <div id="recurring-options">
-            {{--
-            <div class="recurring-options-row">
-                <x-form-field name="recurrency" :label="__('entry.recurrency')" required>
+                <x-form-field name="frequency" :label="__('entry.frequency')" required>
                     <div>
-                        <select name="recurrency" id="recurrency" class="form-select block w-full mt-1">
-                            @forEach($recurringMenu as $option)
-                                <option value="{{ $option['value'] }}">{{ __('entry.'.$option['label']) }}</option>
+                        <select name="frequency" id="frequency" class="form-select block w-full mt-1">
+                            @foreach($recurringMenuNew['base'][$recurringData['base']]['frequency'] as $key => $option)
+                                <option value="{{ $key }}" {{ $recurringData['frequency'] == $key ? 'selected' : '' }}>{{ __('entry.'.$option) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </x-form-field>
+                <x-form-field name="rule" :label="__('entry.rule')" required>
+                    <div>
+                        <select name="rule" id="rule" class="form-select block w-full mt-1">
+                            @foreach($recurringMenuNew['base'][$recurringData['base']]['rule'] as $key => $option)
+                                <option value="{{ $key }}" {{ $recurringData['rule'] == $key ? 'selected' : '' }}>{{ __('entry.'.$option['label']) }}</option>
                             @endforeach
                         </select>
                     </div>
                 </x-form-field>
             </div>
-            --}}
+            <div class="recurring-options-row">
+                <x-form-field name="number_of_occurrences" :label="__('entry.number_of_occurrences')" required>
+                    <div>
+                        <select name="number_of_occurrences" id="number_of_occurrences" class="form-select block w-full mt-1">
+                            @foreach($recurringMenuNew['number-of-occurrences'] as $key => $option)
+                                <option value="{{ $key }}" {{ $recurringData['number_of_occurrences'] == $key ? 'selected' : '' }}>{{ __('entry.'.$option['label']) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </x-form-field>
+                <x-form-field name="date" :label="__('entry.date')" required>
+                    <x-form-input type="date" name="date" id="date" value="{{ old('date', $recurringData['date'] ?? date('Y-m-d')) }}" required />
+                </x-form-field>
+            </div>
+        @endif
+
+        {{-- Old recurrency options: --}}
+        {{--
+        @if ($recurring)
+        <div id="recurring-options">
             <div class="recurring-options-row">
                 <x-form-field name="frequency" :label="__('entry.frequency')" required>
                     <div>
@@ -124,6 +157,8 @@
             </div>
         </div>
         @endif
+        --}}
+
 
         <x-form-field name="type" label="Type" required>
             <div>
