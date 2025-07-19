@@ -18,7 +18,10 @@
         'frequency' => "3",
         'rule' => "2",
         'number_of_occurrences' => "2",
-        'date' => '2028-09-25',
+        'given-end-date' => '2028-09-25',
+        'given-number' => '1',
+        'day_of_week' => '1',
+        'month' => '1',
     ] : null;
 
     ?>
@@ -86,6 +89,33 @@
                         </select>
                     </div>
                 </x-form-field>
+                <x-form-field name="day_of_month" :label="__('entry.day')" required>
+                    <div>
+                        <select name="day_of_month" id="day_of_month" class="form-select block w-full mt-1">
+                            @for ($i = 1; $i <= 31; $i++)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                </x-form-field>
+                <x-form-field name="day_of_week" :label="__('entry.day-of-week')" required>
+                    <div>
+                        <select name="day_of_week" id="day_of_week" class="form-select block w-full mt-1">
+                            @foreach($recurringMenuNew['weekdays-labels'] as $key => $option)
+                            <option value="{{ $key }}" {{ $recurringData['day_of_week'] == $key ? 'selected' : '' }}>{{ __('entry.'.$option) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </x-form-field>
+                <x-form-field name="month" :label="__('entry.month-label')" required>
+                    <div>
+                        <select name="month" id="month" class="form-select block w-full mt-1">
+                            @foreach($recurringMenuNew['months-labels'] as $key => $option)
+                                <option value="{{ $key }}" {{ $recurringData['month'] == $key ? 'selected' : '' }}>{{ __('entry.'.$option) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </x-form-field>
             </div>
             <div class="recurring-options-row">
                 <x-form-field name="number_of_occurrences" :label="__('entry.number_of_occurrences')" required>
@@ -97,8 +127,19 @@
                         </select>
                     </div>
                 </x-form-field>
-                <x-form-field name="date" :label="__('entry.date')" required>
-                    <x-form-input type="date" name="date" id="date" value="{{ old('date', $recurringData['date'] ?? date('Y-m-d')) }}" required />
+                <x-form-field name="given-end-date" :label="__('entry.given-end-date')" required>
+                    <x-form-input type="date" name="given-end-date" id="given-end-date" value="{{ old('given-end-date', $recurringData['given-end-date'] ?? date('Y-m-d')) }}" required />
+                </x-form-field>
+                <x-form-field name="given-number" :label="__('entry.given-number')" required>
+                    <x-form-input type="number" name="given-number" id="given-number" value="{{ old('given-number', $recurringData['given-number'] ?? 1) }}" required min="2" max="120"/>
+                </x-form-field>
+            </div>
+            <div class="recurring-options-row">
+                <x-form-field name="start-date" :label="__('entry.start-date')">
+                    <x-form-input type="date" name="start-date" id="start-date" value="{{ old('start-date', $header->date ?? date('Y-m-d')) }}" disabled />
+                </x-form-field>
+                <x-form-field name="end-date" :label="__('entry.end-date')">
+                    <x-form-input type="date" name="end-date" id="end-date" value="{{ old('end-date', $header->date ?? date('Y-m-d')) }}" disabled />
                 </x-form-field>
             </div>
         @endif

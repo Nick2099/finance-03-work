@@ -98,7 +98,10 @@ class EntryController extends Controller
             'frequency' => "2",
             'rule' => "1",
             'number_of_occurrences' => "2",
-            'date' => '2028-09-25',
+            'given-end-date' => '2028-09-25',
+            'given-number' => '1',
+            'day_of_week' => '1', // 1 = Monday, 2 = Tuesday, ..., 0 = Sunday
+            'month' => '1', // 1 = January, 2 = February, ..., 12 = December
         ] : null;
 
         return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData'));
