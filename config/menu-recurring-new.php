@@ -81,31 +81,31 @@ return [
             // 'rule.label' => 'year.rule.label',
             'rule' => [
                 '1' => [
-                    'label' => 'year.rule.first-working-day-of-the-month', // First working day of the month
+                    'label' => 'year-rule.first-working-day-of-the-month', // First working day of the month
                     'day_of_month' => false, // No specific day of month
                     'day_of_week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
                 '2' => [
-                    'label' => 'year.rule.last-working-day-of-the-month', // Last working day of the month
+                    'label' => 'year-rule.last-working-day-of-the-month', // Last working day of the month
                     'day_of_month' => false, // No specific day of month
                     'day_of_week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
                 '3' => [
-                    'label' => 'year.rule.exactly-on', // Exactly on
+                    'label' => 'year-rule.exactly-on', // Exactly on
                     'day_of_month' => true, // Specific day of month
                     'day_of_week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
                 '4' => [
-                    'label' => 'year.rule.first-working-day-after', // First working day on or after
+                    'label' => 'year-rule.first-working-day-after', // First working day on or after
                     'day_of_month' => true, // Specific day of month
                     'day_of_week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
                 '5' => [
-                    'label' => 'year.rule.last-working-day-before', // Last working day on or before
+                    'label' => 'year-rule.last-working-day-before', // Last working day on or before
                     'day_of_month' => true, // Specific day of month
                     'day_of_week' => false, // No specific day of week
                     'month' => true, // Only specific month
@@ -115,17 +115,17 @@ return [
     ],
     'number-of-occurrences' => [
         '1' => [
-            'label' => 'n-times.label',
+            'label' => 'number-of-occurrences.n-times-label',
             'date' => false, // Specific date not required
             'number' => true, // Specific number of occurrences required
         ],
         '2' => [
-            'label' => 'until-date.label',
+            'label' => 'number-of-occurrences.until-date-label',
             'date' => true, // Specific date required
             'number' => false, // No specific number of occurrences required
         ],
         '3' => [
-            'label' => 'unlimited.label',
+            'label' => 'number-of-occurrences.unlimited-label',
             'date' => false, // Specific date not required
             'number' => false, // No specific number of occurrences required
         ],

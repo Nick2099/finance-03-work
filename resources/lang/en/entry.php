@@ -24,11 +24,22 @@ return [
     'end-date' => 'End date',
     'until-date' => 'until date',
     'unlimited' => 'unlimited',
-    'given-end-date' => 'Approximate end date',
+    'number-of-occurrences' => [
+        'label' => 'Number of occurrences',
+        'n-times-label' => 'Number of occurrences',
+        'until-date-label' => 'Until date',
+        'unlimited-label' => 'Unlimited',
+    ],
+    'occurrences-end-date' => 'Occurrences end date',
+    'occurrences-number' => 'Occurrences number',
+    'rule' => 'Rule',
     'week' => [
         'label' => 'Weekly',
         'every' => 'Every week on',
         'every-2' => 'Every 2 weeks on',
+        'rule' => [
+            'on-weekday' => 'On weekday',
+        ]
     ],
 
     'month-rule' => [
@@ -42,6 +53,14 @@ return [
     'year' => [
         'label' => 'Yearly',
     ],
+    'year-rule' => [
+        'first-working-day-of-the-month' => 'First working day of the month',
+        'last-working-day-of-the-month' => 'Last working day of the month',
+        'exactly-on' => 'Exactly on',
+        'first-working-day-after' => 'First working day on or after',
+        'last-working-day-before' => 'Last working day on or before',
+    ],
+
     'month' => [
         'january' => 'January',
         'february' => 'February',
