@@ -26,7 +26,7 @@ return [
     'unlimited' => 'unlimited',
     'number-of-occurrences' => [
         'label' => 'Number of occurrences',
-        'n-times-label' => 'Number of occurrences',
+        'n-times-label' => 'Number',
         'until-date-label' => 'Until date',
         'unlimited-label' => 'Unlimited',
     ],
@@ -54,8 +54,8 @@ return [
         'label' => 'Yearly',
     ],
     'year-rule' => [
-        'first-working-day-of-the-month' => 'First working day of the month',
-        'last-working-day-of-the-month' => 'Last working day of the month',
+        'first-working-day-of-the-month' => 'First working day of',
+        'last-working-day-of-the-month' => 'Last working day of',
         'exactly-on' => 'Exactly on',
         'first-working-day-after' => 'First working day on or after',
         'last-working-day-before' => 'Last working day on or before',

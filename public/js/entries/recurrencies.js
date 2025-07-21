@@ -5,21 +5,26 @@
 const baseElement = document.getElementById("base");
 const frequencyElement = document.getElementById("frequency");
 const ruleElement = document.getElementById("rule");
-const dayOfMonthElement = document.getElementById("day_of_month");
-const dayOfMonthWrapper = document.getElementById("day_of_month-wrapper");
-const dayOfWeekElement = document.getElementById("day_of_week");
-const dayOfWeekWrapper = document.getElementById("day_of_week-wrapper");
+const dayOfMonthElement = document.getElementById("day-of-month");
+const dayOfMonthWrapper = document.getElementById("day-of-month-wrapper");
+const dayOfWeekElement = document.getElementById("day-of-week");
+const dayOfWeekWrapper = document.getElementById("day-of-week-wrapper");
 const monthElement = document.getElementById("month");
 const monthWrapper = document.getElementById("month-wrapper");
-const numberOfOccurrencesElement = document.getElementById("number_of_occurrences");
-const occurrencesEndDateElement = document.getElementById("occurrences_end_date");
-const occurrencesNumberElement = document.getElementById("occurrences_number");
+const numberOfOccurrencesElement = document.getElementById("number-of-occurrences");
+const occurrencesEndDateElement = document.getElementById("occurrences-end-date");
+const occurrencesEndDateWrapper = document.getElementById("occurrences-end-date-wrapper");
+const occurrencesNumberElement = document.getElementById("occurrences-number");
+const occurrencesNumberWrapper = document.getElementById("occurrences-number-wrapper");
 
 console.log("Available frequencies for base:", recurringMenuNew['base']);
 console.log('Frequency translations:', frequencyTranslations);
 console.log('Rule translations:', ruleTranslations);
 console.log('Weekday translations:', weekdaysTranslations);
 
+// *****************************************************************
+// Main logic for updating options and visibility
+// *****************************************************************
 function updateFrequencyOptions() {
     if (!baseElement || !frequencyElement) return;
 
@@ -69,20 +74,44 @@ function updateRuleOptions() {
 }
 
 function updateVisibilityOfOtherRuleElements() {
-    if (!ruleElement) return;
+    if (!baseElement || !ruleElement) return;
+
     const selectedBase = baseElement.value;
-    const selectedFrequency = frequencyElement.value;
     const selectedRule = ruleElement.value;
-    console.log("Selected rule:", selectedRule);
+    let elementsToShow = recurringMenuNew['base'][selectedBase]['rule'][selectedRule] || undefined;
 
-    let elementsToShow = recurringMenuNew['base'][selectedBase]['rule'][selectedRule] || [];
-    console.log("Elements to show for rule:", elementsToShow);
+    if (elementsToShow === undefined) return;
 
-    console.log("day_of_month:", elementsToShow['day_of_month']);
-    showHideElement(dayOfMonthWrapper, elementsToShow['day_of_month']);
-    showHideElement(dayOfWeekWrapper, elementsToShow['day_of_week']);
-    showHideElement(monthWrapper, elementsToShow['month']);
+    if (dayOfMonthElement) {
+        showHideElement(dayOfMonthWrapper, elementsToShow['day-of-month']);
+    }
+    if (dayOfWeekElement) {
+        showHideElement(dayOfWeekWrapper, elementsToShow['day-of-week']);
+    }
+    if (monthElement) {
+        showHideElement(monthWrapper, elementsToShow['month']);
+    }
 }
+
+function updateVisibilityOfOccurrencesElements() {
+    if (!numberOfOccurrencesElement) return;
+
+    const selectedNumberOfOccurrences = numberOfOccurrencesElement.value;
+
+    const elementsToShow = recurringMenuNew['number-of-occurrences'][selectedNumberOfOccurrences] || undefined;
+    if (elementsToShow === undefined) return;
+    
+    if (occurrencesEndDateElement) {
+        showHideElement(occurrencesEndDateWrapper, elementsToShow['date']);
+    }
+    if (occurrencesNumberElement) {
+        showHideElement(occurrencesNumberWrapper, elementsToShow['number']);
+    }
+}
+
+// *****************************************************************
+// Helper functions
+// *****************************************************************
 
 function showHideElement(element, shouldShow) {
     if (element) {
@@ -90,9 +119,13 @@ function showHideElement(element, shouldShow) {
     }
 }
 
+// *****************************************************************
+// Event listeners for elements
+// *****************************************************************
+
 if (baseElement) {
     baseElement.addEventListener("change", updateFrequencyOptions);
-    updateFrequencyOptions(); // Initial call to populate frequency options
+    // updateFrequencyOptions(); // Doesn't need to be called here, because it'll change data what comes from the $recurringData
 }
 
 if (frequencyElement) {
@@ -102,5 +135,10 @@ if (frequencyElement) {
 
 if (ruleElement) {
     ruleElement.addEventListener("change", updateVisibilityOfOtherRuleElements);
-    // updateVisibilityOfOtherRuleElements(); // It's already called in updateRuleOptions
+    updateVisibilityOfOtherRuleElements(); 
 }
+
+if (numberOfOccurrencesElement) {
+    numberOfOccurrencesElement.addEventListener("change", updateVisibilityOfOccurrencesElements);
+    updateVisibilityOfOccurrencesElements();
+}   

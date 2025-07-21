@@ -94,14 +94,15 @@ class EntryController extends Controller
 
         // recurrence dummy variable
         $recurringData = $recurring ? [
-            'base' => 'month',
+            'base' => 'week',
             'frequency' => "2",
             'rule' => "1",
-            'number_of_occurrences' => "2",
-            'given-end-date' => '2028-09-25',
-            'given-number' => '1',
-            'day_of_week' => '1', // 1 = Monday, 2 = Tuesday, ..., 0 = Sunday
-            'month' => '1', // 1 = January, 2 = February, ..., 12 = December
+            'day-of-month' => "5",
+            'day-of-week' => "5",
+            'month' => "5",
+            'number-of-occurrences' => "1",
+            'date' => '2028-09-25',
+            'number' => '10',
         ] : null;
 
         return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData'));

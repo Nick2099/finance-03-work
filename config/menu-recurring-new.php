@@ -18,8 +18,8 @@ return [
             'rule' => [
                 '1' => [
                     'label' => 'week.rule.on-weekday', // On weekday
-                    'day_of_month' => false, // No specific day of month
-                    'day_of_week' => true, // Specific day of week
+                    'day-of-month' => false, // No specific day of month
+                    'day-of-week' => true, // Specific day of week
                     'month' => false, // No specific month
                 ],
             ],
@@ -38,32 +38,32 @@ return [
             'rule' => [
                 '1' => [
                     'label' => 'month-rule.first-working-day-of-the-month', // First working day of the month
-                    'day_of_month' => false, // No specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => false, // No specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => false, // No specific month
                 ],
                 '2' => [
                     'label' => 'month-rule.last-working-day-of-the-month', // Last working day of the month
-                    'day_of_month' => false, // No specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => false, // No specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => false, // No specific month
                 ],
                 '3' => [
                     'label' => 'month-rule.exactly-on', // Exactly on
-                    'day_of_month' => true, // Specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => true, // Specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => false, // No specific month
                 ],
                 '4' => [
                     'label' => 'month-rule.first-working-day-after', // First working day on or after
-                    'day_of_month' => true, // Specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => true, // Specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => false, // No specific month
                 ],
                 '5' => [
                     'label' => 'month-rule.last-working-day-before', // Last working day on or before
-                    'day_of_month' => true, // Specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => true, // Specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => false, // No specific month
                 ],
             ],
@@ -82,32 +82,32 @@ return [
             'rule' => [
                 '1' => [
                     'label' => 'year-rule.first-working-day-of-the-month', // First working day of the month
-                    'day_of_month' => false, // No specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => false, // No specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
                 '2' => [
                     'label' => 'year-rule.last-working-day-of-the-month', // Last working day of the month
-                    'day_of_month' => false, // No specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => false, // No specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
                 '3' => [
                     'label' => 'year-rule.exactly-on', // Exactly on
-                    'day_of_month' => true, // Specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => true, // Specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
                 '4' => [
                     'label' => 'year-rule.first-working-day-after', // First working day on or after
-                    'day_of_month' => true, // Specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => true, // Specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
                 '5' => [
                     'label' => 'year-rule.last-working-day-before', // Last working day on or before
-                    'day_of_month' => true, // Specific day of month
-                    'day_of_week' => false, // No specific day of week
+                    'day-of-month' => true, // Specific day of month
+                    'day-of-week' => false, // No specific day of week
                     'month' => true, // Only specific month
                 ],
             ],
