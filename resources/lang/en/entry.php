@@ -2,46 +2,26 @@
 
 return [
     'heading-recurring' => 'Edit recurring entry',
-    'new-entry' => 'New entry',
-    'edit-entry' => 'Edit entry',
     'date' => 'Date',
-    'type' => 'Type',
-    'amount' => 'Amount',
-    'place_of_purchase' => 'Place / Institution',
-    'location' => 'Location',
-    'note' => 'Note',
     'base' => 'Base',
-    'recurrency' => 'Recurrency',
     'frequency' => 'Frequency',
-    'day' => 'Day',
+    'rule' => 'Rule',
     'day-of-week' => 'Day',
-    'week-label' => 'Week',
+    'day' => 'Day',
     'month-label' => 'Month',
+    'week-label' => 'Week',
     'year-label' => 'Year',
-    'lasts' => 'Lasts',
-    'end-of-the-year' => 'until end of the year',
     'start-date' => 'Start date',
     'end-date' => 'End date',
-    'until-date' => 'until date',
-    'unlimited' => 'unlimited',
+
+    'occurrences-end-date' => 'Occurrences end date',
+    'occurrences-number' => 'Occurrences number',
     'number-of-occurrences' => [
         'label' => 'Number of occurrences',
         'n-times-label' => 'Number',
         'until-date-label' => 'Until date',
         'unlimited-label' => 'Unlimited',
     ],
-    'occurrences-end-date' => 'Occurrences end date',
-    'occurrences-number' => 'Occurrences number',
-    'rule' => 'Rule',
-    'week' => [
-        'label' => 'Weekly',
-        'every' => 'Every week on',
-        'every-2' => 'Every 2 weeks on',
-        'rule' => [
-            'on-weekday' => 'On weekday',
-        ]
-    ],
-
     'month-rule' => [
         'first-working-day-of-the-month' => 'First working day of the month',
         'last-working-day-of-the-month' => 'Last working day of the month',
@@ -49,9 +29,12 @@ return [
         'first-working-day-after' => 'First working day on or after',
         'last-working-day-before' => 'Last working day on or before',
     ],
-
-    'year' => [
-        'label' => 'Yearly',
+    'year-frequency' => [
+        'everyyear' => 'Every year',
+        'every2years' => 'Every 2 years',
+        'every3years' => 'Every 3 years',
+        'every4years' => 'Every 4 years',
+        'every5years' => 'Every 5 years',
     ],
     'year-rule' => [
         'first-working-day-of-the-month' => 'First working day of',
@@ -60,7 +43,6 @@ return [
         'first-working-day-after' => 'First working day on or after',
         'last-working-day-before' => 'Last working day on or before',
     ],
-
     'month' => [
         'january' => 'January',
         'february' => 'February',
@@ -98,11 +80,32 @@ return [
         'every4weeks' => 'Every 4 weeks',
         'every6weeks' => 'Every 6 weeks',
     ],
-    'year-frequency' => [
-        'everyyear' => 'Every year',
-        'every2years' => 'Every 2 years',
-        'every3years' => 'Every 3 years',
-        'every4years' => 'Every 4 years',
-        'every5years' => 'Every 5 years',
+    'week' => [
+        'label' => 'Weekly',
+        'every' => 'Every week on',
+        'every-2' => 'Every 2 weeks on',
+        'rule' => [
+            'on-weekday' => 'On weekday',
+        ]
     ],
+
+    
+    /*
+    'new-entry' => 'New entry',
+    'edit-entry' => 'Edit entry',
+    'type' => 'Type',
+    'amount' => 'Amount',
+    'place_of_purchase' => 'Place / Institution',
+    'location' => 'Location',
+    'note' => 'Note',
+    'recurrency' => 'Recurrency',
+    'lasts' => 'Lasts',
+    'end-of-the-year' => 'until end of the year',
+    'until-date' => 'until date',
+    'unlimited' => 'unlimited',
+    'year' => [
+        'label' => 'Yearly',
+    ],
+
+    */
 ];
