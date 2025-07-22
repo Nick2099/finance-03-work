@@ -105,7 +105,7 @@ class EntryController extends Controller
             'number' => '10',
         ] : null;
 
-        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData'));
+        return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData', 'user'));
     }
 
     public function store(Request $request)

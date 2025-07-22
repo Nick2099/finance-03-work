@@ -28,6 +28,7 @@ return new class extends Migration
             $table->char('language', 2)->default('en');
             $table->string('timezone', length: 60)->default('UTC');
             $table->string('date_format', length: 5)->default('d.m.Y');
+            $table->tinyInteger('first_day_of_week')->default(1); // 0 = Sunday, 1 = Monday, etc.
             $table->string('currency', length: 3)->default('EUR');
             $table->foreignIdFor(\App\Models\Collection::class)->default(1);
             $table->boolean('demo')->default(false);

@@ -281,6 +281,7 @@
 
     <script>
         // Make those variables available globally
+        const user = @json($user ?? null);
         const headerId = @json($header->id ?? null);
         const listOfItems = @json(old('items', $listOfItems ?? []));
         const groupSubgroupMapJSON = @json($tempGroupSubgroupMap);
