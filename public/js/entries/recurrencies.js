@@ -175,7 +175,8 @@ function updateStartAndEndDates(recurrency) {
         let step = parseInt(recurrency["frequency"], 10) * 7; // step in days
         let allDates = [];
 
-        if (parseInt(recurrency["number-of-occurrences"]) == 1) { // case when the number of occurrences is given
+        if (parseInt(recurrency["number-of-occurrences"]) == 1) {
+            // case when the number of occurrences is given
             allDates.push(startDate.toISOString().split("T")[0]);
             for (
                 let j = 1;
@@ -192,9 +193,28 @@ function updateStartAndEndDates(recurrency) {
             }
             endDate = new Date(allDates[allDates.length - 1]);
             endDateElement.value = endDate.toISOString().split("T")[0];
-            console.log("All occurrence dates:", allDates);
+        } else if (
+            parseInt(recurrency["number-of-occurrences"]) == 2 ||
+            parseInt(recurrency["number-of-occurrences"]) == 3
+        ) {
+            // case when the end date is given or for unlimited recurrency
+            endDate = new Date(occurrencesEndDateElement.value);
+            // For unlimited recurrency, set end date to the end of the year three years in the future
+            if (parseInt(recurrency["number-of-occurrences"]) == 3) {
+                endDate = lastDayInYear(firstDay, 3);
+                console.log("End date for unlimited recurrency:", endDate);
+            }
+            let occurrenceDate = new Date(startDate);
+            while (endDate >= occurrenceDate) {
+                allDates.push(occurrenceDate.toISOString().split("T")[0]);
+                occurrenceDate.setDate(occurrenceDate.getDate() + step);
+            }
+            endDate = new Date(allDates[allDates.length - 1]);
+            endDateElement.value = endDate.toISOString().split("T")[0];
         }
+        console.log("All occurrence dates:", allDates);
     } else if (recurrency["base"] == "month") {
+        
     }
 }
 
@@ -231,6 +251,12 @@ function firstDayOfWeek(date) {
         firstDay.setDate(firstDay.getDate() - firstDay.getDay() - 1); // Set to Saturday
     }
     return firstDay;
+}
+
+function lastDayInYear(date, years = 0) {
+    const d = new Date(date); // convert string to Date
+    const year = d.getFullYear();
+    return new Date(year + years, 11, 31); // December 31st of the same year
 }
 
 // *****************************************************************
