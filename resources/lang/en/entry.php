@@ -13,6 +13,7 @@ return [
     'year-label' => 'Year',
     'start-date' => 'Start date',
     'end-date' => 'End date',
+    'from-date' => 'From date',
 
     'occurrences-end-date' => 'Occurrences end date',
     'occurrences-number' => 'Occurrences number',

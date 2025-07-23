@@ -21,6 +21,7 @@ return [
                     'day-of-month' => false, // No specific day of month
                     'day-of-week' => true, // Specific day of week
                     'month' => false, // No specific month
+                    'from-date' => true, // Specific date required
                 ],
             ],
         ],
@@ -140,17 +141,17 @@ return [
         '0' => 'weekday.sunday',
     ],
     'months-labels' => [
-        '1' => 'month.january',
-        '2' => 'month.february',
-        '3' => 'month.march',
-        '4' => 'month.april',
-        '5' => 'month.may',
-        '6' => 'month.june',
-        '7' => 'month.july',
-        '8' => 'month.august',
-        '9' => 'month.september',
-        '10' => 'month.october',
-        '11' => 'month.november',
-        '12' => 'month.december',
+        '0' => 'month.january',
+        '1' => 'month.february',
+        '2' => 'month.march',
+        '3' => 'month.april',
+        '4' => 'month.may',
+        '5' => 'month.june',
+        '6' => 'month.july',
+        '7' => 'month.august',
+        '8' => 'month.september',
+        '9' => 'month.october',
+        '10' => 'month.november',
+        '11' => 'month.december',
     ],
 ];

@@ -12,6 +12,8 @@ const dayOfWeekElement = document.getElementById("day-of-week");
 const dayOfWeekWrapper = document.getElementById("day-of-week-wrapper");
 const monthElement = document.getElementById("month");
 const monthWrapper = document.getElementById("month-wrapper");
+const fromDateElement = document.getElementById("from-date");
+const fromDateWrapper = document.getElementById("from-date-wrapper");
 const numberOfOccurrencesElement = document.getElementById(
     "number-of-occurrences"
 );
@@ -102,6 +104,9 @@ function updateVisibilityOfOtherRuleElements() {
     if (monthElement) {
         showHideElement(monthWrapper, elementsToShow["month"]);
     }
+    if (fromDateElement) {
+        showHideElement(fromDateWrapper, elementsToShow["from-date"]);
+    }
     getRecurrencyParameters(); // Update the rule with parameters after visibility changes
 }
 
@@ -128,6 +133,7 @@ function updateVisibilityOfOccurrencesElements() {
 function getRecurrencyParameters() {
     let recurrency = [];
 
+    recurrency["entry-date"] = dateElement ? dateElement.value : null;
     recurrency["base"] = baseElement ? baseElement.value : null;
     recurrency["frequency"] = frequencyElement ? frequencyElement.value : null;
     recurrency["rule"] = ruleElement ? ruleElement.value : null;
@@ -138,10 +144,10 @@ function getRecurrencyParameters() {
         ? dayOfWeekElement.value
         : null;
     recurrency["month"] = monthElement ? monthElement.value : null;
+    recurrency["from-date"] = fromDateElement ? fromDateElement.value : null;
     recurrency["number-of-occurrences"] = numberOfOccurrencesElement
         ? numberOfOccurrencesElement.value
         : null;
-    recurrency["entry-date"] = dateElement ? dateElement.value : null;
     recurrency["occurrences-number"] = occurrencesNumberElement
         ? occurrencesNumberElement.value
         : null;
@@ -158,15 +164,13 @@ function updateStartAndEndDates(recurrency) {
 
     if (recurrency["base"] == "week") {
         // calculate start date for weekly recurrency
-        let firstDay = firstDayOfWeek(new Date(dateElement.value));
-        let startDate = new Date(firstDay);
-        let i = 0;
-        while (
-            startDate.getDay() !== parseInt(dayOfWeekElement.value) &&
-            i < 15
-        ) {
+        let fromDate = recurrency["from-date"]
+            ? new Date(recurrency["from-date"])
+            : new Date(dateElement.value);
+        let startDate = new Date(fromDate);
+        let dayOfWeek = parseInt(recurrency["day-of-week"], 10);
+        while (startDate.getDay() !== dayOfWeek) {
             startDate.setDate(startDate.getDate() + 1);
-            i++;
         }
         startDateElement.value = startDate.toISOString().split("T")[0];
 
@@ -201,8 +205,7 @@ function updateStartAndEndDates(recurrency) {
             endDate = new Date(occurrencesEndDateElement.value);
             // For unlimited recurrency, set end date to the end of the year three years in the future
             if (parseInt(recurrency["number-of-occurrences"]) == 3) {
-                endDate = lastDayInYear(firstDay, 3);
-                console.log("End date for unlimited recurrency:", endDate);
+                endDate = lastDayInYear(new Date(), 3);
             }
             let occurrenceDate = new Date(startDate);
             while (endDate >= occurrenceDate) {
@@ -212,9 +215,41 @@ function updateStartAndEndDates(recurrency) {
             endDate = new Date(allDates[allDates.length - 1]);
             endDateElement.value = endDate.toISOString().split("T")[0];
         }
-        console.log("All occurrence dates:", allDates);
+        console.log("All weekly occurrence dates:", allDates);
     } else if (recurrency["base"] == "month") {
-        
+        let frequency = parseInt(recurrency["frequency"], 10);
+        let rule = parseInt(recurrency["rule"], 10);
+        let dayOfMonth = parseInt(recurrency["day-of-month"], 10);
+        let month = parseInt(recurrency["month"], 10);
+
+        let today = new Date();
+        console.log("Today:", today);
+        let fromDate = new Date(today.getFullYear(), month, 1);
+
+        let occurrenceDates = [];
+        let numberOfOccurrences = parseInt(
+            recurrency["number-of-occurrences"],
+            10
+        );
+        let occurrencesEndDate = new Date(recurrency["occurrences-end-date"]);
+        let occurrencesNumber = parseInt(recurrency["occurrences-number"], 10);
+
+        let tmpDay;
+
+        if (numberOfOccurrences === 1) {
+            // If the number of occurrences is given
+            for (let j = 0; j < occurrencesNumber; j++) {
+                if (parseInt(recurrency["rule"], 10) === 1) {
+                    tmpDay = firstWorkingDayOfMonth(fromDate);
+                } else if (parseInt(recurrency["rule"], 10) === 2) {
+                    tmpDay = lastWorkingDayOfMonth(fromDate);
+                }
+                occurrenceDates.push(formatDateLocal(tmpDay));
+                fromDate.setMonth(fromDate.getMonth() + frequency);
+            }
+        } else if (numberOfOccurrences === 2 || numberOfOccurrences === 3) {
+        }
+        console.log("Occurrence dates:", occurrenceDates);
     }
 }
 
@@ -228,6 +263,36 @@ function showHideElement(element, shouldShow) {
     }
 }
 
+function formatDateLocal(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+function firstWorkingDayOfMonth(tmpDate) {
+    let year = tmpDate.getFullYear();
+    let month = tmpDate.getMonth();
+    let date = new Date(year, month, 1);
+    while (date.getDay() === 0 || date.getDay() === 6) {
+        // 0 = Sunday, 6 = Saturday
+        date.setDate(date.getDate() + 1);
+    }
+    return date;
+}
+
+function lastWorkingDayOfMonth(tmpDate) {
+    let year = tmpDate.getFullYear();
+    let month = tmpDate.getMonth();
+    let date = new Date(year, month + 1, 0);
+    while (date.getDay() === 0 || date.getDay() === 6) {
+        // 0 = Sunday, 6 = Saturday
+        date.setDate(date.getDate() - 1);
+    }
+    return date;
+}
+
+/*
 function firstDayOfWeek(date) {
     const day = date.getDay();
     let firstDay;
@@ -252,6 +317,7 @@ function firstDayOfWeek(date) {
     }
     return firstDay;
 }
+*/
 
 function lastDayInYear(date, years = 0) {
     const d = new Date(date); // convert string to Date
@@ -288,6 +354,10 @@ if (dayOfMonthElement) {
 
 if (monthElement) {
     monthElement.addEventListener("change", getRecurrencyParameters);
+}
+
+if (fromDateElement) {
+    fromDateElement.addEventListener("change", getRecurrencyParameters);
 }
 
 if (numberOfOccurrencesElement) {

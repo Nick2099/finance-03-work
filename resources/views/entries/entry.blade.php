@@ -119,6 +119,9 @@
                         </select>
                     </div>
                 </x-form-field>
+                <x-form-field name="from-date" :label="__('entry.from-date')" required>
+                    <x-form-input type="date" name="from-date" id="from-date" value="{{ old('from-date', $recurringData['from-date'] ?? date('Y-m-d')) }}" required />
+                </x-form-field>
             </div>
             <div class="recurring-options-row">
                 <x-form-field name="number-of-occurrences" :label="__('entry.number-of-occurrences.label')" required>
