@@ -16,15 +16,15 @@
 
     // following data is normally set in the controller, but here is used for testing
     $recurringData = $recurring ? [
-        'base' => 'week',
-        'frequency' => "2",
+        'base' => 'month',
+        'frequency' => "1",
         'rule' => "1",
         'day-of-month' => "5",
         'day-of-week' => "5",
-        'month' => "5",
+        'month' => "6",
         'number-of-occurrences' => "1",
         'date' => '2026-09-25',
-        'number' => '10',
+        'number' => '4',
     ] : null;
 
     ?>
@@ -110,7 +110,7 @@
                         </select>
                     </div>
                 </x-form-field>
-                <x-form-field name="month" :label="__('entry.month-label')" required>
+                <x-form-field name="month" :label="__('entry.month-start')" required>
                     <div>
                         <select name="month" id="month" class="form-select block w-full mt-1">
                             @foreach($recurringMenuNew['months-labels'] as $key => $option)

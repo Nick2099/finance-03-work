@@ -223,7 +223,6 @@ function updateStartAndEndDates(recurrency) {
         let month = parseInt(recurrency["month"], 10);
 
         let today = new Date();
-        console.log("Today:", today);
         let fromDate = new Date(today.getFullYear(), month, 1);
 
         let occurrenceDates = [];
@@ -239,15 +238,39 @@ function updateStartAndEndDates(recurrency) {
         if (numberOfOccurrences === 1) {
             // If the number of occurrences is given
             for (let j = 0; j < occurrencesNumber; j++) {
-                if (parseInt(recurrency["rule"], 10) === 1) {
+                if (rule === 1) {
                     tmpDay = firstWorkingDayOfMonth(fromDate);
-                } else if (parseInt(recurrency["rule"], 10) === 2) {
+                } else if (rule === 2) {
                     tmpDay = lastWorkingDayOfMonth(fromDate);
+                } else if (rule === 3) {
+                    tmpDay = exactDayOfMonth(fromDate, dayOfMonth);
+                } else if (rule === 4) {
+                    tmpDay = firstWorkingDayOnOrAfter(fromDate, dayOfMonth);
+                } else if (rule === 5) {
+                    tmpDay = lastWorkingDayOnOrBefore(fromDate, dayOfMonth);
                 }
                 occurrenceDates.push(formatDateLocal(tmpDay));
                 fromDate.setMonth(fromDate.getMonth() + frequency);
             }
         } else if (numberOfOccurrences === 2 || numberOfOccurrences === 3) {
+            if (numberOfOccurrences === 3) {
+                occurrencesEndDate = lastDayInYear(new Date(), 3);
+            }
+            while (fromDate <= occurrencesEndDate) {
+                if (rule === 1) {
+                    tmpDay = firstWorkingDayOfMonth(fromDate);
+                } else if (rule === 2) {
+                    tmpDay = lastWorkingDayOfMonth(fromDate);
+                } else if (rule === 3) {
+                    tmpDay = exactDayOfMonth(fromDate, dayOfMonth);
+                } else if (rule === 4) {
+                    tmpDay = firstWorkingDayOnOrAfter(fromDate, dayOfMonth);
+                } else if (rule === 5) {
+                    tmpDay = lastWorkingDayOnOrBefore(fromDate, dayOfMonth);
+                }
+                occurrenceDates.push(formatDateLocal(tmpDay));
+                fromDate.setMonth(fromDate.getMonth() + frequency);
+            }
         }
         console.log("Occurrence dates:", occurrenceDates);
     }
@@ -292,6 +315,57 @@ function lastWorkingDayOfMonth(tmpDate) {
     return date;
 }
 
+function exactDayOfMonth(date, dayOfMonth) {
+    const lastDay = getLastDayOfMonth(new Date(date));
+    if (lastDay < dayOfMonth) {
+        dayOfMonth = lastDay;
+    }
+    const newDate = new Date(date);
+    newDate.setDate(parseInt(dayOfMonth, 10));
+    return newDate;
+}
+
+function firstWorkingDayOnOrAfter(entryDate, dayOfMonth) {
+    let tmpDate = exactDayOfMonth(entryDate, dayOfMonth);
+    let date = new Date(tmpDate);
+    let tmpMonth = entryDate.getMonth();
+    while (date.getDay() === 0 || date.getDay() === 6) {
+        date.setDate(date.getDate() + 1);
+    }
+    if (date.getMonth() > tmpMonth) {
+        date = lastWorkingDayOfMonth(new Date(tmpDate));
+    }
+    return date;
+}
+
+// Get the last working day on or before a given date - checked, in use
+function lastWorkingDayOnOrBefore(entryDate, dayOfMonth) {
+    let tmpDate = exactDayOfMonth(entryDate, dayOfMonth);
+    let date = new Date(tmpDate);
+    let tmpMonth = entryDate.getMonth();
+    while (date.getDay() === 0 || date.getDay() === 6) {
+        date.setDate(date.getDate() - 1);
+    }
+    if (date.getMonth() < tmpMonth) {
+        date = firstWorkingDayOfMonth(new Date(tmpDate));
+    }
+    return date;
+}
+
+function lastDayInYear(date, years = 0) {
+    const d = new Date(date); // convert string to Date
+    const year = d.getFullYear();
+    return new Date(year + years, 11, 31); // December 31st of the same year
+}
+
+function getLastDayOfMonth(tmpDate) {
+    let year = tmpDate.getFullYear();
+    let month = tmpDate.getMonth();
+    let date = new Date(year, month + 1, 0);
+    let day = date.getDate();
+    return day;
+}
+
 /*
 function firstDayOfWeek(date) {
     const day = date.getDay();
@@ -318,12 +392,6 @@ function firstDayOfWeek(date) {
     return firstDay;
 }
 */
-
-function lastDayInYear(date, years = 0) {
-    const d = new Date(date); // convert string to Date
-    const year = d.getFullYear();
-    return new Date(year + years, 11, 31); // December 31st of the same year
-}
 
 // *****************************************************************
 // Event listeners for elements

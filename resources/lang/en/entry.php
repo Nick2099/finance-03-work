@@ -11,6 +11,7 @@ return [
     'month-label' => 'Month',
     'week-label' => 'Week',
     'year-label' => 'Year',
+    'month-start' => 'Starting from',
     'start-date' => 'Start date',
     'end-date' => 'End date',
     'from-date' => 'From date',
@@ -38,8 +39,8 @@ return [
         'every5years' => 'Every 5 years',
     ],
     'year-rule' => [
-        'first-working-day-of-the-month' => 'First working day of',
-        'last-working-day-of-the-month' => 'Last working day of',
+        'first-working-day-of-the-month' => 'First working day of month',
+        'last-working-day-of-the-month' => 'Last working day of month',
         'exactly-on' => 'Exactly on',
         'first-working-day-after' => 'First working day on or after',
         'last-working-day-before' => 'Last working day on or before',
