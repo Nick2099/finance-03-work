@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'new-entry' => 'New entry',
+    'edit-entry' => 'Edit entry',
+    
     'heading-recurring' => 'Edit recurring entry',
     'date' => 'Date',
     'base' => 'Base',
@@ -93,8 +96,6 @@ return [
 
     
     /*
-    'new-entry' => 'New entry',
-    'edit-entry' => 'Edit entry',
     'type' => 'Type',
     'amount' => 'Amount',
     'place_of_purchase' => 'Place / Institution',

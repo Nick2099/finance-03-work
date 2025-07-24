@@ -38,10 +38,12 @@ const showOccurrenceDatesBtn = document.getElementById(
 const closeOccurrenceDatesModal = document.getElementById(
     "close-occurrence-dates-modal"
 );
+const recurringOccurrenceDatesHiddenInput = document.getElementById(
+    "recurringOccurrenceDates"
+);
 
 let recurrencyOccurrenceDates = [];
 
-console.log("User:", user);
 
 // *****************************************************************
 // Main logic for updating options and visibility of elements
@@ -164,8 +166,6 @@ function getRecurrencyParameters() {
     recurrency["occurrences-end-date"] = occurrencesEndDateElement
         ? occurrencesEndDateElement.value
         : null;
-    console.log("Recurrency parameters:", recurrency);
-
     updateStartAndEndDates(recurrency);
 }
 
@@ -226,7 +226,7 @@ function updateStartAndEndDates(recurrency) {
             endDateElement.value = endDate.toISOString().split("T")[0];
         }
         recurrencyOccurrenceDates = allDates;
-        console.log("All weekly occurrence dates:", allDates);
+        // console.log("All weekly occurrence dates:", allDates);
     } else if (recurrency["base"] == "month") {
         let frequency = parseInt(recurrency["frequency"], 10);
         let rule = parseInt(recurrency["rule"], 10);
@@ -284,10 +284,9 @@ function updateStartAndEndDates(recurrency) {
             }
         }
         recurrencyOccurrenceDates = occurrenceDates;
-        console.log("Occurrence dates [0]:", occurrenceDates[0]);
         startDateElement.value = occurrenceDates[0];
         endDateElement.value = occurrenceDates[occurrenceDates.length - 1];
-        console.log("Occurrence dates:", occurrenceDates);
+        // console.log("Occurrence dates:", occurrenceDates);
     } else if (recurrency["base"] == "year") {
         let frequency = parseInt(recurrency["frequency"], 10);
         let rule = parseInt(recurrency["rule"], 10);
@@ -347,7 +346,13 @@ function updateStartAndEndDates(recurrency) {
         recurrencyOccurrenceDates = occurrenceDates;
         startDateElement.value = occurrenceDates[0];
         endDateElement.value = occurrenceDates[occurrenceDates.length - 1];
-        console.log("Occurrence dates:", occurrenceDates);
+        // console.log("Occurrence dates:", occurrenceDates);
+    }
+    // Update the hidden input with occurrence dates
+    if (recurringOccurrenceDatesHiddenInput) {
+        recurringOccurrenceDatesHiddenInput.value = JSON.stringify(
+            recurrencyOccurrenceDates
+        );
     }
 }
 

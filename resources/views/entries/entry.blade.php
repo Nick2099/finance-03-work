@@ -19,12 +19,12 @@
         'base' => 'month',
         'frequency' => "1",
         'rule' => "1",
-        'day-of-month' => "5",
-        'day-of-week' => "5",
-        'month' => "6",
+        'day-of-month' => "1",
+        'day-of-week' => "1",
+        'month' => "0",
         'number-of-occurrences' => "1",
         'date' => '2026-09-25',
-        'number' => '4',
+        'number' => '2',
     ] : null;
 
     ?>
@@ -55,6 +55,11 @@
         @if(request('badge-id'))
             <input type="hidden" name="badge-id" value="{{ request('badge-id') }}">
         @endif
+        @if(request('recurrence-id'))
+            <input type="hidden" name="recurrence-id" value="{{ request('recurrence-id') }}">
+        @endif
+        <input type="hidden" name="recurring" value="{{ $recurring ? '1' : '0' }}" />
+        <input type="hidden" name="recurringOccurrenceDates" id="recurringOccurrenceDates" value="">
 
         <div class="recurring-options-row">
             <x-form-field name="date" :label="__('entry.date')" required>
@@ -275,7 +280,7 @@
             </tbody>
         </table>
         <div id="items-hidden-fields"></div>
-        <x-form-button id="save-entry-btn">{{ empty($header) ? 'Save entry' : 'Update entry' }}</x-form-button>
+        <x-form-button id="save-entry-btn">{{ $recurring ? 'Save recurrence' : (empty($header) ? 'Save entry' : 'Update entry') }}</x-form-button>
         <x-form-button type="reset">Reset</x-form-button>
         <div>
             <input type="checkbox" name="negative" id="negative" value="negative" {{ old('negative') ? 'checked' : '' }} />
@@ -283,9 +288,9 @@
         </div>
     </form>
 
-    <div id="occurrence-dates-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:3000;">
-        <div style="background:#fff; margin:10vh auto; padding:2em; max-width:500px; position:relative;">
-            <button type="button" id="close-occurrence-dates-modal" style="position:absolute; top:10px; right:10px; font-size:1.5em; background:none; border:none;">&times;</button>
+    <div id="occurrence-dates-modal" class="modal-wrapper display-none">
+        <div class="modal-content">
+            <button type="button" id="close-occurrence-dates-modal" class="close-btn">&times;</button>
             <h3>Occurrence Dates</h3>
             <ul id="occurrence-dates-list" style="max-height:300px; overflow:auto;"></ul>
         </div>

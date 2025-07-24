@@ -64,6 +64,9 @@
                                 <form action="{{ route('entry.add-recurring', $header->id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
+                                    <input type="hidden" name="blade" value="list" />
+                                    <input type="hidden" name="page" value="{{ request('page', 1) }}">
+                                    <input type="hidden" name="recurrence-id" value="0" />
                                     <button type="submit" class="btn btn-secondary">{{ __('list.add-recurring') }}</button>
                                 </form>
                             @endif

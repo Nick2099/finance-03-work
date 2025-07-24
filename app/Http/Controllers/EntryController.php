@@ -94,15 +94,15 @@ class EntryController extends Controller
 
         // recurrence dummy variable
         $recurringData = $recurring ? [
-            'base' => 'week',
-            'frequency' => "2",
+            'base' => 'month',
+            'frequency' => "1",
             'rule' => "1",
-            'day-of-month' => "5",
-            'day-of-week' => "5",
-            'month' => "5",
+            'day-of-month' => "1",
+            'day-of-week' => "1",
+            'month' => "0",
             'number-of-occurrences' => "1",
-            'date' => '2028-09-25',
-            'number' => '10',
+            'date' => '2026-09-25',
+            'number' => '2',
         ] : null;
 
         return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData', 'user'));
@@ -136,8 +136,26 @@ class EntryController extends Controller
             'items.*.note' => 'nullable|string',
             'items.*.badges' => 'nullable|array',
             'items.*.badges.*' => 'integer',
-            'recerrency_id' => 'nullable|integer',
+            // 'recurrence_id' => 'nullable|integer',
         ]);
+
+        if ($request->has('recurring') && $request->input('recurring') == '1') {
+            // Handle recurring entry data
+            $recurrenceData = $request->validate([
+                'base' => 'required|string|in:week,month,year',
+                'frequency' => 'required|integer|min:1',
+                'rule' => 'required|integer|min:1',
+                'day-of-month' => 'required|integer|min:1|max:31',
+                'day-of-week' => 'required|integer|min:0|max:6',
+                'month' => 'required|integer|min:0|max:11',
+                'number-of-occurrences' => 'required|integer|min:1|max:3',
+                'occurrences-end-date' => 'nullable|date',
+                'occurrences-number' => 'nullable|integer|min:2',
+                'recurrence_id' => 'nullable|integer',
+                'recurringOccurrenceDates' => 'nullable|string',
+            ]);
+            // dd($recurrenceData);
+        }
 
         $user = Auth::user();
         $collection = $user->collection;
