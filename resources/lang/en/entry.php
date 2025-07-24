@@ -28,8 +28,8 @@ return [
         'first-working-day-of-the-month' => 'First working day of the month',
         'last-working-day-of-the-month' => 'Last working day of the month',
         'exactly-on' => 'Exactly on',
-        'first-working-day-after' => 'First working day on or after',
-        'last-working-day-before' => 'Last working day on or before',
+        'first-working-day-after' => 'Working day on or after',
+        'last-working-day-before' => 'Working day on or before',
     ],
     'year-frequency' => [
         'everyyear' => 'Every year',
@@ -42,8 +42,8 @@ return [
         'first-working-day-of-the-month' => 'First working day of month',
         'last-working-day-of-the-month' => 'Last working day of month',
         'exactly-on' => 'Exactly on',
-        'first-working-day-after' => 'First working day on or after',
-        'last-working-day-before' => 'Last working day on or before',
+        'first-working-day-after' => 'Working day on or after',
+        'last-working-day-before' => 'Working day on or before',
     ],
     'month' => [
         'january' => 'January',

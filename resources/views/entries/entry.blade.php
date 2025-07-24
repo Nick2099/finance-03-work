@@ -147,6 +147,7 @@
                 <x-form-field name="end-date" :label="__('entry.end-date')">
                     <x-form-input type="date" name="end-date" id="end-date" value="{{ old('end-date', $header->date ?? date('Y-m-d')) }}" disabled />
                 </x-form-field>
+                <button type="button" id="show-occurrence-dates-btn" class="btn">Show all occurrences dates</button>
             </div>
         @endif
 
@@ -281,6 +282,14 @@
             <label for="negative"> Allow negative numbers.</label>
         </div>
     </form>
+
+    <div id="occurrence-dates-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:3000;">
+        <div style="background:#fff; margin:10vh auto; padding:2em; max-width:500px; position:relative;">
+            <button type="button" id="close-occurrence-dates-modal" style="position:absolute; top:10px; right:10px; font-size:1.5em; background:none; border:none;">&times;</button>
+            <h3>Occurrence Dates</h3>
+            <ul id="occurrence-dates-list" style="max-height:300px; overflow:auto;"></ul>
+        </div>
+    </div>
 
     <script>
         // Make those variables available globally

@@ -32,6 +32,16 @@ const occurrencesNumberWrapper = document.getElementById(
 const dateElement = document.getElementById("date");
 const startDateElement = document.getElementById("start-date");
 const endDateElement = document.getElementById("end-date");
+const showOccurrenceDatesBtn = document.getElementById(
+    "show-occurrence-dates-btn"
+);
+const closeOccurrenceDatesModal = document.getElementById(
+    "close-occurrence-dates-modal"
+);
+
+let recurrencyOccurrenceDates = [];
+
+console.log("User:", user);
 
 // *****************************************************************
 // Main logic for updating options and visibility of elements
@@ -215,6 +225,7 @@ function updateStartAndEndDates(recurrency) {
             endDate = new Date(allDates[allDates.length - 1]);
             endDateElement.value = endDate.toISOString().split("T")[0];
         }
+        recurrencyOccurrenceDates = allDates;
         console.log("All weekly occurrence dates:", allDates);
     } else if (recurrency["base"] == "month") {
         let frequency = parseInt(recurrency["frequency"], 10);
@@ -272,6 +283,70 @@ function updateStartAndEndDates(recurrency) {
                 fromDate.setMonth(fromDate.getMonth() + frequency);
             }
         }
+        recurrencyOccurrenceDates = occurrenceDates;
+        console.log("Occurrence dates [0]:", occurrenceDates[0]);
+        startDateElement.value = occurrenceDates[0];
+        endDateElement.value = occurrenceDates[occurrenceDates.length - 1];
+        console.log("Occurrence dates:", occurrenceDates);
+    } else if (recurrency["base"] == "year") {
+        let frequency = parseInt(recurrency["frequency"], 10);
+        let rule = parseInt(recurrency["rule"], 10);
+        let dayOfMonth = parseInt(recurrency["day-of-month"], 10);
+        let month = parseInt(recurrency["month"], 10);
+
+        let today = new Date();
+        let fromDate = new Date(today.getFullYear(), month, 1);
+
+        let occurrenceDates = [];
+        let numberOfOccurrences = parseInt(
+            recurrency["number-of-occurrences"],
+            10
+        );
+        let occurrencesEndDate = new Date(recurrency["occurrences-end-date"]);
+        let occurrencesNumber = parseInt(recurrency["occurrences-number"], 10);
+
+        let tmpDay;
+
+        if (numberOfOccurrences === 1) {
+            // If the number of occurrences is given
+            for (let j = 0; j < occurrencesNumber; j++) {
+                if (rule === 1) {
+                    tmpDay = firstWorkingDayOfMonth(fromDate);
+                } else if (rule === 2) {
+                    tmpDay = lastWorkingDayOfMonth(fromDate);
+                } else if (rule === 3) {
+                    tmpDay = exactDayOfMonth(fromDate, dayOfMonth);
+                } else if (rule === 4) {
+                    tmpDay = firstWorkingDayOnOrAfter(fromDate, dayOfMonth);
+                } else if (rule === 5) {
+                    tmpDay = lastWorkingDayOnOrBefore(fromDate, dayOfMonth);
+                }
+                occurrenceDates.push(formatDateLocal(tmpDay));
+                fromDate.setFullYear(fromDate.getFullYear() + frequency);
+            }
+        } else if (numberOfOccurrences === 2 || numberOfOccurrences === 3) {
+            if (numberOfOccurrences === 3) {
+                occurrencesEndDate = lastDayInYear(new Date(), 10);
+            }
+            while (fromDate <= occurrencesEndDate) {
+                if (rule === 1) {
+                    tmpDay = firstWorkingDayOfMonth(fromDate);
+                } else if (rule === 2) {
+                    tmpDay = lastWorkingDayOfMonth(fromDate);
+                } else if (rule === 3) {
+                    tmpDay = exactDayOfMonth(fromDate, dayOfMonth);
+                } else if (rule === 4) {
+                    tmpDay = firstWorkingDayOnOrAfter(fromDate, dayOfMonth);
+                } else if (rule === 5) {
+                    tmpDay = lastWorkingDayOnOrBefore(fromDate, dayOfMonth);
+                }
+                occurrenceDates.push(formatDateLocal(tmpDay));
+                fromDate.setFullYear(fromDate.getFullYear() + frequency);
+            }
+        }
+        recurrencyOccurrenceDates = occurrenceDates;
+        startDateElement.value = occurrenceDates[0];
+        endDateElement.value = occurrenceDates[occurrenceDates.length - 1];
         console.log("Occurrence dates:", occurrenceDates);
     }
 }
@@ -286,12 +361,28 @@ function showHideElement(element, shouldShow) {
     }
 }
 
+
 function formatDateLocal(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
 }
+
+function formatDateUser(date) {
+    date = new Date(date); // Ensure date is a Date object
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    if (user["date_format"] === "d.m.Y") {
+        return `${day}.${month}.${year}`;
+    } else if (user["date_format"] === "d/m/Y") {
+        return `${day}/${month}/${year}`;
+    } else {
+        return `${year}-${month}-${day}`; // Default case, can be adjusted
+    }
+}
+
 
 function firstWorkingDayOfMonth(tmpDate) {
     let year = tmpDate.getFullYear();
@@ -366,32 +457,27 @@ function getLastDayOfMonth(tmpDate) {
     return day;
 }
 
-/*
-function firstDayOfWeek(date) {
-    const day = date.getDay();
-    let firstDay;
-    if (parseInt(user["first_day_of_week"]) === 0) {
-        // If first day of week is Sunday
-        firstDay = new Date(date);
-        firstDay.setDate(firstDay.getDate() - firstDay.getDay()); // Set to Sunday
-    } else if (parseInt(user["first_day_of_week"]) === 1) {
-        // If first day of week is Monday
-        if (day === 0) {
-            date.setDate(date.getDate() - 7);
-        }
-        firstDay = new Date(date);
-        firstDay.setDate(firstDay.getDate() - firstDay.getDay() + 1); // Set to Monday
-    } else if (parseInt(user["first_day_of_week"]) === 6) {
-        // If first day of week is Saturday
-        if (day === 6) {
-            date.setDate(date.getDate() + 7);
-        }
-        firstDay = new Date(date);
-        firstDay.setDate(firstDay.getDate() - firstDay.getDay() - 1); // Set to Saturday
+function showOccurrenceDates() {
+    const modal = document.getElementById("occurrence-dates-modal");
+    const list = document.getElementById("occurrence-dates-list");
+    list.innerHTML = "";
+    if (recurrencyOccurrenceDates && recurrencyOccurrenceDates.length > 0) {
+        recurrencyOccurrenceDates.forEach((date) => {
+            const li = document.createElement("li");
+            li.textContent = formatDateUser(date);
+            list.appendChild(li);
+        });
+    } else {
+        list.innerHTML = "<li>No dates available.</li>";
     }
-    return firstDay;
+    modal.style.display = "block";
 }
-*/
+
+function hideOccurrenceDates() {
+    const modal = document.getElementById("occurrence-dates-modal");
+    modal.style.display = "none";
+}
+
 
 // *****************************************************************
 // Event listeners for elements
@@ -452,4 +538,12 @@ if (occurrencesNumberElement) {
 
 if (dateElement) {
     dateElement.addEventListener("change", getRecurrencyParameters);
+}
+
+if (showOccurrenceDatesBtn) {
+    showOccurrenceDatesBtn.addEventListener("click", showOccurrenceDates);
+}
+
+if (closeOccurrenceDatesModal) {
+    closeOccurrenceDatesModal.addEventListener("click", hideOccurrenceDates);
 }

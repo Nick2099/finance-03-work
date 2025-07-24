@@ -12,6 +12,7 @@ return [
     'date_formats' => [
         'Y-m-d' => 'yyyy-mm-dd  (2025-12-21)',
         'd.m.Y' => 'dd.mm.yyyy  (21.12.2025)',
+        'd/m/Y' => 'dd/mm/yyyy  (21/12/2025)',
         // 'm.d.Y' => 'mm.dd.yyyy  (12.21.2025)',
     ],
     'currencies' => [
