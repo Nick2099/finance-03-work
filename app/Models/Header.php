@@ -17,6 +17,7 @@ class Header extends Model
         'location',
         'note',
         'amount',
+        'recurrency_id',
         // Add other header fields as needed
     ];
 

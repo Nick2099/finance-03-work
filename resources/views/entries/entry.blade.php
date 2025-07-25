@@ -55,9 +55,7 @@
         @if(request('badge-id'))
             <input type="hidden" name="badge-id" value="{{ request('badge-id') }}">
         @endif
-        @if(request('recurrence-id'))
-            <input type="hidden" name="recurrence-id" value="{{ request('recurrence-id') }}">
-        @endif
+        <input type="hidden" name="recurrence-id" value="{{ isset($header->recurrency_id) ? $header->recurrency_id : null }}">
         <input type="hidden" name="recurring" value="{{ $recurring ? '1' : '0' }}" />
         <input type="hidden" name="recurringOccurrenceDates" id="recurringOccurrenceDates" value="">
 

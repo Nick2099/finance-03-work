@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Item;
 use App\Models\Header;
 use App\Models\Subgroup;
+use App\Models\Recurrency;
+use App\Models\RecurrencyHeader;
+use App\Models\RecurrencyItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
@@ -122,6 +125,11 @@ class EntryController extends Controller
             }
         }
 
+        $recurring = false;
+        if ($request->has('recurring') && $request->input('recurring') == '1') {
+            $recurring = true;
+        }
+
         // Validate the request data (adjust rules as needed for your fields)
         $validatedData = $request->validate([
             'date' => 'required|date',
@@ -139,7 +147,12 @@ class EntryController extends Controller
             // 'recurrence_id' => 'nullable|integer',
         ]);
 
-        if ($request->has('recurring') && $request->input('recurring') == '1') {
+        $user = Auth::user();
+        $collection = $user->collection;
+        $groups = $collection->groups()->get();
+        $groupTypeMap = $groups->pluck('type', 'id');
+
+        if ($recurring) {
             // Handle recurring entry data
             $recurrenceData = $request->validate([
                 'base' => 'required|string|in:week,month,year',
@@ -151,16 +164,46 @@ class EntryController extends Controller
                 'number-of-occurrences' => 'required|integer|min:1|max:3',
                 'occurrences-end-date' => 'nullable|date',
                 'occurrences-number' => 'nullable|integer|min:2',
-                'recurrence_id' => 'nullable|integer',
+                'recurrence-id' => 'nullable|integer',
                 'recurringOccurrenceDates' => 'nullable|string',
             ]);
             // dd($recurrenceData);
+            if ($recurrenceData['recurrence-id'] > 0) {
+                // If recurrence-id is set, update the existing recurrence
+                $recurrence = Recurrency::findOrFail($recurrenceData['recurrence-id']);
+                $recurrence->update([
+                    'user_id' => $user->id,
+                    'name' => $recurrenceData['name'] ?? 'Recurring Entry',
+                    'base' => $recurrenceData['base'],
+                    'frequency' => $recurrenceData['frequency'],
+                    'rule' => $recurrenceData['rule'],
+                    'day_of_month' => $recurrenceData['day-of-month'],
+                    'day_of_week' => $recurrenceData['day-of-week'],
+                    'month' => $recurrenceData['month'],
+                    'number_of_occurrences' => $recurrenceData['number-of-occurrences'],
+                    'occurrences_end_date' => $recurrenceData['occurrences-end-date'],
+                    'occurrences_number' => $recurrenceData['occurrences-number'],
+                    'occurrences_dates' => $recurrenceData['recurringOccurrenceDates'],
+                ]);
+            } else {
+                // Create a new recurrence
+                $recurrence = Recurrency::create([
+                    'user_id' => $user->id,
+                    'name' => $recurrenceData['name'] ?? 'Recurring Entry',
+                    'base' => $recurrenceData['base'],
+                    'frequency' => $recurrenceData['frequency'],
+                    'rule' => $recurrenceData['rule'],
+                    'day_of_month' => $recurrenceData['day-of-month'],
+                    'day_of_week' => $recurrenceData['day-of-week'],
+                    'month' => $recurrenceData['month'],
+                    'number_of_occurrences' => $recurrenceData['number-of-occurrences'],
+                    'occurrences_end_date' => $recurrenceData['occurrences-end-date'],
+                    'occurrences_number' => $recurrenceData['occurrences-number'],
+                    'occurrences_dates' => $recurrenceData['recurringOccurrenceDates'],
+                ]);
+                $recurrenceData['recurrence-id'] = $recurrence->id;
+            }
         }
-
-        $user = Auth::user();
-        $collection = $user->collection;
-        $groups = $collection->groups()->get();
-        $groupTypeMap = $groups->pluck('type', 'id');
 
         // Check if this is an update or create
         if ($request->has('header_id')) {
@@ -172,6 +215,7 @@ class EntryController extends Controller
                 'location' => $validatedData['location'] !== null ? $validatedData['location'] : '',
                 'note' => $validatedData['note'] ?? null,
                 'amount' => $validatedData['amount'],
+                'recurrency_id' => $recurrenceData['recurrence-id'] ?? null,
             ]);
             // Delete old items
             $header->items()->delete();
@@ -184,6 +228,7 @@ class EntryController extends Controller
                 'location' => $validatedData['location'] !== null ? $validatedData['location'] : '',
                 'note' => $validatedData['note'] ?? null,
                 'amount' => $validatedData['amount'],
+                'recurrency_id' => $recurrenceData['recurrence-id'] ?? null,
             ]);
         }
 
