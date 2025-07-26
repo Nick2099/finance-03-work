@@ -32,6 +32,7 @@ class EntryController extends Controller
         $listOfItems = [];
         $header = null;
         $allBadges = $user->badges;
+        $recurringData = [];
 
         if ($id) {
             $header = Header::where('user_id', $user->id)->findOrFail($id);
@@ -95,7 +96,27 @@ class EntryController extends Controller
 
         // dump($groupSubgroupMap);
 
+        if ($header->recurrency_id) {
+            $recurrence = Recurrency::findOrFail($header->recurrency_id);
+            $recurring = true;
+            $recurringData = [
+                'base' => $recurrence->base,
+                'frequency' => $recurrence->frequency,
+                'rule' => $recurrence->rule,
+                'day-of-month' => $recurrence->day_of_month,
+                'day-of-week' => $recurrence->day_of_week,
+                'month' => $recurrence->month,
+                'number-of-occurrences' => $recurrence->number_of_occurrences,
+                'occurrences-end-date' => $recurrence->occurrences_end_date,
+                'occurrences-number' => $recurrence->occurrences_number,
+                'name' => $recurrence->name,
+                'recurringOccurrenceDates' => $recurrence->occurrences_dates,
+            ];
+        } else {
+            $recurring = false;
+        }
         // recurrence dummy variable
+        /*
         $recurringData = $recurring ? [
             'base' => 'month',
             'frequency' => "1",
@@ -107,12 +128,15 @@ class EntryController extends Controller
             'date' => '2026-09-25',
             'number' => '2',
         ] : null;
+        */
 
         return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData', 'user'));
     }
 
     public function store(Request $request)
     {
+        // dd($request->all());
+
         if ($request->has('items')) {
             $items = $request->input('items');
             foreach ($items as $idx => $item) {
@@ -151,6 +175,8 @@ class EntryController extends Controller
         $collection = $user->collection;
         $groups = $collection->groups()->get();
         $groupTypeMap = $groups->pluck('type', 'id');
+
+        // dd($request->all());
 
         if ($recurring) {
             // Handle recurring entry data

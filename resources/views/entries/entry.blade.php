@@ -12,20 +12,19 @@
     // dump($listOfItems);
     // dump($groupSubgroupMap);
     // dump($header);
-    // dump($recurringData);
+    dump($recurringData);
 
     // following data is normally set in the controller, but here is used for testing
-    $recurringData = $recurring ? [
-        'base' => 'month',
-        'frequency' => "1",
-        'rule' => "1",
-        'day-of-month' => "1",
-        'day-of-week' => "1",
-        'month' => "0",
-        'number-of-occurrences' => "1",
-        'date' => '2026-09-25',
-        'number' => '2',
-    ] : null;
+
+    // $recurringData['base'] = 'month';
+    // $recurringData['frequency'] = '1';
+    // $recurringData['rule'] = '1';
+    // $recurringData['day-of-month'] = '1';
+    // $recurringData['day-of-week'] = '1';
+    // $recurringData['month'] = '0';
+    // $recurringData['number-of-occurrences'] = '2';
+    // $recurringData['date'] = '2026-09-25';
+    // $recurringData['occurrences-number'] = '2';
 
     ?>
     <x-slot:heading>
@@ -140,7 +139,7 @@
                     <x-form-input type="date" name="occurrences-end-date" id="occurrences-end-date" value="{{ old('occurrences-end-date', $recurringData['date'] ?? date('Y-m-d')) }}" required />
                 </x-form-field>
                 <x-form-field name="occurrences-number" :label="__('entry.occurrences-number')" required>
-                    <x-form-input type="number" name="occurrences-number" id="occurrences-number" value="{{ old('occurrences-number', $recurringData['number'] ?? 1) }}" required min="2" max="120"/>
+                    <x-form-input type="number" name="occurrences-number" id="occurrences-number" value="{{ old('occurrences-number', $recurringData['occurrences-number'] ?? 1) }}" required min="2" max="120"/>
                 </x-form-field>
             </div>
             <div class="recurring-options-row">
