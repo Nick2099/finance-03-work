@@ -96,7 +96,7 @@ class EntryController extends Controller
 
         // dump($groupSubgroupMap);
 
-        if ($header->recurrency_id) {
+        if (isset($header->recurrency_id) && $header->recurrency_id != null) {
             $recurrence = Recurrency::findOrFail($header->recurrency_id);
             $recurring = true;
             $recurringData = [
@@ -113,22 +113,20 @@ class EntryController extends Controller
                 'recurringOccurrenceDates' => $recurrence->occurrences_dates,
             ];
         } else {
-            $recurring = false;
+            $recurringData = [
+                'base' => 'month',
+                'frequency' => 1,
+                'rule' => 5,
+                'day-of-month' => 15,
+                'day-of-week' => 0,
+                'month' => 0,
+                'number-of-occurrences' => 1,
+                'occurrences-end-date' => today()->addYear()->format('Y-m-d'),
+                'occurrences-number' => 12,
+                'name' => '',
+                'recurringOccurrenceDates' => '',
+            ];
         }
-        // recurrence dummy variable
-        /*
-        $recurringData = $recurring ? [
-            'base' => 'month',
-            'frequency' => "1",
-            'rule' => "1",
-            'day-of-month' => "1",
-            'day-of-week' => "1",
-            'month' => "0",
-            'number-of-occurrences' => "1",
-            'date' => '2026-09-25',
-            'number' => '2',
-        ] : null;
-        */
 
         return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData', 'user'));
     }

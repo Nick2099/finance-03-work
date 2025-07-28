@@ -12,7 +12,7 @@
     // dump($listOfItems);
     // dump($groupSubgroupMap);
     // dump($header);
-    dump($recurringData);
+    // dd($recurringData);
 
     // following data is normally set in the controller, but here is used for testing
 
