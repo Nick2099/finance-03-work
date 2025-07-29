@@ -290,6 +290,7 @@ class EntryController extends Controller
         // If this is a recurring entry, create RecurrencyHeader and RecurrencyItem
         if ($recurring) {
             // $datesArray = json_decode($recurrenceData['recurringOccurrenceDates'], true);
+            $this->deleteOldHeaderAndItems($user->id, $header->recurrency_id, $header->date);
             $this->copyHeaderAndItems($headerId, $datesArray);
         } 
 
@@ -470,7 +471,25 @@ class EntryController extends Controller
             }
             $newHeaders[] = $newHeader;
         }
+    }
 
-        return redirect()->back()->with('success', count($newHeaders) . ' entries copied successfully.');
+    public function deleteOldHeaderAndItems($userId, $recurrencyId, $date)
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        // Find all headers for this user with the same recurrency_id and date > $date
+        $headers = Header::where('user_id', $userId)
+            ->where('recurrency_id', $recurrencyId)
+            ->where('date', '>', $date)
+            ->get();
+
+        foreach ($headers as $header) {
+            // Delete all items for this header
+            $header->items()->delete();
+            // Delete the header itself
+            $header->delete();
+        }
     }
 }
