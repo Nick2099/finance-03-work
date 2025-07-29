@@ -57,6 +57,7 @@ return [
             "water" => "Water",
             "sewage" => "Sewage",
             "hot-water" => "Hot water",
+            "additional-cost" => "Additional costs",
         ],
         "clothes" => [
             "clothes" => "Clothes",

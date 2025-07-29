@@ -142,6 +142,7 @@ class DatabaseSeeder extends Seeder
             ['utilities', 'utilities.water'],
             ['utilities', 'utilities.sewage'],
             ['utilities', 'utilities.hot-water'],
+            ['utilities', 'utilities.additional-cost'],
             ['clothes', 'clothes.clothes'],
             ['clothes', 'clothes.shoes'],
             ['clothes', 'clothes.accessories'],

@@ -229,6 +229,15 @@ class EntryController extends Controller
             }
         }
 
+
+        $datesArray = [];
+        if ($recurring) {
+            $datesArray = json_decode($recurrenceData['recurringOccurrenceDates'], true);
+            $firstOccurrenceDate = is_array($datesArray) && count($datesArray) > 0 ? $datesArray[0] : null;
+            $validatedData['date'] = $firstOccurrenceDate ?: $validatedData['date'];
+        }
+
+
         // Check if this is an update or create
         if ($request->has('header_id')) {
             // Update existing header
@@ -243,6 +252,7 @@ class EntryController extends Controller
             ]);
             // Delete old items
             $header->items()->delete();
+            $headerId = $header->id;
         } else {
             // Create new header
             $header = Header::create([
@@ -254,6 +264,7 @@ class EntryController extends Controller
                 'amount' => $validatedData['amount'],
                 'recurrency_id' => $recurrenceData['recurrence-id'] ?? null,
             ]);
+            $headerId = $header->id;
         }
 
         // Create the items (for both create and update)
@@ -275,6 +286,14 @@ class EntryController extends Controller
                 'badges' => $itemData['badges'] ?: [], // Ensure badges is always an array
             ]);
         }
+
+        // If this is a recurring entry, create RecurrencyHeader and RecurrencyItem
+        if ($recurring) {
+            // $datesArray = json_decode($recurrenceData['recurringOccurrenceDates'], true);
+            $this->copyHeaderAndItems($headerId, $datesArray);
+        } 
+
+
 
         // Redirect or return response
         $page = $request->input('page', 1);
@@ -418,5 +437,40 @@ class EntryController extends Controller
     public function addRecurring($id)
     {
         return $this->create($id, true);
+    }
+
+    public function copyHeaderAndItems($headerId, $datesArray = null)
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        $user = Auth::user();
+        $originalHeader = Header::where('user_id', $user->id)->findOrFail($headerId);
+        $originalItems = $originalHeader->items;
+
+        if (!$datesArray || !is_array($datesArray) || count($datesArray) === 0) {
+            return redirect()->back()->with('error', 'No dates provided for copying.');
+        }
+
+        $newHeaders = [];
+        // Skip the first date in the array (assumed to be the original header's date)
+        $datesToCopy = array_slice($datesArray, 1);
+        foreach ($datesToCopy as $date) {
+            // Replicate header
+            $newHeader = $originalHeader->replicate();
+            $newHeader->date = $date;
+            $newHeader->save();
+
+            // Replicate items
+            foreach ($originalItems as $item) {
+                $newItem = $item->replicate();
+                $newItem->header_id = $newHeader->id;
+                $newItem->save();
+            }
+            $newHeaders[] = $newHeader;
+        }
+
+        return redirect()->back()->with('success', count($newHeaders) . ' entries copied successfully.');
     }
 }
