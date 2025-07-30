@@ -67,6 +67,11 @@
         {{-- New recurrency options: --}}
         @if ($recurring)
             <div class="recurring-options-row">
+                <x-form-field name="rec-name" :label="__('entry.rec-name')">
+                    <x-form-input type="text" name="rec-name" id="rec-name" value="{{ old('rec-name', $recurringData['rec-name'] ?? '') }}" />
+                </x-form-field>
+            </div>
+            <div class="recurring-options-row">
                 <x-form-field name="base" :label="__('entry.base')" required>
                     <div>
                         <select name="base" id="base" class="form-select block w-full mt-1">

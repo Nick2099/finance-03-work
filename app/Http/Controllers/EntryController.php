@@ -98,7 +98,7 @@ class EntryController extends Controller
 
         if (isset($header->recurrency_id) && $header->recurrency_id != null) {
             $recurrence = Recurrency::findOrFail($header->recurrency_id);
-            $recurring = true;
+            // $recurring = true;
             $recurringData = [
                 'base' => $recurrence->base,
                 'frequency' => $recurrence->frequency,
@@ -174,11 +174,10 @@ class EntryController extends Controller
         $groups = $collection->groups()->get();
         $groupTypeMap = $groups->pluck('type', 'id');
 
-        // dd($request->all());
-
         if ($recurring) {
             // Handle recurring entry data
             $recurrenceData = $request->validate([
+                'rec-name' => 'required|string|max:100',
                 'base' => 'required|string|in:week,month,year',
                 'frequency' => 'required|integer|min:1',
                 'rule' => 'required|integer|min:1',
@@ -197,7 +196,7 @@ class EntryController extends Controller
                 $recurrence = Recurrency::findOrFail($recurrenceData['recurrence-id']);
                 $recurrence->update([
                     'user_id' => $user->id,
-                    'name' => $recurrenceData['name'] ?? 'Recurring Entry',
+                    'name' => $recurrenceData['rec-name'],
                     'base' => $recurrenceData['base'],
                     'frequency' => $recurrenceData['frequency'],
                     'rule' => $recurrenceData['rule'],
@@ -213,7 +212,7 @@ class EntryController extends Controller
                 // Create a new recurrence
                 $recurrence = Recurrency::create([
                     'user_id' => $user->id,
-                    'name' => $recurrenceData['name'] ?? 'Recurring Entry',
+                    'name' => $recurrenceData['rec-name'],
                     'base' => $recurrenceData['base'],
                     'frequency' => $recurrenceData['frequency'],
                     'rule' => $recurrenceData['rule'],

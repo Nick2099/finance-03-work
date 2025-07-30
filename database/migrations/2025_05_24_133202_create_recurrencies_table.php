@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('recurrencies', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\User::class)->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('base');
+            $table->string('name', 100);
+            $table->string('base', 10);
             $table->tinyInteger('frequency')->default(0); // 1 = weekly, 2 = monthly, 3 = yearly
             $table->tinyInteger('rule')->nullable();
             $table->tinyInteger('day_of_month')->nullable(); // 1-31,

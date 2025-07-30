@@ -6,6 +6,7 @@ return [
     
     'heading-recurring' => 'Edit recurring entry',
     'date' => 'Date',
+    'rec-name' => 'Recurrence name',
     'base' => 'Base',
     'frequency' => 'Frequency',
     'rule' => 'Rule',

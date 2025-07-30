@@ -60,7 +60,7 @@
                             {{-- This have to be changed.
                             It should be available only for headers that are still not recurring.
                             For recurring should be edit recurring. --}}
-                            @if ($header->items()->count() == 1)
+                            @if ($header->recurrency_id === null)
                                 <form action="{{ route('entry.add-recurring', $header->id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
@@ -69,6 +69,11 @@
                                     <input type="hidden" name="recurrence-id" value="0" />
                                     <button type="submit" class="btn btn-secondary">{{ __('list.add-recurring') }}</button>
                                 </form>
+                            @else
+                                <div style="display:inline-block;">
+                                    {{-- This is just a placeholder for recurring entry indication --}}
+                                    <p>{{ __('list.recurring-entry') }}</p>
+                                </div>
                             @endif
                         </td>
                     </tr>

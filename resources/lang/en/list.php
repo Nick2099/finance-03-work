@@ -15,4 +15,5 @@ return [
     'state' => 'State',
     'correction' => 'Corrected',
     'add-recurring' => 'Make this entry recurring',
+    'recurring-entry' => 'Recurring entry.',
 ];
