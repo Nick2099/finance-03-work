@@ -166,6 +166,7 @@ class EntryController extends Controller
             'items.*.note' => 'nullable|string',
             'items.*.badges' => 'nullable|array',
             'items.*.badges.*' => 'integer',
+            'manually_modified' => 'boolean',
             // 'recurrence_id' => 'nullable|integer',
         ]);
 
@@ -230,10 +231,12 @@ class EntryController extends Controller
 
 
         $datesArray = [];
+        $validatedData['manually_modified'] = true;
         if ($recurring) {
             $datesArray = json_decode($recurrenceData['recurringOccurrenceDates'], true);
             $firstOccurrenceDate = is_array($datesArray) && count($datesArray) > 0 ? $datesArray[0] : null;
             $validatedData['date'] = $firstOccurrenceDate ?: $validatedData['date'];
+            $validatedData['manually_modified'] = false; // Set manually_modified to false for recurring entries
         }
 
 
@@ -241,6 +244,9 @@ class EntryController extends Controller
         if ($request->has('header_id')) {
             // Update existing header
             $header = Header::where('user_id', $user->id)->findOrFail($request->input('header_id'));
+            if (!$recurring) {
+                $recurrenceData['recurrence-id'] = $header->recurrency_id;
+            }
             $header->update([
                 'date' => $validatedData['date'],
                 'place_of_purchase' => $validatedData['place'] !== null ? $validatedData['place'] : '',
@@ -248,6 +254,7 @@ class EntryController extends Controller
                 'note' => $validatedData['note'] ?? null,
                 'amount' => $validatedData['amount'],
                 'recurrency_id' => $recurrenceData['recurrence-id'] ?? null,
+                'manually_modified' => $validatedData['manually_modified'], // Set manually_modified based on the request
             ]);
             // Delete old items
             $header->items()->delete();
@@ -262,6 +269,7 @@ class EntryController extends Controller
                 'note' => $validatedData['note'] ?? null,
                 'amount' => $validatedData['amount'],
                 'recurrency_id' => $recurrenceData['recurrence-id'] ?? null,
+                'manually_modified' => $validatedData['manually_modified'], // Set manually_modified based on the request
             ]);
             $headerId = $header->id;
         }
@@ -291,7 +299,7 @@ class EntryController extends Controller
             // $datesArray = json_decode($recurrenceData['recurringOccurrenceDates'], true);
             $this->deleteOldHeaderAndItems($user->id, $header->recurrency_id, $header->date);
             $this->copyHeaderAndItems($headerId, $datesArray);
-        } 
+        }
 
 
 
@@ -345,7 +353,7 @@ class EntryController extends Controller
         return response()->json($places);
     }
 
-    public function list()
+    public function list(Request $request)
     {
         if (!Auth::check()) {
             return redirect('/')->with('error', 'You have to be logged in.');
@@ -353,6 +361,28 @@ class EntryController extends Controller
 
         $user = Auth::user();
         $itemsOnPage = config('appoptions.list_default_length', 20);
+
+        // If no page is set, find the page for today's date
+        if (!$request->has('page')) {
+            $today = now()->format('Y-m-d');
+            $allHeaders = Header::where('user_id', $user->id)
+                ->orderBy('date', 'desc')
+                ->orderBy('id', 'desc')
+                ->get();
+
+            $index = $allHeaders->search(function ($header) use ($today) {
+                return $header->date <= $today;
+            });
+
+            if ($index === false) {
+                $page = 1;
+            } else {
+                $page = intval(floor($index / $itemsOnPage)) + 1;
+            }
+
+            return redirect()->route('entry.list', ['page' => $page]);
+        }
+
         // Assuming your Header model has a user_id column
         $headers = Header::where('user_id', $user->id)
             ->orderBy('date', 'desc')
@@ -460,6 +490,7 @@ class EntryController extends Controller
             // Replicate header
             $newHeader = $originalHeader->replicate();
             $newHeader->date = $date;
+            $newHeader->manually_modified = false;
             $newHeader->save();
 
             // Replicate items

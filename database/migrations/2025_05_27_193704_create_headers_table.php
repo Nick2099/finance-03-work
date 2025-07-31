@@ -25,6 +25,7 @@ return new class extends Migration
             $table->tinyInteger('creation')->default(0);
             // series = 0: not a series, 1: first entry of a series, 2: middle entry of a series, 3: last entry of a series
             $table->foreignIdFor(\App\Models\Recurrency::class)->nullable()->default(null)->constrained()->onDelete('set null');
+            $table->boolean('manually_modified')->default(true);
             $table->timestamps();
         });
     }
