@@ -174,6 +174,7 @@ class EntryController extends Controller
         $collection = $user->collection;
         $groups = $collection->groups()->get();
         $groupTypeMap = $groups->pluck('type', 'id');
+        $newRecurring = true;
 
         if ($recurring) {
             // Handle recurring entry data
@@ -209,6 +210,7 @@ class EntryController extends Controller
                     'occurrences_number' => $recurrenceData['occurrences-number'],
                     'occurrences_dates' => $recurrenceData['recurringOccurrenceDates'],
                 ]);
+                $newRecurring = false;
             } else {
                 // Create a new recurrence
                 $recurrence = Recurrency::create([
@@ -299,6 +301,7 @@ class EntryController extends Controller
             // $datesArray = json_decode($recurrenceData['recurringOccurrenceDates'], true);
             $this->deleteOldHeaderAndItems($user->id, $header->recurrency_id, $header->date);
             $this->copyHeaderAndItems($headerId, $datesArray);
+            $this->createRecurrencyHeaderAndItems($headerId, $recurrenceData['recurrence-id']);
         }
 
 
@@ -500,6 +503,53 @@ class EntryController extends Controller
                 $newItem->save();
             }
             $newHeaders[] = $newHeader;
+        }
+    }
+
+    public function createRecurrencyHeaderAndItems($headerId, $recurrencyId)
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        $user = Auth::user();
+        $originalHeader = Header::where('user_id', $user->id)->findOrFail($headerId);
+        $originalItems = $originalHeader->items;
+
+        // Check if RecurrencyHeader with this recurrency_id exists
+        $recurrencyHeader = RecurrencyHeader::where('recurrency_id', $recurrencyId)->first();
+        if ($recurrencyHeader) {
+            // Update existing RecurrencyHeader
+            $recurrencyHeader->update([
+                'amount' => $originalHeader->amount,
+                'place_of_purchase' => $originalHeader->place_of_purchase,
+                'location' => $originalHeader->location,
+                'note' => $originalHeader->note,
+            ]);
+            // Delete old items
+            $recurrencyHeader->items()->delete();
+        } else {
+            // Create a new RecurrencyHeader
+            $recurrencyHeader = RecurrencyHeader::create([
+                'recurrency_id' => $recurrencyId,
+                'amount' => $originalHeader->amount,
+                'place_of_purchase' => $originalHeader->place_of_purchase,
+                'location' => $originalHeader->location,
+                'note' => $originalHeader->note,
+            ]);
+        }
+
+        // Replicate items (create new for both update and create)
+        foreach ($originalItems as $item) {
+            RecurrencyItem::create([
+                'recurrency_header_id' => $recurrencyHeader->id,
+                'group_id' => $item->group_id,
+                'subgroup_id' => $item->subgroup_id,
+                'group_type' => $item->group_type,
+                'amount' => $item->amount,
+                'note' => $item->note,
+                'badges' => $item->badges,
+            ]);
         }
     }
 

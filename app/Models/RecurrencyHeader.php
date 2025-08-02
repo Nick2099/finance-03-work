@@ -9,4 +9,13 @@ class RecurrencyHeader extends Model
 {
     /** @use HasFactory<\Database\Factories\RecurrencyHeaderFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'recurrency_id',
+        'date',
+        'amount',
+        'place_of_purchase',
+        'location',
+        'note',
+    ];
 }

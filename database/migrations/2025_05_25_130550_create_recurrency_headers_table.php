@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('recurrency_headers', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Recurrency::class)->constrained()->onDelete('cascade');
-            $table->date('date');
+            // $table->date('date');
             $table->decimal('amount', 10, 2);
             $table->string('place_of_purchase', length: 50);
             $table->string('location', length: 50);

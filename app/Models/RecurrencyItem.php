@@ -9,4 +9,14 @@ class RecurrencyItem extends Model
 {
     /** @use HasFactory<\Database\Factories\RecurrencyItemFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'recurrency_header_id',
+        'group_id',
+        'subgroup_id',
+        'group_type',
+        'amount',
+        'note',
+        'badges', // Add badges to fillable so it can be mass-assigned
+    ];
 }
