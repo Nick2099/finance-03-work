@@ -100,6 +100,9 @@ Route::middleware([MyMiddleware::class])->group(function () {
     Route::get('/list-badges', [EntryController::class, 'listBadges'])
         ->name('entry.list-badges');
 
+    Route::get('/list-recurrences', [EntryController::class, 'listRecurrences'])
+        ->name('entry.list-recurrences');
+        
     Route::delete('/entry/{id}', [EntryController::class, 'destroy'])
         ->name('entry.destroy');
 

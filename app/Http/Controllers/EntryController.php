@@ -174,7 +174,6 @@ class EntryController extends Controller
         $collection = $user->collection;
         $groups = $collection->groups()->get();
         $groupTypeMap = $groups->pluck('type', 'id');
-        $newRecurring = true;
 
         if ($recurring) {
             // Handle recurring entry data
@@ -210,7 +209,6 @@ class EntryController extends Controller
                     'occurrences_number' => $recurrenceData['occurrences-number'],
                     'occurrences_dates' => $recurrenceData['recurringOccurrenceDates'],
                 ]);
-                $newRecurring = false;
             } else {
                 // Create a new recurrence
                 $recurrence = Recurrency::create([
@@ -301,9 +299,8 @@ class EntryController extends Controller
             // $datesArray = json_decode($recurrenceData['recurringOccurrenceDates'], true);
             $this->deleteOldHeaderAndItems($user->id, $header->recurrency_id, $header->date);
             $this->copyHeaderAndItems($headerId, $datesArray);
-            $this->createRecurrencyHeaderAndItems($headerId, $recurrenceData['recurrence-id']);
+            $this->createOrUpdateRecurrencyHeaderAndItems($headerId, $recurrenceData['recurrence-id']);
         }
-
 
 
         // Redirect or return response
@@ -450,6 +447,34 @@ class EntryController extends Controller
         return view('entries.list-badges', compact('headers', 'dateFormat', 'badges', 'listOfBadges', 'labelBadge', 'selectedBadge', 'totalBadgeAmount', 'totalPageBadgeAmount'));
     }
 
+    public function listRecurrences()
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        $user = Auth::user();
+        // Eager load RecurrencyHeader for each Recurrency
+        $allRecurrences = Recurrency::where('user_id', $user->id)
+            ->with('recurrencyHeader')
+            ->orderBy('name', 'desc')
+            ->get();
+
+        // Paginate recurrences
+        $itemsOnPage = config('appoptions.list_default_length', 20);
+        $page = request('page', 1);
+        
+        $recurrences = new LengthAwarePaginator(
+            $allRecurrences->forPage($page, $itemsOnPage),
+            $allRecurrences->count(),
+            $itemsOnPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        return view('entries.list-recurrences', compact('recurrences'));
+    }
+
     public function destroy($id)
     {
         if (!Auth::check()) {
@@ -506,7 +531,7 @@ class EntryController extends Controller
         }
     }
 
-    public function createRecurrencyHeaderAndItems($headerId, $recurrencyId)
+    public function createOrUpdateRecurrencyHeaderAndItems($headerId, $recurrencyId)
     {
         if (!Auth::check()) {
             return redirect('/')->with('error', 'You have to be logged in.');
@@ -548,7 +573,7 @@ class EntryController extends Controller
                 'group_type' => $item->group_type,
                 'amount' => $item->amount,
                 'note' => $item->note,
-                'badges' => $item->badges,
+                'badges' => json_encode($item->badges),
             ]);
         }
     }

@@ -29,4 +29,9 @@ class Recurrency extends Model
     {
         return $this->hasOne(RecurrencyHeader::class);
     }
+
+    public function recurrencyHeader()
+    {
+        return $this->hasOne(RecurrencyHeader::class, 'recurrency_id');
+    }
 }
