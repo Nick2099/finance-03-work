@@ -44,7 +44,6 @@ const recurringOccurrenceDatesHiddenInput = document.getElementById(
 
 let recurrencyOccurrenceDates = [];
 
-
 // *****************************************************************
 // Main logic for updating options and visibility of elements
 // *****************************************************************
@@ -199,11 +198,7 @@ function updateStartAndEndDates(recurrency) {
             ) {
                 let occurrenceDate = new Date(startDate);
                 occurrenceDate.setDate(occurrenceDate.getDate() + step * j);
-                if (!isNaN(occurrenceDate.getTime())) {
-                    allDates.push(occurrenceDate.toISOString().split("T")[0]);
-                } else {
-                    console.warn("Invalid occurrenceDate:", occurrenceDate);
-                }
+                allDates.push(occurrenceDate.toISOString().split("T")[0]);
             }
             endDate = new Date(allDates[allDates.length - 1]);
             endDateElement.value = endDate.toISOString().split("T")[0];
@@ -265,7 +260,7 @@ function updateStartAndEndDates(recurrency) {
             }
         } else if (numberOfOccurrences === 2 || numberOfOccurrences === 3) {
             if (numberOfOccurrences === 3) {
-                occurrencesEndDate = lastDayInYear(new Date(), 3);
+                occurrencesEndDate = lastDayInYear(new Date(), 10);
             }
             while (fromDate <= occurrencesEndDate) {
                 if (rule === 1) {
@@ -347,11 +342,22 @@ function updateStartAndEndDates(recurrency) {
         startDateElement.value = occurrenceDates[0];
         endDateElement.value = occurrenceDates[occurrenceDates.length - 1];
         // console.log("Occurrence dates:", occurrenceDates);
+        // here //
     }
+
+    // Only dates before the lastDateToBeAddedToOccurrenceDates will be sent to the server
+    let lastDateToBeAddedToOccurrenceDates = marginDateForOccurrences();
+    let limitedRecurrencyOccurrenceDates = recurrencyOccurrenceDates.filter(
+        (dateStr) => {
+            const dateObj = new Date(dateStr);
+            return dateObj < lastDateToBeAddedToOccurrenceDates;
+        }
+    );
+
     // Update the hidden input with occurrence dates
     if (recurringOccurrenceDatesHiddenInput) {
         recurringOccurrenceDatesHiddenInput.value = JSON.stringify(
-            recurrencyOccurrenceDates
+            limitedRecurrencyOccurrenceDates
         );
     }
 }
@@ -365,7 +371,6 @@ function showHideElement(element, shouldShow) {
         element.style.display = shouldShow ? "block" : "none";
     }
 }
-
 
 function formatDateLocal(date) {
     const year = date.getFullYear();
@@ -387,7 +392,6 @@ function formatDateUser(date) {
         return `${year}-${month}-${day}`; // Default case, can be adjusted
     }
 }
-
 
 function firstWorkingDayOfMonth(tmpDate) {
     let year = tmpDate.getFullYear();
@@ -454,6 +458,13 @@ function lastDayInYear(date, years = 0) {
     return new Date(year + years, 11, 31); // December 31st of the same year
 }
 
+function marginDateForOccurrences() {
+    const d = new Date(); // current date
+    const year = d.getFullYear();
+    const marginDate = new Date(year + 2, 0, 1); // January 1st of the year after next
+    return marginDate;
+}
+
 function getLastDayOfMonth(tmpDate) {
     let year = tmpDate.getFullYear();
     let month = tmpDate.getMonth();
@@ -482,7 +493,6 @@ function hideOccurrenceDates() {
     const modal = document.getElementById("occurrence-dates-modal");
     modal.style.display = "none";
 }
-
 
 // *****************************************************************
 // Event listeners for elements

@@ -16,6 +16,7 @@ return [
         "education" => "Education",
         "hobby" => "Hobby",
         "sport" => "Sport",
+        "fun" => "Fun",
         "other" => "Other",
     ],
     "subgroup-name" => [
@@ -128,6 +129,12 @@ return [
             "equipment" => "Equipment",
             "events" => "Events",
             "other" => "Other sport expenses",
+        ],
+        "fun" => [
+            "cinema" => "Cinema",
+            "events" => "Events",
+            "restaurants" => "Restaurants",
+            "other" => "Other fun expenses",
         ],
         "other" => [
             "gifts" => "Gifts",

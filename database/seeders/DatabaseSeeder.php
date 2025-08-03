@@ -96,6 +96,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'education', 'type' => 2],
             ['name' => 'hobby', 'type' => 2],
             ['name' => 'sport', 'type' => 2],
+            ['name' => 'fun', 'type' => 2],
             ['name' => 'other', 'type' => 2],
         ];
         foreach ($groups as $group) {
@@ -192,7 +193,12 @@ class DatabaseSeeder extends Seeder
             ['hobby', 'hobby.travel'],
             ['hobby', 'hobby.books'],
             ['hobby', 'hobby.games'],
+            ['hobby', 'hobby.pets'],
             ['hobby', 'hobby.other'],
+            ['fun', 'fun.cinema'],
+            ['fun', 'fun.events'],
+            ['fun', 'fun.restaurants'],
+            ['fun', 'fun.other'],
             ['sport', 'sport.membership'],
             ['sport', 'sport.equipment'],
             ['sport', 'sport.events'],
@@ -202,7 +208,6 @@ class DatabaseSeeder extends Seeder
             ['other', 'other.fines'],
             ['other', 'other.other'],
             ['other', 'other.vacation'],
-            ['other', 'other.pets'],
             ['other', 'other.tools'],
         ];
         foreach ($subgroups as [$groupName, $subgroupName]) {
