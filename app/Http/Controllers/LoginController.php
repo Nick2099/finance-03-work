@@ -70,6 +70,9 @@ class LoginController extends Controller
             // Reset the wrong login attempts for the user and remove
             // the lock if the user is logged in successfully
             $this->resetWrongLoginAttempts($validatedData['username']);
+
+            DB::table('users')->where('id', Auth::id())->update(['last_login_at' => now()]);
+
             // Regenerate the session to prevent session fixation attacks
             // and to ensure the user is logged in with a new session
             request()->session()->regenerate();
