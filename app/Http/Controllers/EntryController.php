@@ -394,6 +394,47 @@ class EntryController extends Controller
         return view('entries.list', compact('headers', 'dateFormat'));
     }
 
+    public function listOnlyRecurrences(Request $request)
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        $user = Auth::user();
+        $itemsOnPage = config('appoptions.list_default_length', 20);
+
+        // If no page is set, find the page for today's date
+        if (!$request->has('page')) {
+            $today = now()->format('Y-m-d');
+            $allHeaders = Header::where('user_id', $user->id)
+                ->orderBy('date', 'desc')
+                ->orderBy('id', 'desc')
+                ->get();
+
+            $index = $allHeaders->search(function ($header) use ($today) {
+                return $header->date <= $today;
+            });
+
+            if ($index === false) {
+                $page = 1;
+            } else {
+                $page = intval(floor($index / $itemsOnPage)) + 1;
+            }
+
+            return redirect()->route('entry.list', ['page' => $page]);
+        }
+
+        // Assuming your Header model has a user_id column
+        $headers = Header::where('user_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->paginate($itemsOnPage); // or ->get() if you don't want pagination
+
+        $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
+
+        return view('entries.list-only-recurrences', compact('headers', 'dateFormat'));
+    }
+
     public function listBadges()
     {
         if (!Auth::check()) {
@@ -463,7 +504,7 @@ class EntryController extends Controller
         // Paginate recurrences
         $itemsOnPage = config('appoptions.list_default_length', 20);
         $page = request('page', 1);
-        
+
         $recurrences = new LengthAwarePaginator(
             $allRecurrences->forPage($page, $itemsOnPage),
             $allRecurrences->count(),

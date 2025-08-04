@@ -26,7 +26,12 @@
                         <td>{{ optional($recurrence->recurrencyHeader)->place_of_purchase }}</td>
                         <td>{{ optional($recurrence->recurrencyHeader)->location }}</td>
                         <td>{{ optional($recurrence->recurrencyHeader)->note }}</td>
-                        <td><!-- actions here --></td>
+                        <td>
+                            <a href="{{ route('entry.list-only-recurrences', ['recurrence-id' => $recurrence->id]) }}"
+                                class="btn btn-primary">
+                                {{ __('list-recurrences.view_entries') }}
+                            </a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
