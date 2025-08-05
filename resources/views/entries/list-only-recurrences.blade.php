@@ -44,7 +44,7 @@
                         <td>{{ $header->location }}</td>
                         <td>{{ $header->description }}</td>
                         <td>
-                            <form action="{{ route('entry.create', $header->id) }}" method="GET"
+                            <form action="{{ route('entry.edit', $header->id) }}" method="GET"
                                 style="display:inline-block;">
                                 <input type="hidden" name="blade" value="list-only-recurrences" />
                                 <input type="hidden" name="page" value="{{ request('page', 1) }}">
@@ -57,24 +57,6 @@
                                 <button type="submit" class="btn btn-danger"
                                     onclick="return confirm('{{ __('list-only-recurrences.delete_confirmation') }}');">{{ __('list-only-recurrences.delete') }}</button>
                             </form>
-                            {{-- This have to be changed.
-                            It should be available only for headers that are still not recurring.
-                            For recurring should be edit recurring.
-                            @if ($header->recurrency_id === null)
-                                <form action="{{ route('entry.add-recurring', $header->id) }}" method="POST"
-                                    style="display:inline-block;">
-                                    @csrf
-                                    <input type="hidden" name="blade" value="list-only-recurrences" />
-                                    <input type="hidden" name="page" value="{{ request('page', 1) }}">
-                                    <input type="hidden" name="recurrence-id" value="0" />
-                                    <button type="submit" class="btn btn-secondary">{{ __('list-only-recurrences.add-recurring') }}</button>
-                                </form>
-                            @else
-                                <div style="display:inline-block;">
-                                    <p>{{ __('list-only-recurrences.recurring-entry') }}</p>
-                                </div>
-                            @endif
-                            --}}
                         </td>
                     </tr>
                 @endforeach

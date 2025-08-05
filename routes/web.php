@@ -90,7 +90,10 @@ Route::middleware([MyMiddleware::class])->group(function () {
 
     // old route - delete when no longer needed
     Route::get('/entry-tmp/{id?}', [EntryController::class, 'create'])
-         ->name('entry.create');
+         ->name('entry.create-tmp');
+
+    Route::get('/entry', [EntryController::class, 'createEntry'])
+        ->name('entry.create');
 
     Route::get('/entry/{id?}', [EntryController::class, 'editEntry'])
         ->name('entry.edit');

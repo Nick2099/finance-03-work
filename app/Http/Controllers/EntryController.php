@@ -22,10 +22,12 @@ class EntryController extends Controller
      */
     public function create($id = null, $recurring = false, $do = null)
     {
-        dump("create called with id: $id, recurring: $recurring, do: $do");
-
         if (!Auth::check()) {
             return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        if (!$do) {
+            return redirect('/')->with('error', 'Invalid action in create function of EntryController.');
         }
 
         $user = Auth::user();
@@ -34,9 +36,37 @@ class EntryController extends Controller
         $listOfItems = [];
         $header = null;
         $allBadges = $user->badges;
-        $recurringData = [];
+        $recurringData = [
+            'rec-name' => '',
+            'base' => 'month',
+            'frequency' => 1,
+            'rule' => 5,
+            'day-of-month' => 15,
+            'day-of-week' => 0,
+            'month' => 0,
+            'number-of-occurrences' => 1,
+            'occurrences-end-date' => today()->addYear()->format('Y-m-d'),
+            'occurrences-number' => 12,
+            'name' => '',
+            'recurringOccurrenceDates' => '',
+        ];
+        $recurring = false;
 
-        if ($do && $do === 'edit-recurrence') {
+        // if none of the if conditions match, we assume it's a new entry
+        if ($do === 'edit-entry') {
+            $header = Header::where('user_id', $user->id)->findOrFail($id);
+            $header->blade = request('blade');
+            $listOfItems = $header->items()->with('group', 'subgroup')->get();
+            if ($header->recurrency_id != null) {
+                $recurringData['rec-name'] = $header->recurrency->name;
+            }   
+            // Ensure badges is always an array (force update on the model, not just the collection)
+        } elseif ($do === 'new-recurrence') {
+            $header = Header::where('user_id', $user->id)->findOrFail($id);
+            $header->blade = request('blade');
+            $listOfItems = $header->items()->with('group', 'subgroup')->get();
+            $recurring = true;
+        } elseif ($do === 'edit-recurrence') {
             $recurrence = Recurrency::findOrFail($id);
             if ($recurrence->user_id !== $user->id) {
                 return redirect('/')->with('error', 'You do not have permission to edit this recurrence.');
@@ -46,13 +76,21 @@ class EntryController extends Controller
                 return redirect('/')->with('error', 'Recurrence header not found.');
             }
             $listOfItems = $header->items()->with('group', 'subgroup')->get();
-        }
-
-        if ($do && $do === 'edit-header') {
-            $header = Header::where('user_id', $user->id)->findOrFail($id);
-            $header->blade = request('blade');
-            $listOfItems = $header->items()->with('group', 'subgroup')->get();
-            // Ensure badges is always an array (force update on the model, not just the collection)
+            $recurringData = [
+                'rec-name' => $recurrence->name,
+                'base' => $recurrence->base,
+                'frequency' => $recurrence->frequency,
+                'rule' => $recurrence->rule,
+                'day-of-month' => $recurrence->day_of_month,
+                'day-of-week' => $recurrence->day_of_week,
+                'month' => $recurrence->month,
+                'number-of-occurrences' => $recurrence->number_of_occurrences,
+                'occurrences-end-date' => $recurrence->occurrences_end_date,
+                'occurrences-number' => $recurrence->occurrences_number,
+                'name' => $recurrence->name,
+                'recurringOccurrenceDates' => $recurrence->occurrences_dates,
+            ];
+            $recurring = true;
         }
 
         foreach ($listOfItems as $item) {
@@ -109,45 +147,11 @@ class EntryController extends Controller
                 return $group;
             });
 
-        if (isset($header->recurrency_id) && $header->recurrency_id != null) {
-            $recurrence = Recurrency::findOrFail($header->recurrency_id);
-            // $recurring = true;
-            $recurringData = [
-                'base' => $recurrence->base,
-                'frequency' => $recurrence->frequency,
-                'rule' => $recurrence->rule,
-                'day-of-month' => $recurrence->day_of_month,
-                'day-of-week' => $recurrence->day_of_week,
-                'month' => $recurrence->month,
-                'number-of-occurrences' => $recurrence->number_of_occurrences,
-                'occurrences-end-date' => $recurrence->occurrences_end_date,
-                'occurrences-number' => $recurrence->occurrences_number,
-                'name' => $recurrence->name,
-                'recurringOccurrenceDates' => $recurrence->occurrences_dates,
-            ];
-        } else {
-            $recurringData = [
-                'base' => 'month',
-                'frequency' => 1,
-                'rule' => 5,
-                'day-of-month' => 15,
-                'day-of-week' => 0,
-                'month' => 0,
-                'number-of-occurrences' => 1,
-                'occurrences-end-date' => today()->addYear()->format('Y-m-d'),
-                'occurrences-number' => 12,
-                'name' => '',
-                'recurringOccurrenceDates' => '',
-            ];
-        }
-
         return view('entries.entry', compact('groups', 'listOfItems', 'groupSubgroupMap', 'header', 'allBadges', 'recurring', 'recurringData', 'user'));
     }
 
     public function store(Request $request)
     {
-        // dd($request->all());
-
         if ($request->has('items')) {
             $items = $request->input('items');
             foreach ($items as $idx => $item) {
@@ -698,6 +702,15 @@ class EntryController extends Controller
             return redirect()->back()->with('error', 'Header ID is required to edit an entry.');
         }
 
-        return $this->create($id, false, 'edit-header');
+        return $this->create($id, false, 'edit-entry');
+    }
+
+    public function createEntry()
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        return $this->create(0, false, 'new-entry');
     }
 }

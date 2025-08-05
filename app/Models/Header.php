@@ -62,4 +62,9 @@ class Header extends Model
         // unset($sum);
         return $badgeSums;
     }
+
+    public function recurrency()
+    {
+        return $this->belongsTo(\App\Models\Recurrency::class, 'recurrency_id');
+    }
 }

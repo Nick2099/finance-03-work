@@ -14,18 +14,6 @@
     // dump($header);
     // dd($recurringData);
 
-    // following data is normally set in the controller, but here is used for testing
-
-    // $recurringData['base'] = 'month';
-    // $recurringData['frequency'] = '1';
-    // $recurringData['rule'] = '1';
-    // $recurringData['day-of-month'] = '1';
-    // $recurringData['day-of-week'] = '1';
-    // $recurringData['month'] = '0';
-    // $recurringData['number-of-occurrences'] = '2';
-    // $recurringData['date'] = '2026-09-25';
-    // $recurringData['occurrences-number'] = '2';
-
     ?>
     <x-slot:heading>
         {{ empty($header) ? 'New entry' : 'Edit entry' }}
@@ -63,6 +51,13 @@
                 <x-form-input type="date" name="date" id="date" value="{{ old('date', $header->date ?? date('Y-m-d')) }}" required />
             </x-form-field>
         </div>
+        @if (!$recurring && $recurringData['rec-name'] != '')
+            <div class="recurring-options-row">
+                <x-form-field name="recurrence-id" :label="__('entry.rec-name')">
+                    <x-form-input type="text" name="rec-name" id="rec-name" value="{{ old('rec-name', $recurringData['rec-name'] ?? '') }}" readonly />
+                </x-form-field>
+            </div>
+        @endif
 
         {{-- New recurrency options: --}}
         @if ($recurring)
