@@ -3,19 +3,19 @@
     // dd($groups);
     ?>
     <x-slot:heading>
-        {{ __('list.heading') }}
+        {{ __('list-only-recurrences.heading') }}
     </x-slot>
-    <h1>{{ __('list.h1') }}</h1>
+    <h1>{{ __('list-only-recurrences.h1',  ['recurrenceName' => $recurrenceName]) }} {{ __('list-only-recurrences.h1.ending') }}</h1>
     <div class="table">
         <table id="header-list">
             <thead>
                 <tr>
-                    <th>{{ __('list.date') }}</th>
-                    <th>{{ __('list.amount') }}</th>
-                    <th>{{ __('list.place_of_purchase') }}</th>
-                    <th>{{ __('list.location') }}</th>
-                    <th>{{ __('list.note') }}</th>
-                    <th>{{ __('list.actions') }}</th>
+                    <th>{{ __('list-only-recurrences.date') }}</th>
+                    <th>{{ __('list-only-recurrences.amount') }}</th>
+                    <th>{{ __('list-only-recurrences.place_of_purchase') }}</th>
+                    <th>{{ __('list-only-recurrences.location') }}</th>
+                    <th>{{ __('list-only-recurrences.note') }}</th>
+                    <th>{{ __('list-only-recurrences.actions') }}</th>
                 </tr>
             </thead>
             <tbody id="header-list-body">
@@ -36,7 +36,7 @@
                         <td class="amount">{{ number_format($header->amount, 2) }}</td>
                         <td>
                             @if ($header->type() == 0)
-                                {{ __('list.state') }}
+                                {{ __('list-only-recurrences.state') }}
                             @else
                                 {{ $header->place_of_purchase }}
                             @endif
@@ -48,14 +48,14 @@
                                 style="display:inline-block;">
                                 <input type="hidden" name="blade" value="list" />
                                 <input type="hidden" name="page" value="{{ request('page', 1) }}">
-                                <button type="submit" class="btn btn-primary">{{ __('list.edit') }}</button>
+                                <button type="submit" class="btn btn-primary">{{ __('list-only-recurrences.edit') }}</button>
                             </form>
                             <form action="{{ route('entry.destroy', $header->id) }}" method="POST"
                                 style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger"
-                                    onclick="return confirm('{{ __('list.delete_confirmation') }}');">{{ __('list.delete') }}</button>
+                                    onclick="return confirm('{{ __('list-only-recurrences.delete_confirmation') }}');">{{ __('list-only-recurrences.delete') }}</button>
                             </form>
                             {{-- This have to be changed.
                             It should be available only for headers that are still not recurring.
@@ -67,12 +67,12 @@
                                     <input type="hidden" name="blade" value="list" />
                                     <input type="hidden" name="page" value="{{ request('page', 1) }}">
                                     <input type="hidden" name="recurrence-id" value="0" />
-                                    <button type="submit" class="btn btn-secondary">{{ __('list.add-recurring') }}</button>
+                                    <button type="submit" class="btn btn-secondary">{{ __('list-only-recurrences.add-recurring') }}</button>
                                 </form>
                             @else
                                 <div style="display:inline-block;">
                                     {{-- This is just a placeholder for recurring entry indication --}}
-                                    <p>{{ __('list.recurring-entry') }}</p>
+                                    <p>{{ __('list-only-recurrences.recurring-entry') }}</p>
                                 </div>
                             @endif
                         </td>

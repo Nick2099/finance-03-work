@@ -407,6 +407,7 @@ class EntryController extends Controller
         if (!$request->has('page')) {
             $today = now()->format('Y-m-d');
             $allHeaders = Header::where('user_id', $user->id)
+                ->where('recurrency_id', $request->input('recurrence-id', null))
                 ->orderBy('date', 'desc')
                 ->orderBy('id', 'desc')
                 ->get();
@@ -421,18 +422,25 @@ class EntryController extends Controller
                 $page = intval(floor($index / $itemsOnPage)) + 1;
             }
 
-            return redirect()->route('entry.list', ['page' => $page]);
+            return redirect()->route('entry.list-only-recurrences', ['page' => $page, 'recurrence-id' => $request->input('recurrence-id', null)]);
         }
 
         // Assuming your Header model has a user_id column
         $headers = Header::where('user_id', $user->id)
+            ->where('recurrency_id', $request->input('recurrence-id', null))
             ->orderBy('date', 'desc')
             ->orderBy('id', 'desc')
             ->paginate($itemsOnPage); // or ->get() if you don't want pagination
 
         $dateFormat = $user->date_format ?? 'Y-m-d'; // fallback if not set
 
-        return view('entries.list-only-recurrences', compact('headers', 'dateFormat'));
+        $recurrenceName = '';
+        if ($request->has('recurrence-id') && $request->input('recurrence-id') > 0) {
+            $recurrence = Recurrency::findOrFail($request->input('recurrence-id'));
+            $recurrenceName = $recurrence->name;
+        }
+
+        return view('entries.list-only-recurrences', compact('headers', 'dateFormat', 'recurrenceName'));
     }
 
     public function listBadges()
