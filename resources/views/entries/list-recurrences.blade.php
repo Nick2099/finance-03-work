@@ -34,12 +34,12 @@
                                     {{ __('list-recurrences.view_entries') }}
                                 </button>
                             </form>
-                            <form action="{{ route('entry.add-recurring', 0) }}" method="POST"
+                            <form action="{{ route('recurrence.edit', $recurrence->id) }}" method="POST"
                                 style="display:inline-block;">
                                 @csrf
                                 <input type="hidden" name="blade" value="list-recurrences" />
                                 <input type="hidden" name="page" value="{{ request('page', 1) }}">
-                                <input type="hidden" name="recurrence-id" value="{{ $recurrence->id }}" />
+                                {{-- <input type="hidden" name="recurrence-id" value="{{ $recurrence->id }}" /> --}}
                                 <button type="submit"
                                     class="btn btn-secondary">{{ __('list.edit-recurring') }}</button>
                             </form>

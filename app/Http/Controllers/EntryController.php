@@ -20,8 +20,10 @@ class EntryController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function create($id = null, $recurring = false)
+    public function create($id = null, $recurring = false, $do = null)
     {
+        dump("create called with id: $id, recurring: $recurring, do: $do");
+
         if (!Auth::check()) {
             return redirect('/')->with('error', 'You have to be logged in.');
         }
@@ -34,19 +36,32 @@ class EntryController extends Controller
         $allBadges = $user->badges;
         $recurringData = [];
 
-        if ($id) {
+        if ($do && $do === 'edit-recurrence') {
+            $recurrence = Recurrency::findOrFail($id);
+            if ($recurrence->user_id !== $user->id) {
+                return redirect('/')->with('error', 'You do not have permission to edit this recurrence.');
+            }
+            $header = $recurrence->header;
+            if (!$header) {
+                return redirect('/')->with('error', 'Recurrence header not found.');
+            }
+            $listOfItems = $header->items()->with('group', 'subgroup')->get();
+        }
+
+        if ($do && $do === 'edit-header') {
             $header = Header::where('user_id', $user->id)->findOrFail($id);
             $header->blade = request('blade');
             $listOfItems = $header->items()->with('group', 'subgroup')->get();
             // Ensure badges is always an array (force update on the model, not just the collection)
-            foreach ($listOfItems as $item) {
-                // If badges is a string, decode it and set it as an attribute (so $item->badges returns array)
-                if (is_string($item->badges)) {
-                    $decoded = json_decode($item->badges, true);
-                    $item->setAttribute('badges', is_array($decoded) ? $decoded : []);
-                } elseif (is_null($item->badges)) {
-                    $item->setAttribute('badges', []);
-                }
+        }
+
+        foreach ($listOfItems as $item) {
+            // If badges is a string, decode it and set it as an attribute (so $item->badges returns array)
+            if (is_string($item->badges)) {
+                $decoded = json_decode($item->badges, true);
+                $item->setAttribute('badges', is_array($decoded) ? $decoded : []);
+            } elseif (is_null($item->badges)) {
+                $item->setAttribute('badges', []);
             }
         }
 
@@ -93,8 +108,6 @@ class EntryController extends Controller
                 unset($group['sort_key']);
                 return $group;
             });
-
-        // dump($groupSubgroupMap);
 
         if (isset($header->recurrency_id) && $header->recurrency_id != null) {
             $recurrence = Recurrency::findOrFail($header->recurrency_id);
@@ -647,5 +660,44 @@ class EntryController extends Controller
             // Delete the header itself
             $header->delete();
         }
+    }
+
+    public function createRecurrence($id = null)
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        if (!$id) {
+            return redirect()->back()->with('error', 'Header ID is required to create a new recurrence.');
+        }
+
+        return $this->create($id, false, 'new-recurrence');
+    }
+
+    public function editRecurrence($id = null)
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        if (!$id) {
+            return redirect()->back()->with('error', 'Recurrence ID is required.');
+        }
+
+        return $this->create($id, false, 'edit-recurrence');
+    }
+
+    public function editEntry($id = null)
+    {
+        if (!Auth::check()) {
+            return redirect('/')->with('error', 'You have to be logged in.');
+        }
+
+        if (!$id) {
+            return redirect()->back()->with('error', 'Header ID is required to edit an entry.');
+        }
+
+        return $this->create($id, false, 'edit-header');
     }
 }

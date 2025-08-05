@@ -19,4 +19,14 @@ class RecurrencyItem extends Model
         'note',
         'badges', // Add badges to fillable so it can be mass-assigned
     ];
+
+    public function group()
+    {
+        return $this->belongsTo(\App\Models\Group::class, 'group_id');
+    }
+
+    public function subgroup()
+    {
+        return $this->belongsTo(\App\Models\Subgroup::class, 'subgroup_id');
+    }
 }

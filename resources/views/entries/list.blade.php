@@ -44,7 +44,7 @@
                         <td>{{ $header->location }}</td>
                         <td>{{ $header->description }}</td>
                         <td>
-                            <form action="{{ route('entry.create', $header->id) }}" method="GET"
+                            <form action="{{ route('entry.edit', $header->id) }}" method="GET"
                                 style="display:inline-block;">
                                 <input type="hidden" name="blade" value="list" />
                                 <input type="hidden" name="page" value="{{ request('page', 1) }}">
@@ -61,7 +61,7 @@
                             It should be available only for headers that are still not recurring.
                             For recurring should be edit recurring. --}}
                             @if ($header->recurrency_id === null)
-                                <form action="{{ route('entry.add-recurring', $header->id) }}" method="POST"
+                                <form action="{{ route('recurrence.create', $header->id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
                                     <input type="hidden" name="blade" value="list" />

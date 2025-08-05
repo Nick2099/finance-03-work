@@ -84,15 +84,28 @@ Route::middleware([MyMiddleware::class])->group(function () {
 
     Route::post('/profile/badges/{badge}/rename', [ProfileBadgesController::class, 'rename'])
         ->name('profile.badges.rename');
-        
+
     Route::delete('/profile/badges/{badge}', [ProfileBadgesController::class, 'delete'])
         ->name('profile.badges.delete');
 
-    Route::get('/entry/{id?}', [EntryController::class, 'create'])
-        ->name('entry.create');
+    // old route - delete when no longer needed
+    Route::get('/entry-tmp/{id?}', [EntryController::class, 'create'])
+         ->name('entry.create');
+
+    Route::get('/entry/{id?}', [EntryController::class, 'editEntry'])
+        ->name('entry.edit');
 
     Route::post('/entry', [EntryController::class, 'store'])
         ->name('entry.store');
+
+    Route::get('/entry/add-recurring/{id}', [EntryController::class, 'addRecurring'])
+        ->name('entry.add-recurring');
+
+    Route::post('/entry/add-recurring/{id}', [EntryController::class, 'addRecurring']);
+
+    // Recurrence routes
+    Route::post('/new-recurrence/{id}', [EntryController::class, 'createRecurrence'])->name('recurrence.create'); // new recurrence
+    Route::post('/edit-recurrence/{id}', [EntryController::class, 'editRecurrence'])->name('recurrence.edit'); // edit recurrence
 
     Route::get('/list', [EntryController::class, 'list'])
         ->name('entry.list');
@@ -105,14 +118,9 @@ Route::middleware([MyMiddleware::class])->group(function () {
 
     Route::get('/list-recurrences', [EntryController::class, 'listRecurrences'])
         ->name('entry.list-recurrences');
-        
+
     Route::delete('/entry/{id}', [EntryController::class, 'destroy'])
         ->name('entry.destroy');
-
-    Route::get('/entry/add-recurring/{id}', [EntryController::class, 'addRecurring'])
-        ->name('entry.add-recurring');
-        
-    Route::post('/entry/add-recurring/{id}', [EntryController::class, 'addRecurring']);
 
     Route::get('/subgroups/{group}', [EntryController::class, 'getSubgroups']);
 
