@@ -27,11 +27,21 @@
                         <td>{{ optional($recurrence->recurrencyHeader)->location }}</td>
                         <td>{{ optional($recurrence->recurrencyHeader)->note }}</td>
                         <td>
-                            <form action="{{ route('entry.list-only-recurrences') }}" method="get" style="display:inline;">
+                            <form action="{{ route('entry.list-only-recurrences') }}" method="get"
+                                style="display:inline;">
                                 <input type="hidden" name="recurrence-id" value="{{ $recurrence->id }}">
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('list-recurrences.view_entries') }}
                                 </button>
+                            </form>
+                            <form action="{{ route('entry.add-recurring', 0) }}" method="POST"
+                                style="display:inline-block;">
+                                @csrf
+                                <input type="hidden" name="blade" value="list-recurrences" />
+                                <input type="hidden" name="page" value="{{ request('page', 1) }}">
+                                <input type="hidden" name="recurrence-id" value="{{ $recurrence->id }}" />
+                                <button type="submit"
+                                    class="btn btn-secondary">{{ __('list.edit-recurring') }}</button>
                             </form>
                         </td>
                     </tr>

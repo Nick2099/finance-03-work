@@ -111,6 +111,7 @@ Route::middleware([MyMiddleware::class])->group(function () {
 
     Route::get('/entry/add-recurring/{id}', [EntryController::class, 'addRecurring'])
         ->name('entry.add-recurring');
+        
     Route::post('/entry/add-recurring/{id}', [EntryController::class, 'addRecurring']);
 
     Route::get('/subgroups/{group}', [EntryController::class, 'getSubgroups']);
