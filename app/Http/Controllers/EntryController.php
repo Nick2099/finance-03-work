@@ -309,6 +309,8 @@ class EntryController extends Controller
         if ($request->has('header_id') && $request->has('blade')) {
             if ($request->input('blade') === 'list-badges') {
                 return redirect()->route('entry.list-badges', ['page' => $page, 'badge-id' => $selectedBadge])->with('success', 'Entry updated successfully.');
+            } elseif ($request->input('blade') === 'list-only-recurrences') {
+                return redirect()->route('entry.list-only-recurrences', ['page' => $page, 'recurrence-id' => $recurrenceData['recurrence-id']])->with('success', 'Entry updated successfully.');
             } else {
                 return redirect()->route('entry.list', ['page' => $page])->with('success', 'Entry updated successfully.');
             }

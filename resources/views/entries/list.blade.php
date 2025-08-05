@@ -80,7 +80,7 @@
                 @endforeach
             </tbody>
         </table>
-        <div class="pagination">
+        <div class="pagination-wrapper">
             {{ $headers->links('pagination::custom') }}
         </div>
     </div>

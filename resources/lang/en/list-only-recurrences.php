@@ -3,7 +3,7 @@
 return [
     'heading' => 'List of Recurrence entries',
     'h1' => 'List of entries for :recurrenceName',
-    'h1.ending' => 'recurrence',
+    'h1.ending' => ' recurrence',
     'date' => 'Date',
     'amount' => 'Amount',
     'place_of_purchase' => 'Origin',

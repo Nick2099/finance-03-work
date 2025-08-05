@@ -27,10 +27,12 @@
                         <td>{{ optional($recurrence->recurrencyHeader)->location }}</td>
                         <td>{{ optional($recurrence->recurrencyHeader)->note }}</td>
                         <td>
-                            <a href="{{ route('entry.list-only-recurrences', ['recurrence-id' => $recurrence->id]) }}"
-                                class="btn btn-primary">
-                                {{ __('list-recurrences.view_entries') }}
-                            </a>
+                            <form action="{{ route('entry.list-only-recurrences') }}" method="get" style="display:inline;">
+                                <input type="hidden" name="recurrence-id" value="{{ $recurrence->id }}">
+                                <button type="submit" class="btn btn-primary">
+                                    {{ __('list-recurrences.view_entries') }}
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach

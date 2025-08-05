@@ -5,7 +5,7 @@
     <x-slot:heading>
         {{ __('list-only-recurrences.heading') }}
     </x-slot>
-    <h1>{{ __('list-only-recurrences.h1',  ['recurrenceName' => $recurrenceName]) }} {{ __('list-only-recurrences.h1.ending') }}</h1>
+    <h1>{{ __('list-only-recurrences.h1',  ['recurrenceName' => $recurrenceName]) }}{{ __('list-only-recurrences.h1.ending') }}</h1>
     <div class="table">
         <table id="header-list">
             <thead>
@@ -46,7 +46,7 @@
                         <td>
                             <form action="{{ route('entry.create', $header->id) }}" method="GET"
                                 style="display:inline-block;">
-                                <input type="hidden" name="blade" value="list" />
+                                <input type="hidden" name="blade" value="list-only-recurrences" />
                                 <input type="hidden" name="page" value="{{ request('page', 1) }}">
                                 <button type="submit" class="btn btn-primary">{{ __('list-only-recurrences.edit') }}</button>
                             </form>
@@ -59,28 +59,28 @@
                             </form>
                             {{-- This have to be changed.
                             It should be available only for headers that are still not recurring.
-                            For recurring should be edit recurring. --}}
+                            For recurring should be edit recurring.
                             @if ($header->recurrency_id === null)
                                 <form action="{{ route('entry.add-recurring', $header->id) }}" method="POST"
                                     style="display:inline-block;">
                                     @csrf
-                                    <input type="hidden" name="blade" value="list" />
+                                    <input type="hidden" name="blade" value="list-only-recurrences" />
                                     <input type="hidden" name="page" value="{{ request('page', 1) }}">
                                     <input type="hidden" name="recurrence-id" value="0" />
                                     <button type="submit" class="btn btn-secondary">{{ __('list-only-recurrences.add-recurring') }}</button>
                                 </form>
                             @else
                                 <div style="display:inline-block;">
-                                    {{-- This is just a placeholder for recurring entry indication --}}
                                     <p>{{ __('list-only-recurrences.recurring-entry') }}</p>
                                 </div>
                             @endif
+                            --}}
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-        <div class="pagination">
+        <div class="pagination-wrapper">
             {{ $headers->links('pagination::custom') }}
         </div>
     </div>

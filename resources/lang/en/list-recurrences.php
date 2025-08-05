@@ -9,4 +9,5 @@ return [
     'location' => 'Location',
     'note' => 'Note',
     'actions' => 'Actions',
+    'view_entries' => 'View Entries',
 ];
