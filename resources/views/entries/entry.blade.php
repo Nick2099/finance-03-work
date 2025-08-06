@@ -393,6 +393,18 @@
                     // If there are no items yet, update item_amount to match amount
                     if (itemAmountInput && items.length === 0) {
                         itemAmountInput.value = this.value;
+                    } else if (items.length > 0) {
+                        // If there are items, update the first item's amount
+                        items[0].amount = this.value;
+                        let sum = 0;
+                        items.forEach((item, idx) => {
+                            if (idx === 0) return; // skip the first item
+                            sum += parseFloat(item.amount) || 0;
+                        });
+                        if (this.value < sum) {
+                            this.value = sum.toFixed(2); // Ensure total is not less than sum of items
+                        }
+                        renderItems('amount', 0); // Re-render items to show updated amount
                     }
                 });
             }
@@ -556,7 +568,7 @@
                         groupSelect.focus();
                     }
                     itemAmountInput.disabled = items.length === 0;
-                    amountInput.readOnly = items.length > 0;
+                    // amountInput.readOnly = items.length > 0;
                     saveEntryBtn.disabled = items.length === 0;
                     typeSelect.disabled = items.length > 0;
                     let focusElement = null;
