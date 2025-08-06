@@ -75,7 +75,10 @@ class EntryController extends Controller
             if (!$header) {
                 return redirect('/')->with('error', 'Recurrence header not found.');
             }
-            $listOfItems = $header->items()->with('group', 'subgroup')->get();
+            // $listOfItems = $header->items()->with('group', 'subgroup')->get();
+            $listOfItems = $recurrence->header->items()->with('group', 'subgroup')->get();
+            $header->id = null;
+            dump("listOfItems: " . json_encode($listOfItems));
             $recurringData = [
                 'rec-name' => $recurrence->name,
                 'base' => $recurrence->base,
@@ -256,7 +259,6 @@ class EntryController extends Controller
             $validatedData['manually_modified'] = false; // Set manually_modified to false for recurring entries
         }
 
-
         // Check if this is an update or create
         if ($request->has('header_id')) {
             // Update existing header
@@ -313,8 +315,14 @@ class EntryController extends Controller
 
         // If this is a recurring entry, create RecurrencyHeader and RecurrencyItem
         if ($recurring) {
-            // $datesArray = json_decode($recurrenceData['recurringOccurrenceDates'], true);
-            $this->deleteOldHeaderAndItems($user->id, $header->recurrency_id, $header->date);
+            if ($recurrenceData['base'] === 'week') {
+                $deleteFrom = $this->firstDayOfWeek($header->date);
+            } elseif ($recurrenceData['base'] === 'month') {
+                $deleteFrom = $this->firstDayOfMonth($header->date);
+            } elseif ($recurrenceData['base'] === 'year') {
+                $deleteFrom = $this->firstDayOfYear($header->date);
+            }
+            $this->deleteOldHeaderAndItems($user->id, $header->recurrency_id, $deleteFrom, $header->id);
             $this->copyHeaderAndItems($headerId, $datesArray);
             $this->createOrUpdateRecurrencyHeaderAndItems($headerId, $recurrenceData['recurrence-id']);
         }
@@ -323,6 +331,7 @@ class EntryController extends Controller
         // Redirect or return response
         $page = $request->input('page', 1);
         $selectedBadge = $request->input('badge-id', null);
+
         if ($request->has('header_id') && $request->has('blade')) {
             if ($request->input('blade') === 'list-badges') {
                 return redirect()->route('entry.list-badges', ['page' => $page, 'badge-id' => $selectedBadge])->with('success', 'Entry updated successfully.');
@@ -646,7 +655,7 @@ class EntryController extends Controller
         }
     }
 
-    public function deleteOldHeaderAndItems($userId, $recurrencyId, $date)
+    public function deleteOldHeaderAndItems($userId, $recurrencyId, $date, $headerId)
     {
         if (!Auth::check()) {
             return redirect('/')->with('error', 'You have to be logged in.');
@@ -655,7 +664,8 @@ class EntryController extends Controller
         // Find all headers for this user with the same recurrency_id and date > $date
         $headers = Header::where('user_id', $userId)
             ->where('recurrency_id', $recurrencyId)
-            ->where('date', '>', $date)
+            ->where('date', '>=', $date)
+            ->where('id', '!=', $headerId) // Exclude the current header
             ->get();
 
         foreach ($headers as $header) {
@@ -712,5 +722,23 @@ class EntryController extends Controller
         }
 
         return $this->create(0, false, 'new-entry');
+    }
+
+    public function firstDayOfWeek($date)
+    {
+        $date = \Carbon\Carbon::parse($date);
+        return $date->startOfWeek()->format('Y-m-d');
+    }
+
+    public function firstDayOfMonth($date)
+    {
+        $date = \Carbon\Carbon::parse($date);
+        return $date->startOfMonth()->format('Y-m-d');
+    }
+
+    public function firstDayOfYear($date)
+    {
+        $date = \Carbon\Carbon::parse($date);
+        return $date->startOfYear()->format('Y-m-d');
     }
 }

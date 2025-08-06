@@ -7,12 +7,13 @@
     $recurringMenu = config('menu-recurring');
     $recurringMenuUntil = config('menu-recurring-until');
     $recurringMenuNew = config('menu-recurring-new');
+    
     // dump($allBadges);
     // dump($groups);
     // dump($listOfItems);
     // dump($groupSubgroupMap);
     // dump($header);
-    // dd($recurringData);
+    // dump($recurringData);
 
     ?>
     <x-slot:heading>
