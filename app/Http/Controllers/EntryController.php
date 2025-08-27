@@ -66,6 +66,10 @@ class EntryController extends Controller
             $header->blade = request('blade');
             $listOfItems = $header->items()->with('group', 'subgroup')->get();
             $recurring = true;
+            $recurringData['day-of-month'] = \Carbon\Carbon::parse($header->date)->day;
+            $recurringData['day-of-week'] = \Carbon\Carbon::parse($header->date)->dayOfWeek;
+            $recurringData['month'] = \Carbon\Carbon::parse($header->date)->month - 1;
+            $recurringData['from-date'] = \Carbon\Carbon::parse($header->date)->format('Y-m-d');
         } elseif ($do === 'edit-recurrence') {
             $recurrence = Recurrency::findOrFail($id);
             if ($recurrence->user_id !== $user->id) {
