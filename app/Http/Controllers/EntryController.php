@@ -76,13 +76,14 @@ class EntryController extends Controller
                 return redirect('/')->with('error', 'You do not have permission to edit this recurrence.');
             }
             $header = $recurrence->header;
+            $header->blade = request('blade');
             if (!$header) {
                 return redirect('/')->with('error', 'Recurrence header not found.');
             }
             // $listOfItems = $header->items()->with('group', 'subgroup')->get();
             $listOfItems = $recurrence->header->items()->with('group', 'subgroup')->get();
             $header->id = null;
-            dump("listOfItems: " . json_encode($listOfItems));
+            // dump("listOfItems: " . json_encode($listOfItems));
             $recurringData = [
                 'rec-name' => $recurrence->name,
                 'base' => $recurrence->base,
@@ -335,12 +336,14 @@ class EntryController extends Controller
         // Redirect or return response
         $page = $request->input('page', 1);
         $selectedBadge = $request->input('badge-id', null);
+        // dd($request->all());
 
-        if ($request->has('header_id') && $request->has('blade')) {
+        // if ($request->has('header_id') && $request->has('blade')) {
+        if ($request->has('blade')) {
             if ($request->input('blade') === 'list-badges') {
                 return redirect()->route('entry.list-badges', ['page' => $page, 'badge-id' => $selectedBadge])->with('success', 'Entry updated successfully.');
-            } elseif ($request->input('blade') === 'list-only-recurrences') {
-                return redirect()->route('entry.list-only-recurrences', ['page' => $page, 'recurrence-id' => $recurrenceData['recurrence-id']])->with('success', 'Entry updated successfully.');
+            } elseif ($request->input('blade') === 'list-recurrences') {
+                return redirect()->route('entry.list-recurrences', ['page' => $page, 'recurrence-id' => $recurrenceData['recurrence-id']])->with('success', 'Entry updated successfully.');
             } else {
                 return redirect()->route('entry.list', ['page' => $page])->with('success', 'Entry updated successfully.');
             }

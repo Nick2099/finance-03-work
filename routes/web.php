@@ -115,12 +115,16 @@ Route::middleware([MyMiddleware::class])->group(function () {
 
     Route::get('/list-only-recurrences', [EntryController::class, 'listOnlyRecurrences'])
         ->name('entry.list-only-recurrences');
+    // this route is called from within the route entry.list-recurrences
+    // it show only the entries of certain recurrence
 
     Route::get('/list-badges', [EntryController::class, 'listBadges'])
         ->name('entry.list-badges');
 
     Route::get('/list-recurrences', [EntryController::class, 'listRecurrences'])
         ->name('entry.list-recurrences');
+    // from within this route the route entry.list-only-recurrences is called
+    // it shows all the recurrences
 
     Route::delete('/entry/{id}', [EntryController::class, 'destroy'])
         ->name('entry.destroy');
