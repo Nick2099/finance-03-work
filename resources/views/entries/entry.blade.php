@@ -154,7 +154,7 @@
             </div>
         @endif
 
-        <x-form-field name="type" label="Type" required>
+        <x-form-field name="type" :label="__('entry.type')" required>
             <div>
                 <select name="type" id="type" class="form-select block w-full mt-1">
                     {{-- type = 0: state,  1: income, 2: expense, 3: correction --}}
@@ -173,36 +173,36 @@
                             }
                         }
                     @endphp
-                    <option value="2" {{ $selectedType == 2 ? 'selected' : '' }}>Expense</option>
-                    <option value="1" {{ $selectedType == 1 ? 'selected' : '' }}>Income</option>
-                    <option value="0" {{ $selectedType == 0 ? 'selected' : '' }}>State</option>
+                    <option value="2" {{ $selectedType == 2 ? 'selected' : '' }}>{{ __('entry.expense') }}</option>
+                    <option value="1" {{ $selectedType == 1 ? 'selected' : '' }}>{{ __('entry.income') }}</option>
+                    <option value="0" {{ $selectedType == 0 ? 'selected' : '' }}>{{ __('entry.state') }}</option>
                     {{-- Temporary enabled for testing--}}
                     {{-- <option value="3" {{ $selectedType == 3 ? 'selected' : '' }} disabled>Correction</option> --}}
-                    <option value="3" {{ $selectedType == 3 ? 'selected' : '' }}>Correction</option>
+                    <option value="3" {{ $selectedType == 3 ? 'selected' : '' }}>{{ __('entry.correction') }}</option>
                 </select>
             </div>
         </x-form-field>
 
-        <x-form-field name="amount" label="Amount" required>
+        <x-form-field name="amount" :label="__('entry.amount')" required>
             <x-form-input type="number" name="amount" id="amount" value="{{ old('amount', $header->amount ?? '0.00') }}"
                 step="0.01" class="decimal" required />
         </x-form-field>
 
-        <x-form-field id="place" name="place" label="Place / Institution" required>
+        <x-form-field id="place" name="place" :label="__('entry.place_of_purchase')" required>
             <div>
                 <input list="places" name="place" id="place" value="{{ old('place', $header->place_of_purchase ?? '') }}" autocomplete="off" class="form-input" required />
                 <datalist id="places"></datalist>
             </div>
         </x-form-field>
 
-        <x-form-field id="loaction" name="location" label="Location" required>
+        <x-form-field id="location" name="location" :label="__('entry.location')" required>
             <div>
                 <input list="locations" name="location" id="location" value="{{ old('location', $header->location ?? '') }}" autocomplete="off" class="form-input" required />
                 <datalist id="locations"></datalist>
             </div>
         </x-form-field>
 
-        <x-form-field name="note" label="Note">
+        <x-form-field name="note" :label="__('entry.note')">
         <x-form-input type="text" name="note" id="note" value="{{ old('note', $header->note ?? '') }}"
             autocomplete="off" />
 
@@ -230,12 +230,12 @@
         <table id="items-list">
             <thead>
                 <tr>
-                    <th>Group</th>
-                    <th>Subgroup</th>
-                    <th>Add</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                    <th>Note</th>
+                    <th>{{ __('entry.group') }}</th>
+                    <th>{{ __('entry.subgroup') }}</th>
+                    <th>{{ __('entry.add') }}</th>
+                    <th>{{ __('entry.amount') }}</th>
+                    <th>{{ __('entry.action') }}</th>
+                    <th>{{ __('entry.note') }}</th>
                 </tr>
             </thead>
             <tbody id="items-list-body">
@@ -278,11 +278,11 @@
             </tbody>
         </table>
         <div id="items-hidden-fields"></div>
-        <x-form-button id="save-entry-btn">{{ $recurring ? 'Save recurrence' : (empty($header) ? 'Save entry' : 'Update entry') }}</x-form-button>
-        <x-form-button type="reset">Reset</x-form-button>
+        <x-form-button id="save-entry-btn">{{ $recurring ? 'Save recurrence' : (empty($header) ? __('entry.save_entry') : __('entry.update_entry')) }}</x-form-button>
+        <x-form-button type="reset">{{ __('entry.reset') }}</x-form-button>
         <div>
             <input type="checkbox" name="negative" id="negative" value="negative" {{ old('negative') ? 'checked' : '' }} />
-            <label for="negative"> Allow negative numbers.</label>
+            <label for="negative"> {{ __('entry.allow_negative') }}</label>
         </div>
     </form>
 

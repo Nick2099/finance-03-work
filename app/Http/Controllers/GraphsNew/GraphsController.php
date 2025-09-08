@@ -89,7 +89,10 @@ class GraphsController extends Controller
 
         // Determine selected year (from GET or default to latest)
         $selectedYear = request('year');
-        if (!$selectedYear || !in_array($selectedYear, $years)) {
+        if (!$selectedYear) {
+            $selectedYear = date('Y');
+        }
+        if (!in_array($selectedYear, $years)) {
             $selectedYear = $years ? max($years) : null;
         }
 

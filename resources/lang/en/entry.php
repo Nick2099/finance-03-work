@@ -95,21 +95,23 @@ return [
         ]
     ],
 
-    
-    /*
     'type' => 'Type',
+    'expense' => 'Expense',
+    'income' => 'Income',
+    'state' => 'State',
+    'correction' => 'Correction',
     'amount' => 'Amount',
     'place_of_purchase' => 'Place / Institution',
     'location' => 'Location',
     'note' => 'Note',
-    'recurrency' => 'Recurrency',
-    'lasts' => 'Lasts',
-    'end-of-the-year' => 'until end of the year',
-    'until-date' => 'until date',
-    'unlimited' => 'unlimited',
-    'year' => [
-        'label' => 'Yearly',
-    ],
+    'group' => 'Group',
+    'subgroup' => 'Subgroup',
+    'add' => 'Add',
+    'action' => 'Action',
+    'note' => 'Note',
 
-    */
+    'save_entry' => 'Save entry',
+    'update_entry' => 'Update entry',
+    'reset' => 'Reset',
+    'allow_negative' => 'Allow negative numbers',
 ];
