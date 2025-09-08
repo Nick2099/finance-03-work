@@ -14,8 +14,20 @@ return new class extends Migration
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\User::class)->constrained()->onDelete('cascade');
-            $table->string('name', length: 50);
+            $table->tinyInteger('type');
+            $table->string('provider', 50)->nullable(); // e.g., 'Visa', 'Mastercard', 'Deutsche Bank'
             $table->timestamps();
+
+            /* Examples:
+            0 - cash
+            1 - cash_savings
+            2 - debit_card: e.g., 'Visa', 'Mastercard', 'Deutsche Bank'
+            3 - credit_card: e.g., 'Visa', 'Mastercard', 'Deutsche Bank'
+            4 - bank_transfer: e.g., 'Deutsche Bank', 'Commerzbank'
+            5 - payment_provider: e.g., 'PayPal', 'Stripe', 'Square', 'Revolut', 'Amazon Pay', 'Klarna'
+            6 - savings_account: e.g., 'Deutsche Bank'
+            ... add more as needed
+            */
         });
     }
 

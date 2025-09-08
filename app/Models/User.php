@@ -67,4 +67,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Badge::class);
     }
+
+    public function paymentMethods()
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
 }

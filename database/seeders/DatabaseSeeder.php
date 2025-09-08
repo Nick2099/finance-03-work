@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->createGroups();
 
         $this->createSubgroups();
+
+        $this->createPaymentMethods();
     }
 
     private function getGroupId(string $groupName, int $collectionId): ?int
@@ -48,7 +50,7 @@ class DatabaseSeeder extends Seeder
             'language' => 'en',
             'timezone' => 'UTC',
             'password' => bcrypt('password'),
-            'demo' => true, // true = demo user, false = normal user
+            'demo' => false, // true = demo user, false = normal user
             'currency' => 'USD',
             'created_at' => now(),
             'updated_at' => now(),
@@ -217,6 +219,39 @@ class DatabaseSeeder extends Seeder
                 'description' => $subgroupName . '-desc.',
                 'privacy' => 0, // public
                 'group_id' => $groupId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+    private function createPaymentMethods(): void
+    {
+        $paymentMethods = [
+            // type, provider
+            ['type' => 0, 'provider' => null], // cash
+            ['type' => 1, 'provider' => null], // cash_savings
+            ['type' => 2, 'provider' => 'Visa'], // debit_card
+            ['type' => 2, 'provider' => 'Mastercard'], // debit_card
+            ['type' => 3, 'provider' => 'Visa'], // credit_card
+            ['type' => 3, 'provider' => 'Mastercard'], // credit_card
+            ['type' => 4, 'provider' => 'Deutsche Bank'], // bank_transfer
+            ['type' => 4, 'provider' => 'Commerzbank'], // bank_transfer
+            ['type' => 5, 'provider' => 'PayPal'], // payment_provider
+            ['type' => 5, 'provider' => 'Stripe'], // payment_provider
+            ['type' => 5, 'provider' => 'Square'], // payment_provider
+            ['type' => 5, 'provider' => 'Revolut'], // payment_provider
+            ['type' => 5, 'provider' => 'Amazon Pay'], // payment_provider
+            ['type' => 5, 'provider' => 'Klarna'], // payment_provider
+            ['type' => 6, 'provider' => 'Deutsche Bank'], // savings_account
+        ];
+        
+        $user = User::first(); // Assuming you want to assign these to the first user
+        
+        foreach ($paymentMethods as $method) {
+            $user->paymentMethods()->create([
+                'type' => $method['type'],
+                'provider' => $method['provider'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

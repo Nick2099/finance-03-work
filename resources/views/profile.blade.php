@@ -3,5 +3,10 @@
         Profile
     </x-slot>
     <h1>User profile</h1>
-    <a href="{{ route('profile.badges') }}">My Badges</a>
+    <div>
+        <a href="{{ route('profile.badges') }}">Badges</a>
+    </div>
+    <div>
+        <a href="{{ route('profile.payment_methods') }}">Payment methods</a>
+    </div>
 </x-layout>

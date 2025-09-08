@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Recurrency::class)->constrained()->onDelete('cascade');
             // $table->date('date');
             $table->decimal('amount', 10, 2);
+            $table->foreignIdFor(\App\Models\PaymentMethod::class)->constrained()->onDelete('cascade');
             $table->string('place_of_purchase', length: 50);
             $table->string('location', length: 50);
             $table->string('note')->nullable();

@@ -71,10 +71,10 @@ return [
     'badges_per_basic_user' => env('BADGES_PER_BASIC_USER', 10),
     'badges_per_premium_user' => env('BADGES_PER_PREMIUM_USER', 50),
     'list_default_length' => env('LIST_DEFAULT_LENGTH',20),
-    'payments_per_demo_user' => env('PAYMENTS_PER_DEMO_USER', 3),
-    'payments_per_basic_user' => env('PAYMENTS_PER_BASIC_USER', 6),
-    'payments_per_premium_user' => env('PAYMENTS_PER_PREMIUM_USER', 10),
-    
+    'payment_methods_per_demo_user' => env('PAYMENT_METHODS_PER_DEMO_USER', 3),
+    'payment_methods_per_basic_user' => env('PAYMENT_METHODS_PER_BASIC_USER', 6),
+    'payment_methods_per_premium_user' => env('PAYMENT_METHODS_PER_PREMIUM_USER', 10),
+
     // Maintenance mode configuration
     'maintenance_lock_up' => env('MAINTENANCE_LOCK_UP', false),
 

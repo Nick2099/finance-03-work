@@ -17,6 +17,8 @@ return new class extends Migration
             $table->date('date');
             $table->decimal('amount', 10, 2);
             // place of purchase is a short description of where the spending took place, e.g. "Supermarket", "Restaurant", etc. The name can be used too, like "John's Diner", Lidl", "Amazon", etc.
+            $table->foreignIdFor(\App\Models\PaymentMethod::class)->constrained()->onDelete('cascade');
+            // payment method is the method used for the transaction, e.g. "Credit Card", "PayPal", etc.
             $table->string('place_of_purchase', length: 50);
             // location is a short description of where the spending took place, e.g. "Berlin", "New York", etc.
             $table->string('location', length: 50);

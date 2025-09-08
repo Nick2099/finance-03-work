@@ -12,6 +12,7 @@ use App\Http\Controllers\Graphs\ExgrController;
 use App\Http\Controllers\Graphs\InExController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\ProfileBadgesController;
+use App\Http\Controllers\ProfilePaymentMethodsController;
 use App\Http\Controllers\GraphsNew\GraphsController;
 
 Route::middleware([MyMiddleware::class])->group(function () {
@@ -87,6 +88,18 @@ Route::middleware([MyMiddleware::class])->group(function () {
 
     Route::delete('/profile/badges/{badge}', [ProfileBadgesController::class, 'delete'])
         ->name('profile.badges.delete');
+
+    Route::get('/profile/payment_methods', [ProfilePaymentMethodsController::class, 'index'])
+        ->name('profile.payment_methods');
+
+    Route::post('/profile/payment_methods/add', [ProfilePaymentMethodsController::class, 'add'])
+        ->name('profile.payment_methods.add');
+
+    Route::post('/profile/payment_methods/{payment_method}/rename', [ProfilePaymentMethodsController::class, 'rename'])
+        ->name('profile.payment_methods.rename');
+
+    Route::delete('/profile/payment_methods/{payment_method}', [ProfilePaymentMethodsController::class, 'delete'])
+        ->name('profile.payment_methods.delete');
 
     // old route - delete when no longer needed
     Route::get('/entry-tmp/{id?}', [EntryController::class, 'create'])
