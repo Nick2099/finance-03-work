@@ -188,6 +188,11 @@ span {
     width: min-content;
 }
 
+#lang-menu button.active {
+    background-color: #4CAF50;
+    color: black;
+}
+
 #lang-menu form {
     margin: 0;
 }

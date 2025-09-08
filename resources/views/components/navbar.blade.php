@@ -33,9 +33,9 @@
         <div id="lang-menu">
             <form method="POST" action="{{ route('set-locale') }}">
                 @csrf
-                <button type="submit" name="locale" value="en">English</button>
-                <button type="submit" name="locale" value="de">Deutsch</button>
-                <button type="submit" name="locale" value="hr">Hrvatski</button>
+                <button type="submit" name="locale" value="en" @class([session('locale') === 'en' ? 'active' : ''])>English</button>
+                <button type="submit" name="locale" value="de" @class([session('locale') === 'de' ? 'active' : ''])>Deutsch</button>
+                <button type="submit" name="locale" value="hr" @class([session('locale') === 'hr' ? 'active' : ''])>Hrvatski</button>
                 <!-- Add more languages as needed -->
             </form>
         </div>
