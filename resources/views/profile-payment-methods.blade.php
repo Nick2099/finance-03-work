@@ -1,5 +1,6 @@
 <x-layout>
     <?php
+    $availablePaymentMethods = config('payment-methods');
     // dump($paymentMethods);
     ?>
     <x-slot:heading>
@@ -21,7 +22,12 @@
                     <td>
                         <form method="POST" action="{{ route('profile.payment_methods.rename', $paymentMethod->id) }}">
                             @csrf
-                            <input type="text" name="type" value="{{ __('payment-methods.' . $paymentMethod->type) }}" autocomplete="off">
+                            {{-- <input type="text" name="type" value="{{ __('payment-methods.' . $paymentMethod->type) }}" autocomplete="off"> --}}
+                            <select name="type" class="form-select block w-full mt-1">
+                            @foreach($availablePaymentMethods as $key => $option)
+                                <option value="{{ $key }}" {{ $paymentMethod->type == $key ? 'selected' : '' }}>{{ __('payment-methods.'.$key) }}</option>
+                            @endforeach
+                            </select>
                             <input type="text" name="provider" value="{{ $paymentMethod->provider }}" autocomplete="off"/>
                             <button type="submit" onclick="return confirm('The new name will be used for all the items where that payment method is in use.')">Rename</button>
                         </form>
