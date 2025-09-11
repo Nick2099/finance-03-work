@@ -1,7 +1,8 @@
 <x-layout>
     <?php
     $availablePaymentMethods = config('payment-methods');
-    // dump($paymentMethods);
+    dump($paymentMethods);
+    dump($availablePaymentMethods);
     ?>
     <x-slot:heading>
         Payment methods
@@ -18,17 +19,25 @@
         <tbody>
             @foreach ($paymentMethods as $paymentMethod)
                 <tr>
-                    {{-- <td>{{ $paymentMethod->badge_id }}</td> --}}
                     <td>
                         <form method="POST" action="{{ route('profile.payment_methods.rename', $paymentMethod->id) }}">
                             @csrf
-                            {{-- <input type="text" name="type" value="{{ __('payment-methods.' . $paymentMethod->type) }}" autocomplete="off"> --}}
                             <select name="type" class="form-select block w-full mt-1">
                             @foreach($availablePaymentMethods as $key => $option)
-                                <option value="{{ $key }}" {{ $paymentMethod->type == $key ? 'selected' : '' }}>{{ __('payment-methods.'.$key) }}</option>
+                                <option value="{{ $key }}" {{ $paymentMethod->type == $key ? 'selected' : '' }}>{{ __('payment-methods.'.$option['name']) }}</option>
                             @endforeach
                             </select>
-                            <input type="text" name="provider" value="{{ $paymentMethod->provider }}" autocomplete="off"/>
+                            <input type="text" name="provider" value="{{ $paymentMethod->provider }}" autocomplete="off" title="Payment provider name"/>
+                            <select name="payment_method" {{ $paymentMethod['type'] == '5' ? '' : 'class=display-none' }} title="Payment provider payment method">
+                                <option value="">-- Select payment method --</option>
+                                @if($paymentMethod['type'] == '5') {{-- Payment provider --}}
+                                    @foreach($paymentMethods as $option)
+                                        @if($availablePaymentMethods[$option['type']]['payment_provider_payment_method'])
+                                            <option value="{{ $option['id'] }}" {{ $paymentMethod->payment_provider_payment_method_id == $option['id'] ? 'selected' : '' }}>{{ __('payment-methods.'.$availablePaymentMethods[$option['type']]['name']) }} - {{ $option['provider'] }}</option>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            </select>
                             <button type="submit" onclick="return confirm('The new name will be used for all the items where that payment method is in use.')">Rename</button>
                         </form>
                     </td>

@@ -35,11 +35,11 @@ class ProfilePaymentMethodsController extends Controller
         }
 
         $user = $request->user();
-        $payment_methods = $user->paymentMethods()->orderBy('id')->get();
+        $paymentMethods = $user->paymentMethods()->orderBy('id')->get();
         $maxPaymentMethods = $this->getMaxPaymentMethods($user);
-        // dd($payment_methods);
+        // dd($paymentMethods);
         return view('profile-payment-methods', [
-            'paymentMethods' => $payment_methods,
+            'paymentMethods' => $paymentMethods,
             'maxPaymentMethods' => $maxPaymentMethods,
         ]);
     }

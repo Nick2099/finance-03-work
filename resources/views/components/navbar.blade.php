@@ -5,6 +5,7 @@
         <x-nav-link href="{{ route('contact') }}" :active="Route::is('contact')">Contact</x-nav-link>
         @auth
             <x-nav-link href="{{ route('entry.create') }}" :active="Route::is('entry.create')">New entry</x-nav-link>
+            <x-nav-link href="" :active="Route::is('entry')">Transfer</x-nav-link>
             <x-nav-links href="#" text="Views">
                 <ul>
                     <x-nav-link href="{{ route('entry.list') }}" :active="Route::is('entry.list')">List (edit)</x-nav-link>

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\User::class)->constrained()->onDelete('cascade');
             $table->tinyInteger('type');
             $table->string('provider', 50)->nullable(); // e.g., 'Visa', 'Mastercard', 'Deutsche Bank'
+            $table->unsignedBigInteger('payment_provider_payment_method_id')->nullable(); // e.g., debit_card, credit_card, bank_transfer, savings_account, but not cash, cash_savings or payment_provider
             $table->timestamps();
 
             /* Examples:

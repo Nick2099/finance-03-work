@@ -1,12 +1,12 @@
 <?php
 
 return [
-    '0' => 'Cash',
-    '1' => 'Cash savings',
-    '2' => 'Debit card',
-    '3' => 'Credit card',
-    '4' => 'Bank transfer',
-    '5' => 'Payment provider',
-    '6' => 'Savings account',
+    'payment-methods.cash' => 'Cash',
+    'payment-methods.cash_savings' => 'Cash savings',
+    'payment-methods.debit_card' => 'Debit card',
+    'payment-methods.credit_card' => 'Credit card',
+    'payment-methods.bank_transfer' => 'Bank transfer',
+    'payment-methods.payment_provider' => 'Payment provider',
+    'payment-methods.savings_account' => 'Savings account',
     // Add more as needed
 ];
