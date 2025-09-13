@@ -229,21 +229,22 @@ class DatabaseSeeder extends Seeder
     {
         $paymentMethods = [
             // type, provider
-            ['type' => 0, 'provider' => null], // cash
-            ['type' => 1, 'provider' => null], // cash_savings
-            ['type' => 2, 'provider' => 'Visa'], // debit_card
-            ['type' => 2, 'provider' => 'Mastercard'], // debit_card
-            ['type' => 3, 'provider' => 'Visa'], // credit_card
-            ['type' => 3, 'provider' => 'Mastercard'], // credit_card
-            ['type' => 4, 'provider' => 'Deutsche Bank'], // bank_transfer
-            ['type' => 4, 'provider' => 'Commerzbank'], // bank_transfer
-            ['type' => 5, 'provider' => 'PayPal'], // payment_provider
-            ['type' => 5, 'provider' => 'Stripe'], // payment_provider
-            ['type' => 5, 'provider' => 'Square'], // payment_provider
-            ['type' => 5, 'provider' => 'Revolut'], // payment_provider
-            ['type' => 5, 'provider' => 'Amazon Pay'], // payment_provider
-            ['type' => 5, 'provider' => 'Klarna'], // payment_provider
-            ['type' => 6, 'provider' => 'Deutsche Bank'], // savings_account
+            ['type' => 0, 'provider' => "Wallet", 'provider_source' => null], // cash
+            ['type' => 0, 'provider' => "Home safe", 'provider_source' => null], // cash - savings
+            ['type' => 1, 'provider' => 'Commerzbank', 'provider_source' => null], // bank_transfer
+            ['type' => 1, 'provider' => 'Deutsche Bank', 'provider_source' => null], // bank_transfer
+            ['type' => 1, 'provider' => 'Addiko Bank', 'provider_source' => null], // bank_transfer
+            ['type' => 2, 'provider' => 'Mastercard', 'provider_source' => null], // credit_card
+            ['type' => 2, 'provider' => 'Visa', 'provider_source' => null], // credit_card
+            ['type' => 3, 'provider' => 'Revolut', 'provider_source' => null], // prepaid_card
+            ['type' => 3, 'provider' => 'N26', 'provider_source' => null], // prepaid_card
+            ['type' => 3, 'provider' => 'Wise', 'provider_source' => null], // prepaid_card
+            ['type' => 4, 'provider' => 'PayPal', 'provider_source' => 5], // payment_provider
+            ['type' => 4, 'provider' => 'Klarna', 'provider_source' => 3], // payment_provider
+            ['type' => 5, 'provider' => 'Apple Pay', 'provider_source' => null], // payment_provider
+            ['type' => 5, 'provider' => 'Google Pay', 'provider_source' => null], // payment_provider
+            ['type' => 5, 'provider' => 'Amazon Gift Card', 'provider_source' => null], // gift_card
+            ['type' => 5, 'provider' => 'Netflix Gift Card', 'provider_source' => null], // gift_card
         ];
         
         $user = User::first(); // Assuming you want to assign these to the first user
@@ -252,6 +253,7 @@ class DatabaseSeeder extends Seeder
             $user->paymentMethods()->create([
                 'type' => $method['type'],
                 'provider' => $method['provider'],
+                'provider_source' => $method['provider_source'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
